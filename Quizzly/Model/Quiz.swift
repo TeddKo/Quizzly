@@ -33,16 +33,6 @@ enum DifficultyLevel: Int, Codable, CaseIterable {
     }
 }
 
-struct QuizImage {
-    let identifier: String
-    let type: ImageSourceType
-}
-
-enum ImageSourceType {
-    case local(URL)
-    case asset(String)
-}
-
 @Model
 final class Quiz {
     @Attribute(.unique) var id: UUID
@@ -51,7 +41,7 @@ final class Quiz {
     var correctAnswerIndex: Int
     var explanation: String?
     var difficultyLevel: DifficultyLevel
-    var quizImage: QuizImage?
+    var imagePath: String?
     
     var quizCategory: QuizCategory?
     
@@ -63,10 +53,14 @@ final class Quiz {
         explanation: String? = nil,
         difficultyLevel: DifficultyLevel,
         quizCategory: QuizCategory,
-        quizImage: QuizImage? = nil,
+        imagePath: String? = nil,
     ) {
         guard !options.isEmpty else {
             fatalError("Quiz options cannot be empty.")
+        }
+        
+        guard options.indices.contains(correctAnswerIndex) else {
+            fatalError("correctAnswerIndex is out of bounds for options.")
         }
         
         self.id = id
@@ -76,6 +70,6 @@ final class Quiz {
         self.explanation = explanation
         self.difficultyLevel = difficultyLevel
         self.quizCategory = quizCategory
-        self.quizImage = quizImage
+        self.imagePath = imagePath
     }
 }
