@@ -1,5 +1,5 @@
 //
-//  Question.swift
+//  Quiz.swift
 //  Quizzly
 //
 //  Created by Ko Minhyuk on 5/12/25.
@@ -33,6 +33,16 @@ enum DifficultyLevel: Int, Codable, CaseIterable {
     }
 }
 
+struct QuizImage {
+    let identifier: String
+    let type: ImageSourceType
+}
+
+enum ImageSourceType {
+    case local(URL)
+    case asset(String)
+}
+
 @Model
 final class Quiz {
     @Attribute(.unique) var id: UUID
@@ -41,7 +51,7 @@ final class Quiz {
     var correctAnswerIndex: Int
     var explanation: String?
     var difficultyLevel: DifficultyLevel
-    var imgPath: String?
+    var quizImage: QuizImage?
     
     var quizCategory: QuizCategory?
     
@@ -53,8 +63,12 @@ final class Quiz {
         explanation: String? = nil,
         difficultyLevel: DifficultyLevel,
         quizCategory: QuizCategory,
-        imgPath: String? = nil
+        quizImage: QuizImage? = nil,
     ) {
+        guard !options.isEmpty else {
+            fatalError("Quiz options cannot be empty.")
+        }
+        
         self.id = id
         self.questionDescription = questionDescription
         self.options = options
@@ -62,6 +76,6 @@ final class Quiz {
         self.explanation = explanation
         self.difficultyLevel = difficultyLevel
         self.quizCategory = quizCategory
-        self.imgPath = imgPath
+        self.quizImage = quizImage
     }
 }

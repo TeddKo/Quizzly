@@ -1,5 +1,5 @@
 //
-//  Item.swift
+//  Profile.swift
 //  Quizzly
 //
 //  Created by Ko Minhyuk on 5/12/25.
@@ -36,6 +36,14 @@ final class Profile {
         self.name = name
         self.createdAt = createdAt
         self.iconName = iconName
-        self.themeColorHex = themeColorHex
+        
+        if let hex = themeColorHex {
+            guard hex.isHexColor else {
+                fatalError("Invalid hex color format")
+            }
+            self.themeColorHex = hex
+        } else {
+            self.themeColorHex = nil
+        }
     }
 }

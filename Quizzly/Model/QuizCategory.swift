@@ -30,6 +30,14 @@ final class QuizCategory {
         self.id = id
         self.name = name
         self.iconName = iconName
-        self.themeColorHex = themeColorHex
+        
+        if let hex = themeColorHex {
+            guard hex.isHexColor else {
+                fatalError("Invalid hex color format")
+            }
+            self.themeColorHex = hex
+        } else {
+            self.themeColorHex = nil
+        }
     }
 }
