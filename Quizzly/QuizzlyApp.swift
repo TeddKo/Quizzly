@@ -12,7 +12,12 @@ import SwiftData
 struct QuizzlyApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            Profile.self,
+            Quiz.self,
+            QuizCategory.self,
+            QuizAttempt.self,
+            CategoryProgress.self,
+            ReviewNote.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -25,7 +30,7 @@ struct QuizzlyApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            CategoryListView()
         }
         .modelContainer(sharedModelContainer)
     }
