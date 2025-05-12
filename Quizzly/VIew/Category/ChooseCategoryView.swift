@@ -19,7 +19,9 @@ let mockCategories: [QuizCategory] = [
 struct ChooseCategoryView: View {
     @State private var selectedDifficulty: DifficultyLevel = .level3
     @State private var selectedCategory: QuizCategory? = nil
-
+    @State private var showAlert = false
+    @State private var navigationPath = NavigationPath()
+    
     let categories: [QuizCategory]
     
     let columns = [
@@ -28,7 +30,7 @@ struct ChooseCategoryView: View {
     ]
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationPath) {
             VStack {
                 LazyVGrid(columns: columns, spacing: 16) {
                     ForEach(categories, id: \.id) { category in
@@ -90,7 +92,17 @@ struct ChooseCategoryView: View {
                 Spacer()
                 
                 Button {
+                    guard let selected = selectedCategory else { return }
                     
+                    let matchingQuizzes = selected.quizzes?.filter {
+                        $0.difficultyLevel == selectedDifficulty
+                    } ?? []
+                    
+                    if matchingQuizzes.isEmpty {
+                        showAlert = true
+                    } else {
+                        navigationPath.append(selected)
+                    }
                 } label: {
                     Text("퀴즈 풀기")
                         .tint(.white)
@@ -100,6 +112,8 @@ struct ChooseCategoryView: View {
                         .background(.cyan)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
+                
+                .disabled(selectedCategory == nil)
                 .background {
                     RoundedRectangle(cornerRadius: 12)
                         .foregroundStyle(.cyan)
@@ -112,6 +126,17 @@ struct ChooseCategoryView: View {
             .padding(.top, 25)
             .padding(.bottom, 15)
             .navigationTitle("카테고리 선택")
+            .alert("퀴즈가 없습니다", isPresented: $showAlert) {
+                Button("문제 만들러 가기") {
+                    navigationPath.append("create")
+                }
+                
+                Button("취소", role: .cancel) {}
+            } message: {
+                Text("이 카테고리와 난이도에 해당하는 문제가 없습니다.")
+            }
+            
+            // TODO: 문제 유무에 따라 CreateQuizView / QuizView 화면 다르게 이동
         }
     }
     
