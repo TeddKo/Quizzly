@@ -17,7 +17,8 @@ struct QuizzlyApp: App {
             QuizCategory.self,
             QuizAttempt.self,
             CategoryProgress.self,
-            ReviewNote.self
+            ReviewNote.self,
+            Item.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -30,7 +31,7 @@ struct QuizzlyApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ChooseProfileView()
+            ItemsView(modelContext: sharedModelContainer.mainContext)
         }
         .modelContainer(sharedModelContainer)
     }

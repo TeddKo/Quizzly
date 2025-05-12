@@ -31,7 +31,7 @@ struct HomeView: View {
                 } label: {
                     ZStack {
                         Circle()
-                            .fill(colorFromHex(profile.themeColorHex))
+                            .fill(profile.themeColorHex?.asHexColor ?? Color.gray)
                             .frame(width: 50, height: 50)
                         
                         Image(systemName: "person.fill")
@@ -57,20 +57,6 @@ struct HomeView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
-    }
-    
-    private func colorFromHex(_ hexString: String?) -> Color {
-        guard let hex = hexString?.trimmingCharacters(in: CharacterSet.alphanumerics.inverted), hex.count == 6 else {
-            return Color.gray
-        }
-        var rgbValue: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&rgbValue)
-        
-        return Color(
-            red: Double((rgbValue & 0xFF0000) >> 16) / 255.0,
-            green: Double((rgbValue & 0x00FF00) >> 8) / 255.0,
-            blue: Double(rgbValue & 0x0000FF) / 255.0
-        )
     }
 }
 
