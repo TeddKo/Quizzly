@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 
+// TODO: mock 데이터 실제 데이터로 바꾸기
 let mockCategories: [QuizCategory] = [
     QuizCategory(name: "iOS", iconName: "iphone", themeColorHex: "#34C759"),
     QuizCategory(name: "Design", iconName: "scribble", themeColorHex: "#FF9500"),
@@ -17,7 +18,8 @@ let mockCategories: [QuizCategory] = [
 
 struct ChooseCategoryView: View {
     @State private var selectedDifficulty: DifficultyLevel = .level3
-    
+    @State private var selectedCategory: QuizCategory? = nil
+
     let categories: [QuizCategory]
     
     let columns = [
@@ -56,9 +58,16 @@ struct ChooseCategoryView: View {
                         .padding()
                         .padding(.vertical, 16)
                         .frame(maxWidth: .infinity)
-                        .background(.white)
+                        .background(Color.white)
                         .cornerRadius(16)
-                        .shadow(color: Color.black.opacity(0.1), radius: 6, x: 0, y: 3)
+                        .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 3)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(selectedCategory?.id == category.id ? Color.cyan : Color.clear, lineWidth: 3)
+                        )
+                        .onTapGesture {
+                            selectedCategory = category
+                        }
                     }
                 }
                 .padding(.horizontal)
