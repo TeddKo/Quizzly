@@ -18,7 +18,7 @@ struct QuizView: View {
     @Query(sort: \Quiz.questionDescription) private var quizzes: [Quiz]
     
     // TODO: mock 데이터 실제 데이터로 바꾸기
-    let options = [
+    let mockOptions = [
         "Volleyball",
         "Football",
         "Basketball",
@@ -41,7 +41,7 @@ struct QuizView: View {
                 }
                 
                 VStack(spacing: 12) {
-                    ForEach(options, id: \.self) { option in
+                    ForEach(mockOptions, id: \.self) { option in
                         Button {
                             selectedOption = option
                         } label: {
