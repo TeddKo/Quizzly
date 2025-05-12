@@ -13,70 +13,56 @@ struct CategoryListView: View {
     @Query(sort: \QuizCategory.name) private var quizCategories: [QuizCategory]
     @State private var showingAddCategorySheet = false
     
-
+    
     var body: some View {
-            NavigationStack {
-                List {
-                    ForEach(quizCategories) { category in
-                        NavigationLink(value: category) {
-                            HStack {
-                                if let iconName = category.iconName, !iconName.isEmpty {
-                                    Image(systemName: iconName)
-                                        .foregroundColor(colorFromHex(category.themeColorHex))
-                                } else {
-                                    Image(systemName: "folder")
-                                        .foregroundColor(colorFromHex(category.themeColorHex))
-                                }
-                                Text(category.name)
+        NavigationStack {
+            List {
+                ForEach(quizCategories) { category in
+                    NavigationLink(value: category) {
+                        HStack {
+                            if let iconName = category.iconName, !iconName.isEmpty {
+                                Image(systemName: iconName)
+                                    .foregroundColor(category.themeColorHex?.asHexColor)
+                            } else {
+                                Image(systemName: "folder")
+                                    .foregroundColor(category.themeColorHex?.asHexColor)
                             }
+                            Text(category.name)
                         }
                     }
-                    .onDelete(perform: deleteCategories)
                 }
-                .navigationTitle("카테고리")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button {
-                            showingAddCategorySheet = true
-                        } label: {
-                            Label("카테고리 추가", systemImage: "plus.circle.fill")
-                        }
-                    }
-
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        EditButton()
+                .onDelete(perform: deleteCategories)
+            }
+            .navigationTitle("카테고리")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        showingAddCategorySheet = true
+                    } label: {
+                        Label("카테고리 추가", systemImage: "plus.circle.fill")
                     }
                 }
-
-                .sheet(isPresented: $showingAddCategorySheet) {
-                    AddCategoryView()
-                }
-
-                .navigationDestination(for: QuizCategory.self) { category in
-                    EditCategoryView(category: category)
+                
+                ToolbarItem(placement: .navigationBarLeading) {
+                    EditButton()
                 }
             }
-        }
-
-        private func deleteCategories(offsets: IndexSet) {
-            withAnimation {
-                offsets.map { quizCategories[$0] }.forEach(modelContext.delete)
+            
+            .sheet(isPresented: $showingAddCategorySheet) {
+                AddCategoryView()
+            }
+            
+            .navigationDestination(for: QuizCategory.self) { category in
+                EditCategoryView(category: category)
             }
         }
-
-        private func colorFromHex(_ hexString: String?) -> Color {
-            guard let hex = hexString?.trimmingCharacters(in: CharacterSet.alphanumerics.inverted), hex.count == 6 else {
-                return Color.gray
-            }
-            var rgbValue: UInt64 = 0
-            Scanner(string: hex).scanHexInt64(&rgbValue)
-
-            return Color(
-                red: Double((rgbValue & 0xFF0000) >> 16) / 255.0,
-                green: Double((rgbValue & 0x00FF00) >> 8) / 255.0,
-                blue: Double(rgbValue & 0x0000FF) / 255.0
-            )
+    }
+    
+    private func deleteCategories(offsets: IndexSet) {
+        withAnimation {
+            offsets.map { quizCategories[$0] }.forEach(modelContext.delete)
         }
+    }
 }
 
 #Preview {

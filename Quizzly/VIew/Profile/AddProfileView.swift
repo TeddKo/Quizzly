@@ -15,16 +15,13 @@ struct AddProfileView: View {
     @State private var profileName: String = ""
     @State private var createdAt: Date = Date.now
     @State private var profileIconName: String = ""
-    @State private var profileThemeColorHex: String = "#"
+    @State private var color: Color = .white
 
     var body: some View {
         NavigationStack {
             Form {
                 TextField("프로필 이름 (Required)", text: $profileName)
-                TextField("아이콘 이름 (e.g., swift, book.fill)", text: $profileIconName)
-                TextField("컬러값 (e.g., #1ABC9C)", text: $profileThemeColorHex)
-                    .autocapitalization(.none)
-                    .keyboardType(.asciiCapable)
+                ColorPicker("컬러를 선택하세요", selection: $color)
             }
             .navigationTitle("프로필 추가")
             .toolbar {
@@ -48,19 +45,10 @@ struct AddProfileView: View {
         let newProfile = Profile(
             name: profileName,
             createdAt: Date.now,
-            iconName: profileIconName.isEmpty ? nil : profileIconName,
-            themeColorHex: normalizeHexColor(profileThemeColorHex)
+            themeColorHex: color.hexStringWithAlpha
         )
 
         modelContext.insert(newProfile)
-    }
-
-    private func normalizeHexColor(_ hex: String) -> String? {
-        let trimmedHex = hex.trimmingCharacters(in: .whitespacesAndNewlines)
-        if trimmedHex.isEmpty || trimmedHex == "#" {
-            return nil
-        }
-        return trimmedHex.hasPrefix("#") ? trimmedHex : "#" + trimmedHex
     }
 }
 
