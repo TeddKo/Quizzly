@@ -23,6 +23,7 @@ struct ProfileCardView: View {
                     .frame(width: 18, height: 18)
                     .foregroundStyle(colorFromHex(profile.themeColorHex) == .white ? .black : .white)
             }
+            .shadow(color: .gray.opacity(0.3), radius: 7, x: 0, y: 3)
             
             Text(profile.name)
                 .font(.caption)

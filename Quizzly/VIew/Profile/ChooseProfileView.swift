@@ -54,6 +54,7 @@ struct ChooseProfileView: View {
                             .opacity(0)
                             .font(.caption)
                     }
+                    .shadow(color: .gray.opacity(0.3), radius: 7, x: 0, y: 3)
                 }
                 .padding(.top, 40)
             }
