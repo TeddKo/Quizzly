@@ -13,7 +13,6 @@ final class Profile {
     @Attribute(.unique) var id: UUID
     var name: String
     var createdAt: Date
-    var iconName: String?
     var themeColorHex: String?
     
     @Relationship(deleteRule: .cascade, inverse: \QuizAttempt.profile)
@@ -29,13 +28,11 @@ final class Profile {
         id: UUID = UUID(),
         name: String,
         createdAt: Date,
-        iconName: String? = nil,
         themeColorHex: String? = nil
     ) {
         self.id = id
         self.name = name
         self.createdAt = createdAt
-        self.iconName = iconName
         
         if let hex = themeColorHex {
             guard hex.isHexColor else {
