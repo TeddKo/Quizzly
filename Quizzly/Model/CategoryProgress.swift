@@ -22,13 +22,13 @@ final class CategoryProgress {
         correctAttempts: Int = 0,
         lastAttemptedAt: Date? = nil,
         profile: Profile?,
-        category: QuizCategory?
+        quizCategory: QuizCategory?
     ) {
         self.totalAttempts = totalAttempts
         self.correctAttempts = correctAttempts
         self.lastAttemptedAt = lastAttemptedAt
         self.profile = profile
-        self.quizCategory = category
+        self.quizCategory = quizCategory
     }
     
     var correctRate: Double {

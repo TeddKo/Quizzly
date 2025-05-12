@@ -52,7 +52,7 @@ final class Quiz {
         correctAnswerIndex: Int,
         explanation: String? = nil,
         difficultyLevel: DifficultyLevel,
-        category: QuizCategory,
+        quizCategory: QuizCategory,
         imgPath: String
     ) {
         self.id = id
@@ -61,7 +61,7 @@ final class Quiz {
         self.correctAnswerIndex = correctAnswerIndex
         self.explanation = explanation
         self.difficultyLevel = difficultyLevel
-        self.quizCategory = category
+        self.quizCategory = quizCategory
         self.imgPath = imgPath
     }
 }
