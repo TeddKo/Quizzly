@@ -9,51 +9,50 @@ import SwiftUI
 
 struct HomeView: View {
     @Bindable var profile: Profile
-
+    @Binding var navigationPath: NavigationPath
+    
     var body: some View {
-        NavigationStack {
-            VStack {
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Hi, \(profile.name)")
-                            .font(.title3)
-                            .foregroundStyle(.secondary)
-                        
-                        Text("Find Deals")
-                            .font(.largeTitle)
-                            .bold()
-                    }
+        VStack {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text("Hi, \(profile.name)")
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
                     
-                    Spacer()
-                    
-                    Button {
+                    Text("Find Deals")
+                        .font(.largeTitle)
+                        .bold()
+                }
+                
+                Spacer()
+                
+                Button {
+                    navigationPath = NavigationPath()
+                } label: {
+                    ZStack {
+                        Circle()
+                            .fill(colorFromHex(profile.themeColorHex))
+                            .frame(width: 50, height: 50)
                         
-                    } label: {
-                        ZStack {
-                            Circle()
-                                .fill(colorFromHex(profile.themeColorHex))
-                                .frame(width: 50, height: 50)
-                            
-                            Image(systemName: "person.fill")
-                                .resizable()
-                                .frame(width: 18, height: 18)
-                                .foregroundStyle(.white)
-                        }
+                        Image(systemName: "person.fill")
+                            .resizable()
+                            .frame(width: 18, height: 18)
+                            .foregroundStyle(.white)
                     }
                 }
-                .padding(.top, 50)
-                .padding(.bottom, 15)
             }
-            .padding()
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        
-                    } label: {
-                        Image("menu")
-                            .resizable()
-                            .frame(width: 23, height: 23)
-                    }
+            .padding(.top, 50)
+            .padding(.bottom, 15)
+        }
+        .padding()
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    
+                } label: {
+                    Image("menu")
+                        .resizable()
+                        .frame(width: 23, height: 23)
                 }
             }
         }
@@ -76,5 +75,5 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView(profile: Profile(name: "민지", createdAt: Date.now))
+    HomeView(profile: Profile(name: "민지", createdAt: Date.now), navigationPath: .constant(NavigationPath()))
 }

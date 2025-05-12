@@ -13,21 +13,21 @@ struct ChooseProfileView: View {
     @Query(sort: \Profile.name) private var profiles: [Profile]
     
     @State private var showingAddProfileSheet = false
+    @State private var navigationPath = NavigationPath()
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationPath) {
             VStack {
-                if profiles.isEmpty {
-                    Text("Choose Your Profile")
-                        .font(.largeTitle)
-                } else {
-                    Text("Create Your Profile")
-                        .font(.largeTitle)
-                }
+                let profileDescription: String = profiles.isEmpty ? "Create Your Profile" : "Choose Your Profile"
+                
+                Text(profileDescription)
+                    .font(.largeTitle)
                 
                 HStack(spacing: 20) {
                     ForEach(profiles) { profile in
-                        NavigationLink(destination: HomeView(profile: profile)) {
+                        Button {
+                            navigationPath.append(profile)
+                        } label: {
                             ProfileCardView(profile: profile)
                         }
                     }
@@ -60,6 +60,9 @@ struct ChooseProfileView: View {
             }
             .sheet(isPresented: $showingAddProfileSheet) {
                 AddProfileView()
+            }
+            .navigationDestination(for: Profile.self) { profile in
+                HomeView(profile: profile, navigationPath: $navigationPath)
             }
         }
     }
