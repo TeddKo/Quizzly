@@ -17,6 +17,9 @@ struct QuizView: View {
     
     @Query(sort: \Quiz.questionDescription) private var quizzes: [Quiz]
     
+    let category: QuizCategory
+    let difficulty: DifficultyLevel
+    
     // TODO: mock 데이터 실제 데이터로 바꾸기
     let mockOptions = [
         "Volleyball",
@@ -106,5 +109,11 @@ struct QuizView: View {
 }
 
 #Preview {
-    QuizView()
+    let sampleCategory = QuizCategory(
+        name: "Swift",
+        iconName: "swift",
+        themeColorHex: "#FF5733"
+    )
+
+    QuizView(category: sampleCategory, difficulty: DifficultyLevel.level1)
 }
