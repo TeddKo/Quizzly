@@ -11,10 +11,15 @@ import SwiftData
 struct AddCategoryView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) var dismiss
-
+    
+    @State private var viewModel:ViewModel
     @State private var categoryName: String = ""
     @State private var categoryIconName: String = ""
     @State private var categoryThemeColorHex: String = "#"
+    
+    init(viewModel: ViewModel) {
+        self.viewModel = viewModel
+    }
 
     var body: some View {
         NavigationStack {
@@ -43,13 +48,17 @@ struct AddCategoryView: View {
         }
     }
 
-    private func saveCategory() {
-        let newCategory = QuizCategory(
-            name: categoryName,
-            iconName: categoryIconName.isEmpty ? nil : categoryIconName,
-            themeColorHex: normalizeHexColor(categoryThemeColorHex)
-        )
-        modelContext.insert(newCategory)
+//    private func saveCategory() {
+//        let newCategory = QuizCategory(
+//            name: categoryName,
+//            iconName: categoryIconName.isEmpty ? nil : categoryIconName,
+//            themeColorHex: normalizeHexColor(categoryThemeColorHex)
+//        )
+//        modelContext.insert(newCategory)
+//    }
+    private func saveCategory(){
+        let newQuizCategory = QuizCategory(name:categoryName,iconName: categoryIconName.isEmpty ? nil : categoryIconName,themeColorHex: normalizeHexColor(categoryThemeColorHex))
+        viewModel.addCategory(item: newQuizCategory)
     }
 
     private func normalizeHexColor(_ hex: String) -> String? {

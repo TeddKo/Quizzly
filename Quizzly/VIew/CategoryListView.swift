@@ -5,81 +5,93 @@
 //  Created by Ko Minhyuk on 5/12/25.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct CategoryListView: View {
+
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \QuizCategory.name) private var quizCategories: [QuizCategory]
+    //    @Query(sort: \QuizCategory.name) private var quizCategories: [QuizCategory]
     @State private var showingAddCategorySheet = false
-    
+    @StateObject private var viewModel: ViewModel
+
+    init(modelContext: ModelContext) {
+        _viewModel = StateObject(wrappedValue: ViewModel(modelContext: modelContext.container.mainContext))
+    }
 
     var body: some View {
-            NavigationStack {
-                List {
-                    ForEach(quizCategories) { category in
-                        NavigationLink(value: category) {
-                            HStack {
-                                if let iconName = category.iconName, !iconName.isEmpty {
-                                    Image(systemName: iconName)
-                                        .foregroundColor(colorFromHex(category.themeColorHex))
-                                } else {
-                                    Image(systemName: "folder")
-                                        .foregroundColor(colorFromHex(category.themeColorHex))
-                                }
-                                Text(category.name)
-                            }
+        NavigationStack {
+            List {
+                ForEach(viewModel.quizCategories) { category in
+                    NavigationLink(value: category) {
+                        HStack {
+                            //                            if let iconName = quiz.iconName, !iconName.isEmpty {
+                            //                                Image(systemName: iconName)
+                            //                                    .foregroundColor(colorFromHex(quiz.themeColorHex))
+                            //                            } else {
+                            //                                Image(systemName: "folder")
+                            //                                    .foregroundColor(colorFromHex(quiz.themeColorHex))
+                            //                            }
+                            Text(category.name)
                         }
                     }
-                    .onDelete(perform: deleteCategories)
                 }
-                .navigationTitle("카테고리")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button {
-                            showingAddCategorySheet = true
-                        } label: {
-                            Label("카테고리 추가", systemImage: "plus.circle.fill")
-                        }
-                    }
-
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        EditButton()
+                .onDelete(perform: deleteCategories)
+            }
+            .navigationTitle("카테고리")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        showingAddCategorySheet = true
+                    } label: {
+                        Label("카테고리 추가", systemImage: "plus.circle.fill")
                     }
                 }
 
-                .sheet(isPresented: $showingAddCategorySheet) {
-                    AddCategoryView()
-                }
-
-                .navigationDestination(for: QuizCategory.self) { category in
-                    EditCategoryView(category: category)
+                ToolbarItem(placement: .navigationBarLeading) {
+                    EditButton()
                 }
             }
-        }
 
-        private func deleteCategories(offsets: IndexSet) {
-            withAnimation {
-                offsets.map { quizCategories[$0] }.forEach(modelContext.delete)
+            .sheet(isPresented: $showingAddCategorySheet) {
+                AddCategoryView(viewModel: viewModel)
+            }
+
+            .navigationDestination(for: QuizCategory.self) { category in
+                EditCategoryView(category: category, viewModel: viewModel)
+            }
+            .onAppear {
+                viewModel.fetchCategory()
             }
         }
+    }
 
-        private func colorFromHex(_ hexString: String?) -> Color {
-            guard let hex = hexString?.trimmingCharacters(in: CharacterSet.alphanumerics.inverted), hex.count == 6 else {
-                return Color.gray
-            }
-            var rgbValue: UInt64 = 0
-            Scanner(string: hex).scanHexInt64(&rgbValue)
+    private func deleteCategories(offsets: IndexSet) {
+            try? offsets.map{viewModel.quizCategories[$0]}.forEach(viewModel.deleteCategory)
+//        withAnimation {
+//            var testStatement = offsets.map { viewModel.quizs[$0] }.forEach(modelContext.delete)
+//        }
+    }
 
-            return Color(
-                red: Double((rgbValue & 0xFF0000) >> 16) / 255.0,
-                green: Double((rgbValue & 0x00FF00) >> 8) / 255.0,
-                blue: Double(rgbValue & 0x0000FF) / 255.0
-            )
+    private func colorFromHex(_ hexString: String?) -> Color {
+        guard let hex = hexString?.trimmingCharacters(in: CharacterSet.alphanumerics.inverted), hex.count == 6 else {
+            return Color.gray
         }
+        var rgbValue: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&rgbValue)
+
+        return Color(
+            red: Double((rgbValue & 0xFF0000) >> 16) / 255.0,
+            green: Double((rgbValue & 0x00FF00) >> 8) / 255.0,
+            blue: Double(rgbValue & 0x0000FF) / 255.0
+        )
+    }
 }
 
-#Preview {
-    CategoryListView()
-        .modelContainer(for: QuizCategory.self, inMemory: true)
-}
+//#Preview {
+//    do{
+//        try? CategoryListView(modelContext: ModelContext(ModelContainer(for: Quiz.self)))
+//    } catch let e{
+//        print(e)
+//    }
+//}

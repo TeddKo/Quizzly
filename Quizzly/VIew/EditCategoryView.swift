@@ -10,6 +10,7 @@ import SwiftData
 
 struct EditCategoryView: View {
     @Bindable var category: QuizCategory
+    @StateObject var viewModel:ViewModel
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
@@ -34,6 +35,7 @@ struct EditCategoryView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("확인") {
+                    viewModel.updateCategory(name: category.name, category: category)
                     dismiss()
                 }
             }
