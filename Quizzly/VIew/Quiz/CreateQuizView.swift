@@ -29,41 +29,49 @@ struct CreateQuizView: View {
     
     var body: some View {
         NavigationStack {
-            Form {
-                Section(header: Text("문제 내용")) {
-                    TextField("문제를 입력하세요", text: $questionDescription)
-                }
-                
-                Section(header: Text("보기 (4개 입력)")) {
-                    ForEach(0..<4, id: \.self) { index in
-                        TextField("보기 \(index + 1)", text: $options[index])
+            ZStack(alignment: .bottom) {
+                Form {
+                    Section(header: Text("문제 내용")) {
+                        TextField("문제를 입력하세요", text: $questionDescription)
                     }
-                }
-                
-                Section(header: Text("정답 선택")) {
-                    Picker("정답 보기", selection: $correctAnswerIndex) {
+                    
+                    Section(header: Text("보기 (4개 입력)")) {
                         ForEach(0..<4, id: \.self) { index in
-                            Text("보기 \(index + 1)").tag(index)
+                            TextField("보기 \(index + 1)", text: $options[index])
                         }
                     }
-                    .pickerStyle(.segmented)
-                }
-                
-                Section(header: Text("문제 해설 (선택)")) {
-                    TextEditor(text: $explanation)
-                        .frame(height: 100)
-                }
-                
-                Section(header: Text("난이도 선택")) {
-                    Picker("난이도", selection: $difficultyLevel) {
-                        ForEach(DifficultyLevel.allCases, id: \.self) { level in
-                            Text(level.displayName).tag(level)
+                    
+                    Section(header: Text("정답 선택")) {
+                        Picker("정답 보기", selection: $correctAnswerIndex) {
+                            ForEach(0..<4, id: \.self) { index in
+                                Text("보기 \(index + 1)").tag(index)
+                            }
                         }
+                        .pickerStyle(.segmented)
                     }
-                    .pickerStyle(.segmented)
+                    
+                    Section(header: Text("문제 해설 (선택)")) {
+                        TextEditor(text: $explanation)
+                            .frame(height: 100)
+                    }
+                    
+                    Section(header: Text("난이도 선택")) {
+                        Picker("난이도", selection: $difficultyLevel) {
+                            ForEach(DifficultyLevel.allCases, id: \.self) { level in
+                                Text(level.displayName).tag(level)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                    }
+                    
+                    Section {
+                        Color.clear
+                            .frame(height: 80) 
+                            .listRowBackground(Color.clear)
+                    }
                 }
                                 
-                Section {
+                VStack {
                     Button {
                         
                     } label: {
@@ -82,8 +90,14 @@ struct CreateQuizView: View {
                             .opacity(0.4)
                             .blur(radius: 12)
                     }
+                    .padding(.horizontal)
+                    .padding(.bottom, 12)
                     .disabled(!isFormValid)
+                    .listRowBackground(Color(.clear))
+                    .frame(maxWidth: .infinity)
+                    
                 }
+                .background(Color(.clear))
             }
             .navigationTitle("퀴즈 생성")
         }
