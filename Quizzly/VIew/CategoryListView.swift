@@ -13,10 +13,10 @@ struct CategoryListView: View {
     @Environment(\.modelContext) private var modelContext
     //    @Query(sort: \QuizCategory.name) private var quizCategories: [QuizCategory]
     @State private var showingAddCategorySheet = false
-    @StateObject private var viewModel: ViewModel
+    @StateObject private var viewModel: CategoryViewModel
 
     init(modelContext: ModelContext) {
-        _viewModel = StateObject(wrappedValue: ViewModel(modelContext: modelContext.container.mainContext))
+        _viewModel = StateObject(wrappedValue: CategoryViewModel(modelContext: modelContext.container.mainContext))
     }
 
     var body: some View {

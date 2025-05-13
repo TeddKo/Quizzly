@@ -10,7 +10,7 @@ import SwiftData
 
 struct EditCategoryView: View {
     @Bindable var category: QuizCategory
-    @StateObject var viewModel:ViewModel
+    @StateObject var viewModel:CategoryViewModel
     @Environment(\.dismiss) var dismiss
 
     var body: some View {

@@ -12,12 +12,12 @@ struct AddCategoryView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) var dismiss
     
-    @State private var viewModel:ViewModel
+    @State private var viewModel:CategoryViewModel
     @State private var categoryName: String = ""
     @State private var categoryIconName: String = ""
     @State private var categoryThemeColorHex: String = "#"
     
-    init(viewModel: ViewModel) {
+    init(viewModel: CategoryViewModel) {
         self.viewModel = viewModel
     }
 

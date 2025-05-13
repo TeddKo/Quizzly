@@ -30,7 +30,8 @@ struct QuizzlyApp: App {
 
     var body: some Scene {
         WindowGroup {
-            CategoryListView(modelContext: sharedModelContainer.mainContext)
+//            CategoryListView(modelContext: sharedModelContainer.mainContext)
+            QuizListView(modelContext: sharedModelContainer.mainContext)
         }
         .modelContainer(sharedModelContainer)
     }
