@@ -74,6 +74,7 @@ struct AddQuizView: View {
             }
             .background(Color(.clear))
             .navigationTitle("퀴즈 생성")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("취소") {
