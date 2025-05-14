@@ -52,6 +52,9 @@ struct HomeView: View {
                                         .fontWeight(.bold)
                                         .foregroundColor(.white)
                                 }
+                                .onTapGesture {
+                                    navigationPath = NavigationPath()
+                                }
                             
                             VStack(alignment: .leading, spacing: 5) {
                                 Text("\(profile.name)님, 안녕하세요!")
