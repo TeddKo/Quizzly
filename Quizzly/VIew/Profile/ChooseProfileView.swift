@@ -23,40 +23,43 @@ struct ChooseProfileView: View {
                 Text(profileDescription)
                     .font(.largeTitle)
                 
-                HStack(spacing: 20) {
-                    ForEach(profiles) { profile in
-                        Button {
-                            navigationPath.append(profile)
-                        } label: {
-                            ProfileCardView(profile: profile)
-                        }
-                    }
-                    
-                    VStack {
-                        Button {
-                            showingAddProfileSheet = true
-                        } label: {
-                            ZStack {
-                                Circle()
-                                    .fill(.gray.opacity(0.5))
-                                    .frame(width: 50, height: 50)
-                                
-                                Image(systemName: "plus")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 18, height: 18)
-                                    .bold()
-                                    .foregroundStyle(.white)
+                ScrollView(.horizontal) {
+                    HStack(spacing: 20) {
+                        ForEach(profiles) { profile in
+                            Button {
+                                navigationPath.append(profile)
+                            } label: {
+                                ProfileCardView(profile: profile)
                             }
                         }
                         
-                        Text("add")
-                            .opacity(0)
-                            .font(.caption)
+                        VStack {
+                            Button {
+                                showingAddProfileSheet = true
+                            } label: {
+                                ZStack {
+                                    Circle()
+                                        .fill(.gray.opacity(0.5))
+                                        .frame(width: 50, height: 50)
+                                    
+                                    Image(systemName: "plus")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 18, height: 18)
+                                        .bold()
+                                        .foregroundStyle(.white)
+                                }
+                            }
+                            
+                            Text("add")
+                                .opacity(0)
+                                .font(.caption)
+                        }
+                        .shadow(color: .gray.opacity(0.3), radius: 7, x: 0, y: 3)
                     }
-                    .shadow(color: .gray.opacity(0.3), radius: 7, x: 0, y: 3)
+                    .padding(.top, 40)
                 }
-                .padding(.top, 40)
+                .scrollIndicators(.hidden)
             }
             .sheet(isPresented: $showingAddProfileSheet) {
                 AddProfileView()
@@ -70,7 +73,7 @@ struct ChooseProfileView: View {
 
 #Preview {
     let container = try! ModelContainer(for: Profile.self, configurations: .init(isStoredInMemoryOnly: true))
-    let sample = Profile(name: "민지", createdAt: .now, iconName: "person.crop.circle", themeColorHex: "#e67e22")
+    let sample = Profile(name: "민지", createdAt: .now, themeColorHex: "#e67e22")
     container.mainContext.insert(sample)
     
     return ChooseProfileView()
