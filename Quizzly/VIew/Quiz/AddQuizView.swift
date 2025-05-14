@@ -37,7 +37,7 @@ struct AddQuizView: View {
     @State private var explanation: String = ""
     @State private var difficultyLevel: DifficultyLevel = .level3
     @State private var imagePath: String? = nil
-    @StateObject var viewModel:QuizViewModel
+    @EnvironmentObject var viewModel:QuizViewModel
     
     // 전달된 카테고리 (실제 저장 시 연결용)
     var quizCategory: QuizCategory

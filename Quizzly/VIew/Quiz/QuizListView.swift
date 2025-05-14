@@ -53,17 +53,18 @@ struct QuizListView: View {
                 }
             }
             .sheet(isPresented: $showingAddQuizSheet) {
-                AddQuizView(viewModel: viewModel, quizCategory: category)
+                AddQuizView(quizCategory: category)
+                    .environmentObject(viewModel)
             }
             .navigationDestination(for: Quiz.self) { quiz in
-                EditQuizView(quiz: quiz,viewModel:viewModel)
+                EditQuizView(quiz: quiz)
+                    .environmentObject(viewModel)
             }
         }
     }
 
     private func deleteQuizzes(offsets: IndexSet) {
         withAnimation {
-            offsets.map { viewModel.quizzes[$0] }.forEach(modelContext.delete)
             offsets.map{ viewModel.quizzes[$0] }.forEach(viewModel.deleteQuiz)
         }
     }

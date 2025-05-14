@@ -18,7 +18,7 @@ import SwiftUI
 struct EditQuizView: View {
     @Bindable var quiz: Quiz
     @Environment(\.dismiss) var dismiss
-    @StateObject var viewModel:QuizViewModel
+    @EnvironmentObject var viewModel:QuizViewModel
 
     var body: some View {
         Form {
