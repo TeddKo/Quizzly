@@ -202,6 +202,18 @@ struct QuizNote: Identifiable {
     let userAnswer: String
     let correctAnswer: String
     let explanation: String
+    
+    let level: String
+    let category: String
+    let dateAdded: String
+    let choices: [Choice]
+    let recommendations: [LearningRecommendation]
+    let memo: String
+}
+
+struct Choice {
+    let label: String
+    let text: String
 }
 
 struct LearningRecommendation: Identifiable, Hashable {
@@ -222,13 +234,18 @@ struct LearningRecommendation: Identifiable, Hashable {
                 question: "SwiftUI에서 상태(State) 변수를 선언하는 올바른 방법은?",
                 userAnswer: "B",
                 correctAnswer: "A",
-                explanation: "'@state'가 아닌 '@State'로 대문자 S를 사용해야 합니다."
-            ),
-            QuizNote(
-                question: "다음 중 Swift의 옵셔널 언래핑 방법이 아닌 것은?",
-                userAnswer: "C",
-                correctAnswer: "D",
-                explanation: "optional.unwrap() 메서드는 존재하지 않습니다."
+                explanation: "'@state'가 아닌 '@State'로 대문자 S를 사용해야 합니다.",
+                level: "Level 3",
+                category: "SwiftUI",
+                dateAdded: "2025년 5월 14일",
+                choices: [
+                    Choice(label: "A", text: "@State 사용"),
+                    Choice(label: "B", text: "@state 사용"),
+                    Choice(label: "C", text: "var 사용"),
+                    Choice(label: "D", text: "let 사용")
+                ],
+                recommendations: [],
+                memo: ""
             )
         ],
         recommendations: [
@@ -237,4 +254,5 @@ struct LearningRecommendation: Identifiable, Hashable {
         ]
     )
 }
+
 
