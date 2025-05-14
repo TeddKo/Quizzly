@@ -29,9 +29,22 @@
 		8D1350072DD175E0000BCFD4 /* QuizzlyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QuizzlyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D76E8FDB2DD507DE000D0C32 /* Exceptions for "Quizzly" folder in "Quizzly" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				VIew/QuizView.swift,
+			);
+			target = 8D134FED2DD175DF000BCFD4 /* Quizzly */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		8D134FF02DD175DF000BCFD4 /* Quizzly */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D76E8FDB2DD507DE000D0C32 /* Exceptions for "Quizzly" folder in "Quizzly" target */,
+			);
 			path = Quizzly;
 			sourceTree = "<group>";
 		};
@@ -379,7 +392,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = EXL6JG4DR8;
+				DEVELOPMENT_TEAM = AQB2Q27Y88;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -408,7 +421,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = EXL6JG4DR8;
+				DEVELOPMENT_TEAM = AQB2Q27Y88;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

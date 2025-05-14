@@ -1,3 +1,11 @@
+//
+//  CategoryCard.swift
+//  Quizzly
+//
+//  Created by DEV on 5/15/25.
+//
+
+
 import SwiftUI
 
 struct CategoryCard: View {
