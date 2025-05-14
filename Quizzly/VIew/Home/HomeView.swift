@@ -37,8 +37,11 @@ struct HomeView: View {
     @Binding var navigationPath: NavigationPath
     @AppStorage("currentUserUUID") var uuid = ""
     @State private var showingAllCategories = false
-    @StateObject var categoryViewModel:CategoryViewModel
-    @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject var categoryViewModel:CategoryViewModel
+//    @Environment(\.modelContext) private var modelContext
+//     var categoryViewModel:CategoryViewModel
+    
+    var allCategories:[QuizCategory] = []
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -171,17 +174,23 @@ struct HomeView: View {
                             }
                         }
                         
-                        let displayedCategories = showingAllCategories ? allCategories : Array(allCategories.prefix(4))
+//                        let displayedCategories = showingAllCategories ? allCategories : Array(allCategories.prefix(4))
+                        let displayedCategories = showingAllCategories ? categoryViewModel.quizCategories : Array(categoryViewModel.quizCategories.prefix(4))
                         
                         VStack {
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                                 ForEach(displayedCategories) { category in
-                                    CategoryCard(
-                                        title: category.title,
-                                        icon: category.icon,
-                                        count: category.count,
-                                        color: category.color
-                                    )
+                                    Button {
+                                        navigationPath.append(category)
+                                    } label: {
+                                        CategoryCard(
+                                            title: category.title,
+                                            icon: category.icon,
+                                            count: category.count,
+                                            color: category.color
+                                        )
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
                                 }
                             }
                         }
@@ -223,7 +232,8 @@ struct HomeView: View {
             .padding()
         }
         .onAppear(perform: {
-            categoryViewModel.calculateTotalQuizAttempt()
+//           allCategories = categoryViewModel.getCategories()
+//            categoryViewModel.calculateTotalQuizAttempt()
         })
         .navigationTitle("홈")
         .navigationBarTitleDisplayMode(.inline)

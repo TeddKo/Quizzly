@@ -63,7 +63,8 @@ struct CategoryListView: View {
             }
             
             .onAppear {
-                categoryViewModel.deleteAllCategory()
+//                categoryViewModel.deleteAllCategory()
+                categoryViewModel.calculateTotalQuizAttempt()
             }
         }
     }

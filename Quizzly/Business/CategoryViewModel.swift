@@ -18,13 +18,14 @@ class CategoryViewModel: ObservableObject {
     
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
-//        fetchCategory()
+        fetchCategory()
     }
     
     func calculateTotalQuizAttempt(){
         currentUserID = UserDefaults.standard.string(forKey: "currentUserUUID") ?? ""
+        guard let userUUID = UUID(uuidString: currentUserID) else { return }
         let predicate = #Predicate<CategoryProgress>{ category in
-            category.profile?.id.uuidString.contains(currentUserID) ?? false
+            return category.profile?.id == userUUID
         }
         let descriptor = FetchDescriptor<CategoryProgress>(predicate: predicate)
         do {
@@ -58,6 +59,13 @@ class CategoryViewModel: ObservableObject {
             print("Fetch failed: \(error)")
             quizCategories = []
         }
+    }
+    
+    func getCategories()->[QuizCategory]{
+        if !quizCategories.isEmpty{
+            return quizCategories
+        }
+        return []
     }
 
     func updateCategory(name: String, category: QuizCategory) {
