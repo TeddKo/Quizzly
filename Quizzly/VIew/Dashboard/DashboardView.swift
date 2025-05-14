@@ -26,10 +26,25 @@ enum WrongNoteCategory: String, CaseIterable, Identifiable {
     var id: String { self.rawValue }
 }
 
+struct WrongNote: Identifiable {
+    var id = UUID()
+    var question: String
+    var category: String
+    var date: String
+    var accuracy: Int
+}
+
+let mockNotes: [WrongNote] = [
+    WrongNote(question: "TCP와 UDP의 차이점으로 올바르지 않은 것은?", category: "네트워크", date: "오늘", accuracy: 75),
+    WrongNote(question: "HTTP 상태 코드 401과 403의 차이점은?", category: "네트워크", date: "어제", accuracy: 62),
+    WrongNote(question: "SwiftUI에서 상태(State) 변수 선언 방식은?", category: "Swift", date: "5월 10일", accuracy: 48),
+    WrongNote(question: "Big-O에서 O(n log n)의 정렬 알고리즘?", category: "알고리즘", date: "5월 8일", accuracy: 55)
+]
 
 struct DashboardView: View {
     @State private var selectedPeriod: PeriodFilter = .all
     @State private var selectedCategory: WrongNoteCategory = .all
+    @State private var searchText: String = ""
     
     // TODO: 취약 카테고리 받아서 실제 percent로 교체
     private var weakCategoryPercent = 0.6
@@ -169,11 +184,28 @@ struct DashboardView: View {
                             }
                         }
                         
-                        VStack(spacing: 10) {
-                            WrongNoteCard(question: "TCP와 UDP의 차이점으로 올바르지 않은 것은?", category: "네트워크", date: "오늘 추가됨")
+                        HStack {
+                            Image(systemName: "magnifyingglass")
+                                .foregroundColor(.gray)
                             
-                            WrongNoteCard(question: "HTTP 상태 코드 401과 403의 차이점은?", category: "네트워크", date: "어제 추가됨")
+                            TextField("검색어를 입력하세요", text: $searchText)
                         }
+                        .padding(10)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(10)
+                        
+                        ScrollView {
+                             VStack(spacing: 12) {
+                                 ForEach(mockNotes, id: \.id) { note in
+                                     WrongNoteCard(
+                                         question: note.question,
+                                         category: note.category,
+                                         date: note.date,
+                                         accuracy: note.accuracy
+                                     )
+                                 }
+                             }
+                         }
                     }
                 }
                 .padding()
@@ -183,6 +215,7 @@ struct DashboardView: View {
             }
             .padding()
             .background(.gray.opacity(0.1))
+            .ignoresSafeArea(edges: [.top, .bottom])
         }
     }
 }
@@ -314,7 +347,8 @@ struct WrongNoteCard: View {
     let question: String
     let category: String
     let date: String
-    
+    let accuracy: Int
+
     var body: some View {
         HStack(alignment: .center, spacing: 15) {
             Image(systemName: "xmark.circle")
@@ -326,20 +360,32 @@ struct WrongNoteCard: View {
                 .padding(8)
                 .background(.red.opacity(0.1))
                 .cornerRadius(5)
+                .padding(.leading, 10)
             
             VStack(alignment: .leading, spacing: 5) {
                 Text(question)
                     .font(.caption)
                     .fontWeight(.semibold)
                 
-                Text("\(category) • \(date)")
-                    .font(.caption2)
-                    .foregroundColor(.black.opacity(0.6))
+                HStack {
+                    Text("\(category) • \(date)")
+                        .font(.caption2)
+                        .foregroundColor(.black.opacity(0.6))
+                    
+                    Spacer()
+
+                    Text("오답률 \(accuracy)%")
+                        .font(.caption2)
+                        .fontWeight(.semibold)
+                        .padding(6)
+                        .background(Color.red.opacity(0.1))
+                        .foregroundColor(.red)
+                        .cornerRadius(13)
+                }
             }
             
             Spacer()
         }
-        .padding(.horizontal)
         .padding(.vertical, 10)
         .overlay(
             RoundedRectangle(cornerRadius: 10)
