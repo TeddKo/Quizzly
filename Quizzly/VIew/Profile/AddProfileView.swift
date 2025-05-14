@@ -14,7 +14,6 @@ struct AddProfileView: View {
 
     @State private var profileName: String = ""
     @State private var createdAt: Date = Date.now
-    @State private var profileIconName: String = ""
     @State private var color: Color = .white
 
     var body: some View {
