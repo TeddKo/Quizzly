@@ -13,12 +13,14 @@ struct ChooseProfileView: View {
 //    @Query(sort: \Profile.name) private var profiles: [Profile]
     
     @StateObject var homeViewModel:HomeViewModel
+    @StateObject var categoryViewModel:CategoryViewModel
     
     @State private var showingAddProfileSheet = false
     @State private var navigationPath = NavigationPath()
     
     init(modelContext:ModelContext) {
         _homeViewModel = StateObject(wrappedValue: HomeViewModel(modelContext: modelContext.container.mainContext))
+        _categoryViewModel = StateObject(wrappedValue: CategoryViewModel(modelContext: modelContext.container.mainContext))
     }
     
     var body: some View {
@@ -73,6 +75,7 @@ struct ChooseProfileView: View {
             }
             .navigationDestination(for: Profile.self) { profile in
                 HomeView(profile: profile, navigationPath: $navigationPath)
+                    .environmentObject(categoryViewModel)
             }
             .navigationDestination(for: Category.self) { category in
                 QuizView(navigationPath: $navigationPath, category: category, difficulty: .level1)

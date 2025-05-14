@@ -36,6 +36,7 @@ struct HomeView: View {
     @Binding var navigationPath: NavigationPath
     
     @State private var showingAllCategories = false
+    @EnvironmentObject var categoryViewModel:CategoryViewModel
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
