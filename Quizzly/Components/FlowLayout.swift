@@ -405,6 +405,15 @@ struct Test: View {
                     }
                 }
             )
+            .onTapGesture {
+                if (editingItemId != nil && editingItemId != item.id) || editingItemId == item.id {
+                    withAnimation {
+                        editingItemId = nil
+                    }
+                } else {
+                    print("\(item.text) tapped")
+                }
+            }
     }
 }
 
