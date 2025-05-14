@@ -56,13 +56,10 @@ class QuizViewModel: ObservableObject {
             print(error)
         }
     }
-
-    func deleteQuiz(at offsets: IndexSet) {
+    
+    func deleteQuiz(quiz: Quiz) {
         do {
-            let quizzesToDelete = offsets.map { quizzes[$0] }
-            quizzesToDelete.forEach { quiz in
-                modelContext.delete(quiz)
-            }
+            modelContext.delete(quiz)
             try saveContext()
         } catch {
             print(error)
@@ -95,13 +92,13 @@ class QuizViewModel: ObservableObject {
     }
 
     func saveContext() throws {
-        do {
-            if modelContext.hasChanges {
+        if modelContext.hasChanges {
+            do {
                 try modelContext.save()
+            } catch {
+                modelContext.rollback()
+                print(error)
             }
-        } catch {
-            modelContext.rollback()
-            print(error)
         }
     }
 }

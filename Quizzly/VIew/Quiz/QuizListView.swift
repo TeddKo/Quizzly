@@ -64,6 +64,7 @@ struct QuizListView: View {
     private func deleteQuizzes(offsets: IndexSet) {
         withAnimation {
             offsets.map { viewModel.quizzes[$0] }.forEach(modelContext.delete)
+            offsets.map{ viewModel.quizzes[$0] }.forEach(viewModel.deleteQuiz)
         }
     }
 }
