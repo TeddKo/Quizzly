@@ -15,7 +15,8 @@ struct AddProfileView: View {
     @State private var profileName: String = ""
     @State private var createdAt: Date = Date.now
     @State private var color: Color = .white
-
+    @EnvironmentObject var homeViewModel:HomeViewModel
+    
     var body: some View {
         NavigationStack {
             Form {
@@ -47,7 +48,7 @@ struct AddProfileView: View {
             themeColorHex: color.hexStringWithAlpha
         )
 
-        modelContext.insert(newProfile)
+        homeViewModel.addProfile(item: newProfile)
     }
 }
 
