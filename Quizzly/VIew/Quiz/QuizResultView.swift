@@ -196,7 +196,6 @@ struct QuizResultView: View {
     }
 }
 
-// MARK: - Supporting Models
 struct QuizNote: Identifiable {
     let id = UUID()
     let question: String
@@ -211,33 +210,31 @@ struct LearningRecommendation: Identifiable, Hashable {
     let duration: String
 }
 
-// MARK: - Preview
-struct QuizResultView_Previews: PreviewProvider {
-    static var previews: some View {
-        QuizResultView(
-            correctCount: 8,
-            incorrectCount: 2,
-            totalTime: "03:24",
-            scorePercentage: 80,
-            quizTitle: "Swift 기초 퀴즈",
-            notes: [
-                QuizNote(
-                    question: "SwiftUI에서 상태(State) 변수를 선언하는 올바른 방법은?",
-                    userAnswer: "B",
-                    correctAnswer: "A",
-                    explanation: "'@state'가 아닌 '@State'로 대문자 S를 사용해야 합니다."
-                ),
-                QuizNote(
-                    question: "다음 중 Swift의 옵셔널 언래핑 방법이 아닌 것은?",
-                    userAnswer: "C",
-                    correctAnswer: "D",
-                    explanation: "optional.unwrap() 메서드는 존재하지 않습니다."
-                )
-            ],
-            recommendations: [
-                LearningRecommendation(title: "SwiftUI 프로퍼티 래퍼 심화", duration: "10분 학습코스"),
-                LearningRecommendation(title: "Swift 옵셔널 마스터하기", duration: "15분 학습코스")
-            ]
-        )
-    }
+#Preview {
+    QuizResultView(
+        correctCount: 8,
+        incorrectCount: 2,
+        totalTime: "03:24",
+        scorePercentage: 80,
+        quizTitle: "Swift 기초 퀴즈",
+        notes: [
+            QuizNote(
+                question: "SwiftUI에서 상태(State) 변수를 선언하는 올바른 방법은?",
+                userAnswer: "B",
+                correctAnswer: "A",
+                explanation: "'@state'가 아닌 '@State'로 대문자 S를 사용해야 합니다."
+            ),
+            QuizNote(
+                question: "다음 중 Swift의 옵셔널 언래핑 방법이 아닌 것은?",
+                userAnswer: "C",
+                correctAnswer: "D",
+                explanation: "optional.unwrap() 메서드는 존재하지 않습니다."
+            )
+        ],
+        recommendations: [
+            LearningRecommendation(title: "SwiftUI 프로퍼티 래퍼 심화", duration: "10분 학습코스"),
+            LearningRecommendation(title: "Swift 옵셔널 마스터하기", duration: "15분 학습코스")
+        ]
+    )
 }
+
