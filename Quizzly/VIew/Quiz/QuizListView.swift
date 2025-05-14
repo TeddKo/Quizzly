@@ -37,10 +37,7 @@ struct QuizListView: View {
                             .lineLimit(2)
                     }
                 }
-                .onDelete { indexSet in
-                    print(#line,#file,indexSet)
-                    deleteQuizzes(offsets: indexSet)
-                }
+                .onDelete(perform: deleteQuizzes)
             }
             .navigationTitle("‘\(category.name)’ 퀴즈")
             .toolbar {
@@ -55,12 +52,11 @@ struct QuizListView: View {
                     EditButton()
                 }
             }
-
             .sheet(isPresented: $showingAddQuizSheet) {
                 AddQuizView(viewModel: viewModel, quizCategory: category)
             }
             .navigationDestination(for: Quiz.self) { quiz in
-                EditQuizView(quiz: quiz)
+                EditQuizView(quiz: quiz,viewModel:viewModel)
             }
         }
     }

@@ -14,6 +14,7 @@ class QuizViewModel: ObservableObject {
 
     @Published var quizzes: [Quiz] = []
     @Published var category: QuizCategory = QuizCategory(name: "")
+
     private var modelContext: ModelContext
 
     init(modelContext: ModelContext) {
@@ -21,9 +22,14 @@ class QuizViewModel: ObservableObject {
         fetchQuiz()
     }
 
-//    TODO: - CRUD (quizs)
+    //    TODO: - CRUD (quizs)
     func addQuiz(item: Quiz) {
-        modelContext.insert(item)
+        do {
+            modelContext.insert(item)
+            try saveContext()
+        } catch {
+            print(error)
+        }
         fetchQuiz()
     }
 
@@ -38,31 +44,31 @@ class QuizViewModel: ObservableObject {
     }
 
     func answerQuiz(startDate: Date, chsoenAnswer: Int, quiz: Quiz, attempt: QuizAttempt) {
-        if quiz.correctAnswerIndex == chsoenAnswer {
-            attempt.selectedAnswerIndex = chsoenAnswer
-            attempt.wasCorrect = true
-            attempt.attemptDate = Date.now
-            attempt.timeTaken = startDate.timeIntervalSince(Date.now)
+        do {
+            if quiz.correctAnswerIndex == chsoenAnswer {
+                attempt.selectedAnswerIndex = chsoenAnswer
+                attempt.wasCorrect = true
+                attempt.attemptDate = Date.now
+                attempt.timeTaken = startDate.timeIntervalSince(Date.now)
+            }
+            try saveContext()
+        } catch {
+            print(error)
         }
-    }
-    
-    func deleteQuiz(at offsets: IndexSet) {
-        print(offsets)
-        let quizzesToDelete = offsets.map { quizzes[$0] }
-        quizzesToDelete.forEach { quiz in
-            modelContext.delete(quiz)
-        }
-        
-        fetchQuiz()
     }
 
-    //추천학습
-    //#1.wasCorrect가 false인 것듯을 카운팅
-    //#2.가장 많은 것을 추천학습으로 표현
-    //
-    //오답노트
-    //#1.틀린 문제들을 정렬해서 오답노트라고 다시 보여줌
-    //
+    func deleteQuiz(at offsets: IndexSet) {
+        do {
+            let quizzesToDelete = offsets.map { quizzes[$0] }
+            quizzesToDelete.forEach { quiz in
+                modelContext.delete(quiz)
+            }
+            try saveContext()
+        } catch {
+            print(error)
+        }
+        fetchQuiz()
+    }
 
     func filteredQuizByLevel(level: Int) {
         let predicate = #Predicate<Quiz> { quiz in
@@ -88,12 +94,13 @@ class QuizViewModel: ObservableObject {
         }
     }
 
-    func saveContext() {
+    func saveContext() throws {
         do {
             if modelContext.hasChanges {
                 try modelContext.save()
             }
         } catch {
+            modelContext.rollback()
             print(error)
         }
     }

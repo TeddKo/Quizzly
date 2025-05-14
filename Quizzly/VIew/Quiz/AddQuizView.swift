@@ -26,6 +26,9 @@ import SwiftData
 struct AddQuizView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) var dismiss
+    
+    
+//    @Bindable var quiz:Quiz
 
     // TODO: Mock 상태이므로 SwiftData에 바인딩해야 함
     @State private var questionDescription: String = ""
@@ -102,7 +105,14 @@ struct AddQuizView: View {
     }
     
     private func saveQuiz(){
-        let newQuiz = Quiz(questionDescription: questionDescription, options: options,correctAnswerIndex: correctAnswerIndex, explanation:explanation, difficultyLevel: difficultyLevel, quizCategory: quizCategory, imgPath: imagePath ?? "")
+        let newQuiz = Quiz(questionDescription: questionDescription,
+                           options: options,
+                           correctAnswerIndex: correctAnswerIndex,
+                           explanation:explanation,
+                           difficultyLevel: difficultyLevel,
+                           quizCategory: quizCategory,
+                           imgPath: imagePath ?? "")
+        
         viewModel.addQuiz(item: newQuiz)
     }
     

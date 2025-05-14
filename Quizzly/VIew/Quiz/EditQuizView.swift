@@ -18,6 +18,7 @@ import SwiftUI
 struct EditQuizView: View {
     @Bindable var quiz: Quiz
     @Environment(\.dismiss) var dismiss
+    @StateObject var viewModel:QuizViewModel
 
     var body: some View {
         Form {
@@ -59,6 +60,9 @@ struct EditQuizView: View {
                 .pickerStyle(.segmented)
             }
         }
+        .onChange(of: quiz){
+            try? viewModel.saveContext()
+        }
         .navigationTitle("문제 편집")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -71,20 +75,20 @@ struct EditQuizView: View {
 }
 
 #Preview {
-    let sampleCategory = QuizCategory(
-        name: "Swift",
-        iconName: "swift",
-        themeColorHex: "#FF5733"
-    )
-
-    let sampleQuiz = Quiz(
-        questionDescription: "What keyword declares a constant in Swift?",
-        options: ["var", "let", "const", "define"],
-        correctAnswerIndex: 1,
-        explanation: "In Swift, 'let' is used to declare a constant.",
-        difficultyLevel: .level1,
-        quizCategory: sampleCategory, imgPath: ""
-    )
-    
-    EditQuizView(quiz: sampleQuiz)
+//    let sampleCategory = QuizCategory(
+//        name: "Swift",
+//        iconName: "swift",
+//        themeColorHex: "#FF5733"
+//    )
+//
+//    let sampleQuiz = Quiz(
+//        questionDescription: "What keyword declares a constant in Swift?",
+//        options: ["var", "let", "const", "define"],
+//        correctAnswerIndex: 1,
+//        explanation: "In Swift, 'let' is used to declare a constant.",
+//        difficultyLevel: .level1,
+//        quizCategory: sampleCategory, imgPath: ""
+//    )
+//    
+//    EditQuizView(quiz: sampleQuiz)
 }
