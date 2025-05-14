@@ -44,7 +44,7 @@ struct QuizListView: View {
             }
             
             .sheet(isPresented: $showingAddQuizSheet) {
-                AddQuizView(quizCategory: category)
+                AddQuizView()
             }
             
             .navigationDestination(for: Quiz.self) { quiz in
