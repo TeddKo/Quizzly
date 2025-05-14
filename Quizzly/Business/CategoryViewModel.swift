@@ -30,6 +30,7 @@ class CategoryViewModel: ObservableObject {
     
     func addCategory(item: QuizCategory) {
         modelContext.insert(item)
+        saveContext()
         fetchCategory()
     }
     
@@ -48,12 +49,24 @@ class CategoryViewModel: ObservableObject {
             print("name can be empty")
             return
         }
+        saveContext()
         fetchCategory()
     }
     
     func deleteCategory(item: QuizCategory) {
         modelContext.delete(item)
+        saveContext()
         fetchCategory()
+    }
+    
+    func saveContext(){
+        do {
+            if modelContext.hasChanges {
+                try modelContext.save()
+            }
+        } catch let e {
+            print(e)
+        }
     }
 }
 
