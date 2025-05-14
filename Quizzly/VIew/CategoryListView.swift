@@ -12,12 +12,16 @@ struct CategoryListView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \QuizCategory.name) private var quizCategories: [QuizCategory]
     @State private var showingAddCategorySheet = false
+    @StateObject var categoryViewModel:CategoryViewModel
     
+    init(modelContext:ModelContext) {
+        _categoryViewModel = StateObject(wrappedValue: CategoryViewModel(modelContext: modelContext.container.mainContext))
+    }
     
     var body: some View {
         NavigationStack {
             List {
-                ForEach(quizCategories) { category in
+                ForEach(categoryViewModel.quizCategories) { category in
                     NavigationLink(value: category) {
                         HStack {
                             if let iconName = category.iconName, !iconName.isEmpty {
@@ -50,22 +54,28 @@ struct CategoryListView: View {
             
             .sheet(isPresented: $showingAddCategorySheet) {
                 AddCategoryView()
+                    .environmentObject(categoryViewModel)
             }
             
             .navigationDestination(for: QuizCategory.self) { category in
                 EditCategoryView(category: category)
+                    .environmentObject(categoryViewModel)
+            }
+            
+            .onAppear {
+                categoryViewModel.deleteAllCategory()
             }
         }
     }
     
     private func deleteCategories(offsets: IndexSet) {
         withAnimation {
-            offsets.map { quizCategories[$0] }.forEach(modelContext.delete)
+            offsets.map{categoryViewModel.quizCategories[$0]}.forEach(categoryViewModel.deleteCategory)
         }
     }
 }
 
 #Preview {
-    CategoryListView()
-        .modelContainer(for: QuizCategory.self, inMemory: true)
+//    CategoryListView()
+//        .modelContainer(for: QuizCategory.self, inMemory: true)
 }

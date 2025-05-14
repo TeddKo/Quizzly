@@ -9,8 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct AddCategoryView: View {
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var categoryViewModel:CategoryViewModel
 
     @State private var categoryName: String = ""
     @State private var categoryIconName: String = ""
@@ -49,7 +49,7 @@ struct AddCategoryView: View {
             iconName: categoryIconName.isEmpty ? nil : categoryIconName,
             themeColorHex: normalizeHexColor(categoryThemeColorHex)
         )
-        modelContext.insert(newCategory)
+        categoryViewModel.addCategory(item: newCategory)
     }
 
     private func normalizeHexColor(_ hex: String) -> String? {

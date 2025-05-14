@@ -30,7 +30,8 @@ struct QuizzlyApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ChooseProfileView(modelContext: sharedModelContainer.mainContext)
+//            ChooseProfileView(modelContext: sharedModelContainer.mainContext)
+            CategoryListView(modelContext: sharedModelContainer.mainContext)
         }
         .modelContainer(sharedModelContainer)
     }

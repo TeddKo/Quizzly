@@ -1,0 +1,75 @@
+//
+//  CategoryViewModel.swift
+//  Quizzly
+//
+//  Created by 김현식 on 5/14/25.
+//
+
+import Foundation
+import SwiftData
+import SwiftUI
+
+class CategoryViewModel: ObservableObject {
+
+    @Published var quizCategories: [QuizCategory] = []
+    private var modelContext: ModelContext
+
+    init(modelContext: ModelContext) {
+        self.modelContext = modelContext
+//        fetchCategory()
+    }
+    
+    func deleteAllCategory(){
+        do {
+            for item in quizCategories.enumerated() {
+                modelContext.delete(item.element)
+            }
+            try saveContext()
+        } catch {
+            print("failed")
+        }
+    }
+
+    func addCategory(item: QuizCategory) {
+        modelContext.insert(item)
+        fetchCategory()
+    }
+
+    func fetchCategory() {
+        let descriptor = FetchDescriptor<QuizCategory>()
+        do {
+            quizCategories = try modelContext.fetch(descriptor)
+        } catch {
+            print("Fetch failed: \(error)")
+            quizCategories = []
+        }
+    }
+
+    func updateCategory(name: String, category: QuizCategory) {
+        guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return
+        }
+        fetchCategory()
+    }
+
+    func deleteCategory(category: QuizCategory) {
+        do {
+            modelContext.delete(category)
+            try saveContext()
+        } catch {
+            print(error)
+        }
+        fetchCategory()
+    }
+
+    func saveContext() throws {
+        if modelContext.hasChanges {
+            do {
+                try modelContext.save()
+            } catch {
+                modelContext.rollback()
+                print(error)
+            }
+        }
+    }
+}

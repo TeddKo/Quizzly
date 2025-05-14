@@ -2,7 +2,7 @@
 //  HomeViewModel.swift
 //  Quizzly
 //
-//  Created by DEV on 5/14/25.
+//  Created by 김현식 on 5/14/25.
 //
 
 import Foundation
