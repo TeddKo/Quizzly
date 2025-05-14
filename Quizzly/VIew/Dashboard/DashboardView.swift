@@ -214,6 +214,7 @@ struct DashboardView: View {
                 .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
             }
             .padding()
+            .padding(.top, 50)
             .background(.gray.opacity(0.1))
             .ignoresSafeArea(edges: [.top, .bottom])
         }
