@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 let recentCards: [RecentCard] = [
     RecentCard(title: "Swift 기초 문법", percent: 0.9, date: "오늘", isCorrect: true),
@@ -34,8 +35,10 @@ let allCategories: [Category] = [
 struct HomeView: View {
     @Bindable var profile: Profile
     @Binding var navigationPath: NavigationPath
-    
+    @AppStorage("currentUserUUID") var uuid = ""
     @State private var showingAllCategories = false
+    @StateObject var categoryViewModel:CategoryViewModel
+    @Environment(\.modelContext) private var modelContext
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -219,6 +222,9 @@ struct HomeView: View {
             }
             .padding()
         }
+        .onAppear(perform: {
+            categoryViewModel.calculateTotalQuizAttempt()
+        })
         .navigationTitle("홈")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
@@ -304,5 +310,5 @@ struct RecentCard: View, Identifiable, Hashable {
 }
 
 #Preview {
-    HomeView(profile: Profile(name: "민지", createdAt: Date.now), navigationPath: .constant(NavigationPath()))
+//    HomeView(profile: Profile(name: "민지", createdAt: Date.now), navigationPath: .constant(NavigationPath()))
 }

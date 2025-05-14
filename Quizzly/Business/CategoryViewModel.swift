@@ -13,10 +13,25 @@ class CategoryViewModel: ObservableObject {
 
     @Published var quizCategories: [QuizCategory] = []
     private var modelContext: ModelContext
-
+    var currentUserID:String = ""
+    var tempArray:[CategoryProgress] = []
+    
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
 //        fetchCategory()
+    }
+    
+    func calculateTotalQuizAttempt(){
+        currentUserID = UserDefaults.standard.string(forKey: "currentUserUUID") ?? ""
+        let predicate = #Predicate<CategoryProgress>{ category in
+            category.profile?.id.uuidString.contains(currentUserID) ?? false
+        }
+        let descriptor = FetchDescriptor<CategoryProgress>(predicate: predicate)
+        do {
+            tempArray = try modelContext.fetch(descriptor)
+        } catch let e {
+            print(e)
+        }
     }
     
     func deleteAllCategory(){
