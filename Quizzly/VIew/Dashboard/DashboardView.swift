@@ -9,7 +9,7 @@ import SwiftUI
 
 enum Filter: String, CaseIterable {
     case week, month, all
-
+    
     var label: String {
         switch self {
         case .week: return "이번 주"
@@ -21,7 +21,7 @@ enum Filter: String, CaseIterable {
 
 struct DashboardView: View {
     @State private var selectedFilter: Filter = .all
-
+    
     // TODO: 취약 카테고리 받아서 실제 percent로 교체
     private var weakCategoryPercent = 0.6
     
@@ -112,47 +112,48 @@ struct DashboardView: View {
                             }
                         }
                     }
-                    .padding()
-                    .background(.white)
-                    .cornerRadius(16)
-                    .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
-                    
-                    Group {
-                        // MARK: 오답 노트
-                        VStack(alignment: .leading, spacing: 12) {
-                            HStack {
-                                Text("오답 노트")
-                                    .font(.callout)
-                                    .fontWeight(.bold)
-                                
-                                Spacer()
-                                
-                                Button {
-                                    
-                                } label: {
-                                    Text("모두 보기")
-                                        .font(.subheadline)
-                                }
-                            }
-                            
-                            VStack(spacing: 10) {
-                                WrongNoteCard(question: "TCP와 UDP의 차이점으로 올바르지 않은 것은?", category: "네트워크", date: "오늘 추가됨")
-                                
-                                WrongNoteCard(question: "HTTP 상태 코드 401과 403의 차이점은?", category: "네트워크", date: "어제 추가됨")
-                            }
-                        }
-                    }
-                    .padding()
-                    .background(.white)
-                    .cornerRadius(16)
-                    .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
                 }
                 .padding()
+                .background(.white)
+                .cornerRadius(16)
+                .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+                
+                Group {
+                    // MARK: 오답 노트
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Text("오답 노트")
+                                .font(.callout)
+                                .fontWeight(.bold)
+                            
+                            Spacer()
+                            
+                            Button {
+                                
+                            } label: {
+                                Text("모두 보기")
+                                    .font(.subheadline)
+                            }
+                        }
+                        
+                        VStack(spacing: 10) {
+                            WrongNoteCard(question: "TCP와 UDP의 차이점으로 올바르지 않은 것은?", category: "네트워크", date: "오늘 추가됨")
+                            
+                            WrongNoteCard(question: "HTTP 상태 코드 401과 403의 차이점은?", category: "네트워크", date: "어제 추가됨")
+                        }
+                    }
+                }
+                .padding()
+                .background(.white)
+                .cornerRadius(16)
+                .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
             }
+            .padding()
             .background(.gray.opacity(0.1))
         }
     }
 }
+
 
 struct StatCard: View {
     let title: String
