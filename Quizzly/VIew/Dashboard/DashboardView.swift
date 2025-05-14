@@ -361,32 +361,20 @@ struct WrongNoteCard: View {
                 .padding(8)
                 .background(.red.opacity(0.1))
                 .cornerRadius(5)
-                .padding(.leading, 10)
             
             VStack(alignment: .leading, spacing: 5) {
                 Text(question)
                     .font(.caption)
                     .fontWeight(.semibold)
                 
-                HStack {
                     Text("\(category) • \(date)")
                         .font(.caption2)
                         .foregroundColor(.black.opacity(0.6))
-                    
-                    Spacer()
-
-                    Text("오답률 \(accuracy)%")
-                        .font(.caption2)
-                        .fontWeight(.semibold)
-                        .padding(6)
-                        .background(Color.red.opacity(0.1))
-                        .foregroundColor(.red)
-                        .cornerRadius(13)
-                }
             }
             
             Spacer()
         }
+        .padding(.horizontal)
         .padding(.vertical, 10)
         .overlay(
             RoundedRectangle(cornerRadius: 10)
