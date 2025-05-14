@@ -52,6 +52,9 @@ struct HomeView: View {
                                         .fontWeight(.bold)
                                         .foregroundColor(.white)
                                 }
+                                .onTapGesture {
+                                    navigationPath = NavigationPath()
+                                }
                             
                             VStack(alignment: .leading, spacing: 5) {
                                 Text("\(profile.name)님, 안녕하세요!")
@@ -173,12 +176,17 @@ struct HomeView: View {
                         VStack {
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                                 ForEach(displayedCategories) { category in
-                                    CategoryCard(
-                                        title: category.title,
-                                        icon: category.icon,
-                                        count: category.count,
-                                        color: category.color
-                                    )
+                                    Button {
+                                        navigationPath.append(category)
+                                    } label: {
+                                        CategoryCard(
+                                            title: category.title,
+                                            icon: category.icon,
+                                            count: category.count,
+                                            color: category.color
+                                        )
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
                                 }
                             }
                         }
@@ -219,8 +227,6 @@ struct HomeView: View {
             }
             .padding()
         }
-        .navigationTitle("홈")
-        .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .background(.gray.opacity(0.1))
     }

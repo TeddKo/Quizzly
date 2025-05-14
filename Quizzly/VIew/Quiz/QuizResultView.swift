@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct QuizResultView: View {
+    @Binding var navigationPath: NavigationPath
+    
+    @State private var retry: Bool = false
+    
     let correctCount: Int
     let incorrectCount: Int
     let totalTime: String
@@ -15,7 +19,8 @@ struct QuizResultView: View {
     let quizTitle: String
     let notes: [QuizNote]
     let recommendations: [LearningRecommendation]
-
+    let category: Category
+    
     var body: some View {
         VStack(spacing: 24) {
             // MARK: 타이틀 및 링
@@ -165,7 +170,7 @@ struct QuizResultView: View {
 
             HStack {
                 Button {
-
+                    navigationPath.removeLast(1)
                 } label: {
                     Text("홈으로")
                         .font(.subheadline)
@@ -178,7 +183,7 @@ struct QuizResultView: View {
                 .cornerRadius(8)
 
                 Button {
-
+                    retry = true
                 } label: {
                     Text("다시 풀기")
                         .font(.subheadline)
@@ -193,6 +198,14 @@ struct QuizResultView: View {
             }
         }
         .padding()
+        .navigationBarBackButtonHidden(true)
+        .navigationDestination(isPresented: $retry) {
+            QuizView(
+                navigationPath: $navigationPath,
+                category: category,
+                difficulty: .level1
+            )
+        }
     }
 }
 
@@ -220,39 +233,6 @@ struct LearningRecommendation: Identifiable, Hashable {
     let id = UUID()
     let title: String
     let duration: String
-}
-
-#Preview {
-    QuizResultView(
-        correctCount: 8,
-        incorrectCount: 2,
-        totalTime: "03:24",
-        scorePercentage: 80,
-        quizTitle: "Swift 기초 퀴즈",
-        notes: [
-            QuizNote(
-                question: "SwiftUI에서 상태(State) 변수를 선언하는 올바른 방법은?",
-                userAnswer: "B",
-                correctAnswer: "A",
-                explanation: "'@state'가 아닌 '@State'로 대문자 S를 사용해야 합니다.",
-                level: "Level 3",
-                category: "SwiftUI",
-                dateAdded: "2025년 5월 14일",
-                choices: [
-                    Choice(label: "A", text: "@State 사용"),
-                    Choice(label: "B", text: "@state 사용"),
-                    Choice(label: "C", text: "var 사용"),
-                    Choice(label: "D", text: "let 사용")
-                ],
-                recommendations: [],
-                memo: ""
-            )
-        ],
-        recommendations: [
-            LearningRecommendation(title: "SwiftUI 프로퍼티 래퍼 심화", duration: "10분 학습코스"),
-            LearningRecommendation(title: "Swift 옵셔널 마스터하기", duration: "15분 학습코스")
-        ]
-    )
 }
 
 

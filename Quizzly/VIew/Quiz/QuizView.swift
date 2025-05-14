@@ -12,12 +12,17 @@ struct QuizView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) var dismiss
     
+    @Binding var navigationPath: NavigationPath
+
     @State private var ratio: CGFloat = 0.5
     @State private var selectedOption: String? = nil
-    
+    @State private var currentIndex: Int = 0
+    @State private var showResult: Bool = false
+    @State private var correctCount: Int = 0
+
     @Query(sort: \Quiz.questionDescription) private var quizzes: [Quiz]
     
-    let category: QuizCategory
+    let category: Category
     let difficulty: DifficultyLevel
     
     // TODO: mock 데이터 실제 데이터로 바꾸기
@@ -28,92 +33,130 @@ struct QuizView: View {
         "Badminton"
     ]
     
+    let quizList: [Quiz] = [
+        Quiz(
+            id: UUID(),
+            questionDescription: "What is the most popular sport throughout the world?",
+            options: ["Volleyball", "Football", "Basketball", "Badminton"],
+            correctAnswerIndex: 1, // "Football"
+            difficultyLevel: .level1,
+            quizCategory: QuizCategory(name: "World", iconName: "globe", themeColorHex: "#3498db")
+        ),
+        Quiz(
+            id: UUID(),
+            questionDescription: "Which keyword is used to define a constant in Swift?",
+            options: ["let", "var", "const", "def"],
+            correctAnswerIndex: 0, // "let"
+            difficultyLevel: .level1,
+            quizCategory: QuizCategory(name: "Swift", iconName: "swift", themeColorHex: "#e67e22")
+        )
+    ]
+    
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 30) {
-                ZStack(alignment: .top) {
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(.gray.opacity(0.5))
-                        .frame(maxWidth: .infinity, maxHeight: 200)
-                        .overlay {
-                            Text("What is the most popular sport throughout the world?")
-                                .bold()
-                                .foregroundStyle(.black)
-                                .multilineTextAlignment(.center)
-                        }
-                }
-                
-                VStack(spacing: 12) {
-                    ForEach(mockOptions, id: \.self) { option in
-                        Button {
-                            selectedOption = option
-                        } label: {
-                            Text(option)
-                                .bold()
-                                .foregroundStyle(selectedOption == option ? .cyan : .black)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 24)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(
-                                    selectedOption == option ? Color.cyan : Color.gray.opacity(0.5),
-                                    lineWidth: 2
-                                )
-                        )
-                    }
-                }
-                
-                Button {
-                    
-                } label: {
-                    Text("Next")
-                        .tint(.white)
-                        .bold()
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(.cyan)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                }
-                .background {
-                    RoundedRectangle(cornerRadius: 12)
-                        .foregroundStyle(.cyan)
-                        .offset(y: 10)
-                        .opacity(0.4)
-                        .blur(radius: 12)
-                }
-                
-            }
-            .padding(.horizontal)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Image(systemName: "xmark")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 14, height: 14)
+        VStack(spacing: 30) {
+            ZStack(alignment: .top) {
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(.gray.opacity(0.5))
+                    .frame(maxWidth: .infinity, maxHeight: 200)
+                    .overlay {
+                        Text(quizList[currentIndex].questionDescription)
                             .bold()
-                            .foregroundColor(.black)
-                            .frame(width: 36, height: 36)
-                            .overlay(
-                                Circle()
-                                    .stroke(.black.opacity(0.5), lineWidth: 1.3)
-                            )
+                            .foregroundStyle(.black)
+                            .multilineTextAlignment(.center)
                     }
+            }
+            
+            VStack(spacing: 12) {
+                ForEach(quizList[currentIndex].options, id: \.self) { option in
+                    Button {
+                        selectedOption = option
+                    } label: {
+                        Text(option)
+                            .bold()
+                            .foregroundStyle(selectedOption == option ? .cyan : .black)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 24)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(
+                                selectedOption == option ? Color.cyan : Color.gray.opacity(0.5),
+                                lineWidth: 2
+                            )
+                    )
+                }
+            }
+            
+            Button {
+                if let selected = selectedOption,
+                   selected == quizList[currentIndex].correctAnswer {
+                    correctCount += 1
+                }
+
+                if currentIndex < quizList.count - 1 {
+                    currentIndex += 1
+                    selectedOption = nil
+                } else {
+                    showResult = true
+                }
+            } label: {
+                Text(currentIndex == quizList.count - 1 ? "Finish" : "Next")
+                    .tint(.white)
+                    .bold()
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(.cyan)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+            .background {
+                RoundedRectangle(cornerRadius: 12)
+                    .foregroundStyle(.cyan)
+                    .offset(y: 10)
+                    .opacity(0.4)
+                    .blur(radius: 12)
+            }
+            
+            .navigationDestination(isPresented: $showResult) {
+                QuizResultView(
+                    navigationPath: $navigationPath,
+                    correctCount: correctCount,
+                    incorrectCount: quizList.count - correctCount,
+                    totalTime: "03:24",
+                    scorePercentage: Int((Double(correctCount) / Double(quizList.count)) * 100),
+                    quizTitle: "\(category.title) 퀴즈",
+                    notes: [],
+                    recommendations: [],
+                    category: category
+                )
+            }
+
+        }
+        .padding(.horizontal)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    dismiss()
+                }) {
+                    Image(systemName: "xmark")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 14, height: 14)
+                        .bold()
+                        .foregroundColor(.black)
+                        .frame(width: 36, height: 36)
+                        .overlay(
+                            Circle()
+                                .stroke(.black.opacity(0.5), lineWidth: 1.3)
+                        )
                 }
             }
         }
+        .navigationBarBackButtonHidden(true)
     }
 }
 
-#Preview {
-    let sampleCategory = QuizCategory(
-        name: "Swift",
-        iconName: "swift",
-        themeColorHex: "#FF5733"
-    )
-
-    QuizView(category: sampleCategory, difficulty: DifficultyLevel.level1)
+extension Quiz {
+    var correctAnswer: String {
+        return options[correctAnswerIndex]
+    }
 }
