@@ -173,12 +173,17 @@ struct HomeView: View {
                         VStack {
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                                 ForEach(displayedCategories) { category in
-                                    CategoryCard(
-                                        title: category.title,
-                                        icon: category.icon,
-                                        count: category.count,
-                                        color: category.color
-                                    )
+                                    Button {
+                                        navigationPath.append(category)
+                                    } label: {
+                                        CategoryCard(
+                                            title: category.title,
+                                            icon: category.icon,
+                                            count: category.count,
+                                            color: category.color
+                                        )
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
                                 }
                             }
                         }
@@ -219,8 +224,6 @@ struct HomeView: View {
             }
             .padding()
         }
-        .navigationTitle("홈")
-        .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .background(.gray.opacity(0.1))
     }

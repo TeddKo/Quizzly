@@ -74,6 +74,9 @@ struct ChooseProfileView: View {
             .navigationDestination(for: Profile.self) { profile in
                 HomeView(profile: profile, navigationPath: $navigationPath)
             }
+            .navigationDestination(for: Category.self) { category in
+                QuizView(category: category, difficulty: .level1)
+            }
             .onAppear {
                 homeViewModel.fetchProfile()
             }
