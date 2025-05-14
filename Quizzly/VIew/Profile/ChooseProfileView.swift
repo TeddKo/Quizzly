@@ -10,22 +10,28 @@ import SwiftData
 
 struct ChooseProfileView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \Profile.name) private var profiles: [Profile]
+//    @Query(sort: \Profile.name) private var profiles: [Profile]
+    
+    @StateObject var homeViewModel:HomeViewModel
     
     @State private var showingAddProfileSheet = false
     @State private var navigationPath = NavigationPath()
     
+    init(modelContext:ModelContext) {
+        _homeViewModel = StateObject(wrappedValue: HomeViewModel(modelContext: modelContext.container.mainContext))
+    }
+    
     var body: some View {
         NavigationStack(path: $navigationPath) {
             VStack {
-                let profileDescription: String = profiles.isEmpty ? "Create Your Profile" : "Choose Your Profile"
+                let profileDescription: String = homeViewModel.profiles.isEmpty ? "Create Your Profile" : "Choose Your Profile"
                 
                 Text(profileDescription)
                     .font(.largeTitle)
                 
                 ScrollView(.horizontal) {
                     HStack(spacing: 20) {
-                        ForEach(profiles) { profile in
+                        ForEach(homeViewModel.profiles) { profile in
                             Button {
                                 navigationPath.append(profile)
                             } label: {
@@ -63,19 +69,28 @@ struct ChooseProfileView: View {
             }
             .sheet(isPresented: $showingAddProfileSheet) {
                 AddProfileView()
+                    .environmentObject(homeViewModel)
             }
             .navigationDestination(for: Profile.self) { profile in
                 HomeView(profile: profile, navigationPath: $navigationPath)
+            }
+            .onAppear {
+                homeViewModel.fetchProfile()
+            }
+            .onDisappear {
+                homeViewModel.deleteProfile()
+                //임시로 뷰가 사라지면 모든 프로필들이 지워지게 해놨습니다.
+                //참고 부탁 드립니다.
             }
         }
     }
 }
 
-#Preview {
-    let container = try! ModelContainer(for: Profile.self, configurations: .init(isStoredInMemoryOnly: true))
-    let sample = Profile(name: "민지", createdAt: .now, themeColorHex: "#e67e22")
-    container.mainContext.insert(sample)
-    
-    return ChooseProfileView()
-        .modelContainer(container)
-}
+//#Preview {
+//    let container = try! ModelContainer(for: Profile.self, configurations: .init(isStoredInMemoryOnly: true))
+//    let sample = Profile(name: "민지", createdAt: .now, themeColorHex: "#e67e22")
+//    container.mainContext.insert(sample)
+//    
+//    return ChooseProfileView()
+//        .modelContainer(container)
+//}
