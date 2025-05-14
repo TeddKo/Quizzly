@@ -7,20 +7,29 @@
 
 import SwiftUI
 
-enum Filter: String, CaseIterable {
-    case week, month, all
-    
-    var label: String {
-        switch self {
-        case .week: return "이번 주"
-        case .month: return "이번 달"
-        case .all: return "전체"
-        }
-    }
+enum PeriodFilter: String, CaseIterable, Identifiable {
+    case all = "전체"
+    case thisWeek = "이번 주"
+    case thisMonth = "이번 달"
+
+    var id: String { rawValue }
 }
 
+enum WrongNoteCategory: String, CaseIterable, Identifiable {
+    case all = "전체 카테고리"
+    case swift = "Swift"
+    case dataStructure = "자료구조"
+    case algorithm = "알고리즘"
+    case network = "네트워크"
+    case database = "데이터베이스"
+    
+    var id: String { self.rawValue }
+}
+
+
 struct DashboardView: View {
-    @State private var selectedFilter: Filter = .all
+    @State private var selectedPeriod: PeriodFilter = .all
+    @State private var selectedCategory: WrongNoteCategory = .all
     
     // TODO: 취약 카테고리 받아서 실제 percent로 교체
     private var weakCategoryPercent = 0.6
@@ -38,9 +47,21 @@ struct DashboardView: View {
                             Spacer()
                             
                             // MARK: 기간 탭 필터
-                            Picker("기간 선택", selection: $selectedFilter) {
-                                ForEach(Filter.allCases, id: \.self) { filter in
-                                    Text(filter.label)
+                            Menu {
+                                Picker("기간 선택", selection: $selectedPeriod) {
+                                    ForEach(PeriodFilter.allCases) { period in
+                                        Text(period.rawValue).tag(period)
+                                    }
+                                }
+                            } label: {
+                                HStack {
+                                    Text(selectedPeriod.rawValue)
+                                        .font(.caption) // ← 여기서 폰트 크기 조절
+                                        .foregroundColor(.blue)
+
+                                    Image(systemName: "chevron.down")
+                                        .font(.caption2)
+                                        .foregroundColor(.blue)
                                 }
                             }
                         }
@@ -128,11 +149,23 @@ struct DashboardView: View {
                             
                             Spacer()
                             
-                            Button {
-                                
+                            Menu {
+                                // MARK: 카테고리 탭 필터
+                                Picker("카테고리 선택", selection: $selectedCategory) {
+                                    ForEach(WrongNoteCategory.allCases) { category in
+                                        Text(category.rawValue).tag(category)
+                                    }
+                                }
                             } label: {
-                                Text("모두 보기")
-                                    .font(.subheadline)
+                                HStack {
+                                    Text(selectedCategory.rawValue)
+                                        .font(.caption)
+                                        .foregroundColor(.blue)
+                                    
+                                    Image(systemName: "chevron.down")
+                                        .font(.caption2)
+                                        .foregroundColor(.blue)
+                                }
                             }
                         }
                         
