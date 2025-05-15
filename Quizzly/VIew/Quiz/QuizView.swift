@@ -5,13 +5,13 @@
 //  Created by 강민지 on 5/12/25.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct QuizView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) var dismiss
-    
+
     @Binding var navigationPath: NavigationPath
 
     @State private var ratio: CGFloat = 0.5
@@ -19,39 +19,40 @@ struct QuizView: View {
     @State private var currentIndex: Int = 0
     @State private var showResult: Bool = false
     @State private var correctCount: Int = 0
-    @EnvironmentObject var categoryViewModel:CategoryViewModel
-    @EnvironmentObject var quizViewModel:QuizViewModel
-    
+    @EnvironmentObject var categoryViewModel: CategoryViewModel
+    @EnvironmentObject var quizViewModel: QuizViewModel
+
     @Query(sort: \Quiz.questionDescription) private var quizzes: [Quiz]
-    
-    let category: QuizCategory
-    let difficulty: DifficultyLevel
-    
+
+    var category: QuizCategory
+    var difficulty: DifficultyLevel
+
     // TODO: mock 데이터 실제 데이터로 바꾸기
     let mockOptions = [
         "Volleyball",
         "Football",
         "Basketball",
-        "Badminton"
+        "Badminton",
     ]
-    var quizList:[Quiz] = []
-    
+    @State var quizList: [Quiz] = []
+    @State var isCount: Int = 0
+
     var body: some View {
         VStack(spacing: 30) {
             ZStack(alignment: .top) {
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(.gray.opacity(0.5))
+                    .fill(isCount != 0 ? .gray.opacity(0.5) : .clear)
                     .frame(maxWidth: .infinity, maxHeight: 200)
                     .overlay {
-                        Text(quizList[currentIndex].questionDescription)
+                        Text(isCount != 0 ? quizList[currentIndex].questionDescription : "")
                             .bold()
                             .foregroundStyle(.black)
                             .multilineTextAlignment(.center)
                     }
             }
-            
+
             VStack(spacing: 12) {
-                ForEach(quizList[currentIndex].options, id: \.self) { option in
+                ForEach(isCount != 0 ? quizList[currentIndex].options : [], id: \.self) { option in
                     Button {
                         selectedOption = option
                     } label: {
@@ -70,10 +71,11 @@ struct QuizView: View {
                     )
                 }
             }
-            
+
             Button {
                 if let selected = selectedOption,
-                   selected == quizList[currentIndex].correctAnswer {
+                    selected == quizList[currentIndex].correctAnswer
+                {
                     correctCount += 1
                 }
 
@@ -99,21 +101,25 @@ struct QuizView: View {
                     .opacity(0.4)
                     .blur(radius: 12)
             }
-            
+            .opacity(isCount != 0 ? 100 : 0 )
             .navigationDestination(isPresented: $showResult) {
-//                QuizResultView(
-//                    navigationPath: $navigationPath,
-//                    correctCount: correctCount,
-//                    incorrectCount: quizList.count - correctCount,
-//                    totalTime: "03:24",
-//                    scorePercentage: Int((Double(correctCount) / Double(quizList.count)) * 100),
-//                    quizTitle: "\(category.title) 퀴즈",
-//                    notes: [],
-//                    recommendations: [],
-//                    category: category
-//                )
+                //                QuizResultView(
+                //                    navigationPath: $navigationPath,
+                //                    correctCount: correctCount,
+                //                    incorrectCount: quizList.count - correctCount,
+                //                    totalTime: "03:24",
+                //                    scorePercentage: Int((Double(correctCount) / Double(quizList.count)) * 100),
+                //                    quizTitle: "\(category.title) 퀴즈",
+                //                    notes: [],
+                //                    recommendations: [],
+                //                    category: category
+                //                )
             }
-
+            .onAppear {
+                quizViewModel.fetchQuiz(category: category)
+                quizList = quizViewModel.filterQuizzes
+                isCount = quizList.count
+            }
         }
         .padding(.horizontal)
         .toolbar {

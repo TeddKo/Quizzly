@@ -14,7 +14,8 @@ class QuizViewModel: ObservableObject {
 
     @Published var quizzes: [Quiz] = []
     @Published var category: QuizCategory = QuizCategory(name: "")
-
+    @Published var filterQuizzes:[Quiz] = []
+    
     private var modelContext: ModelContext
 
     init(modelContext: ModelContext) {
@@ -37,6 +38,18 @@ class QuizViewModel: ObservableObject {
         let quizDescriptor = FetchDescriptor<Quiz>()
         do {
             quizzes = try modelContext.fetch(quizDescriptor)
+        } catch {
+            print("Fetch failed: \(error)")
+            quizzes = []
+        }
+    }
+    
+    func fetchQuiz(category:QuizCategory){
+        let categorID = category.id
+        let predicate = #Predicate<Quiz>{ $0.quizCategory?.id == categorID }
+        let descriptor = FetchDescriptor<Quiz>(predicate: predicate)
+        do {
+            filterQuizzes = try modelContext.fetch(descriptor)
         } catch {
             print("Fetch failed: \(error)")
             quizzes = []
