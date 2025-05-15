@@ -75,7 +75,7 @@ struct ChooseProfileView: View {
                     .environmentObject(homeViewModel)
             }
             .navigationDestination(for: Profile.self) { profile in
-                HomeView(profile: profile, navigationPath: $navigationPath,userID:profile.id.uuidString)
+                MainTabView(profile: profile, navigationPath: $navigationPath,userID: profile.id.uuidString)
                     .environmentObject(categoryViewModel)
             }
             .navigationDestination(for: Category.self) { category in

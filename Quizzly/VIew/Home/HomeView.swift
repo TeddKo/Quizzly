@@ -254,6 +254,7 @@ struct HomeView: View {
             .padding()
         }
         .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
         .background(.gray.opacity(0.1))
     }
 }

@@ -23,7 +23,7 @@ struct AddQuizView: View {
     @State private var selectedCategory: QuizCategory? = nil
     
     var body: some View {
-        VStack {
+        ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 30) {
                 HStack {
                     Text("퀴즈 생성")
@@ -175,6 +175,8 @@ struct AddQuizView: View {
         .padding(.top, 50)
         .ignoresSafeArea(edges: [.top, .bottom])
         .background(.gray.opacity(0.1))
+        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
     }
     
     private func saveQuiz() {
