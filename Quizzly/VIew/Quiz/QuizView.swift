@@ -82,7 +82,9 @@ struct QuizView: View {
     @State private var currentIndex: Int = 0
     @State private var showResult: Bool = false
     @State private var correctCount: Int = 0
-
+    @State private var wrongNotes: [QuizNote] = []
+    @State private var userAnswers: [Int] = []
+    
     @Query(sort: \Quiz.questionDescription) private var allFetchedQuizzes: [Quiz]
     
     let category: QuizCategory
@@ -165,7 +167,7 @@ struct QuizView: View {
                 scorePercentage: filteredQuizzes.isEmpty ? 0 : Int((Double(correctCount) / Double(filteredQuizzes.count)) * 100),
                 quizTitle: "\(category.name) 퀴즈",
                 // TODO: 오답 노트 및 추천 학습 데이터 구성
-                notes: [],
+                notes: wrongNotes,
                 recommendations: [],
                 category: category
             )
@@ -174,21 +176,69 @@ struct QuizView: View {
             if filteredQuizzes.isEmpty {
                 print("선택된 카테고리/난이도에 해당하는 퀴즈가 없습니다.")
             }
+            
+            print("Filtered count: \(filteredQuizzes.count)")
+            print("Current Index: \(currentIndex)")
+            print("Current Quiz: \(String(describing: currentQuiz?.questionDescription))")
+
         }
     }
     
     private func handleNextButtonTap(for quiz: Quiz) {
         if let selected = selectedOption,
-           selected == quiz.options[quiz.correctAnswerIndex] {
-            correctCount += 1
-        }
+            let selectedIndex = quiz.options.firstIndex(of: selected) {
+             userAnswers.append(selectedIndex)
+             
+             if selectedIndex == quiz.correctAnswerIndex {
+                 correctCount += 1
+             }
+         } else {
+             userAnswers.append(-1)
+         }
 
         if currentIndex < filteredQuizzes.count - 1 {
             currentIndex += 1
             selectedOption = nil
         } else {
+            evaluateQuizResults(from: filteredQuizzes)
             showResult = true
         }
+    }
+    
+    func evaluateQuizResults(from quizzes: [Quiz]) {
+        wrongNotes = quizzes.enumerated().compactMap { index, quiz in
+            let userAnswerIndex = userAnswers[index]
+            
+            guard let correctAnswer = quiz.options[safe: quiz.correctAnswerIndex],
+                  let selectedAnswer = quiz.options[safe: userAnswerIndex],
+                  userAnswerIndex != quiz.correctAnswerIndex else {
+                return nil
+            }
+            
+            return QuizNote(
+                question: quiz.questionDescription,
+                userAnswer: selectedAnswer,
+                correctAnswer: correctAnswer,
+                explanation: quiz.explanation ?? "해설이 제공되지 않았습니다.",
+                level: quiz.difficultyLevel.displayName,
+                category: quiz.quizCategory?.name ?? "미지정",
+                dateAdded: formattedDate(),
+                choices: quiz.options.enumerated().map { index, option in
+                    Choice(label: String(UnicodeScalar(65 + index)!), text: option)
+                },
+                recommendations: [
+                    LearningRecommendation(title: "이 주제 복습", duration: "10분"),
+                    LearningRecommendation(title: "개념 다시 보기", duration: "7분")
+                ],
+                memo: ""
+            )
+        }
+    }
+    
+    func formattedDate() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy년 M월 d일 추가됨"
+        return formatter.string(from: Date())
     }
 }
 
@@ -201,6 +251,11 @@ extension Quiz {
     }
 }
 
+extension Array {
+    subscript(safe index: Int) -> Element? {
+        indices.contains(index) ? self[index] : nil
+    }
+}
 
 #Preview {
     let sampleCategory = QuizCategory(name: "Sample Category", iconName: "swift", themeColorHex: "#3498db")
