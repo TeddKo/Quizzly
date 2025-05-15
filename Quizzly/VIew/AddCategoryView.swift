@@ -9,21 +9,20 @@ import SwiftUI
 import SwiftData
 
 struct AddCategoryView: View {
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) var dismiss
 
     @State private var categoryName: String = ""
     @State private var categoryIconName: String = ""
-    @State private var categoryThemeColorHex: String = "#"
+    @State private var categoryThemeColor: Color = .gray
+    
+    @EnvironmentObject private var categoryViewModel: CategoryViewModel
 
     var body: some View {
         NavigationStack {
             Form {
-                TextField("카테고리 이름 (Required)", text: $categoryName)
-                TextField("아이콘 이름 (e.g., swift, book.fill)", text: $categoryIconName)
-                TextField("컬러값 (e.g., #1ABC9C)", text: $categoryThemeColorHex)
-                    .autocapitalization(.none)
-                    .keyboardType(.asciiCapable)
+                TextField("카테고리 이름", text: $categoryName)
+                TextField("아이콘 이름", text: $categoryIconName)
+                ColorPicker("테마 색상 선택", selection: $categoryThemeColor, supportsOpacity: false)
             }
             .navigationTitle("카테고리 추가")
             .toolbar {
@@ -47,16 +46,13 @@ struct AddCategoryView: View {
         let newCategory = QuizCategory(
             name: categoryName,
             iconName: categoryIconName.isEmpty ? nil : categoryIconName,
-            themeColorHex: normalizeHexColor(categoryThemeColorHex)
+            themeColorHex: categoryThemeColor.hexStringWithAlpha
         )
-        modelContext.insert(newCategory)
+        categoryViewModel.addCategory(newCategory)
     }
+}
 
-    private func normalizeHexColor(_ hex: String) -> String? {
-        let trimmedHex = hex.trimmingCharacters(in: .whitespacesAndNewlines)
-        if trimmedHex.isEmpty || trimmedHex == "#" {
-            return nil
-        }
-        return trimmedHex.hasPrefix("#") ? trimmedHex : "#" + trimmedHex
-    }
+#Preview {
+    AddCategoryView()
+        .modelContainer(for: QuizCategory.self, inMemory: true)
 }
