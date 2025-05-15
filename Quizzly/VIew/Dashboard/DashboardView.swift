@@ -53,8 +53,14 @@ struct DashboardView: View {
     
     private var weakCategoryPercent = 0.6
     
+    let dashboardData: [String] = []
+    
     var body: some View {
-        NavigationStack {
+        if dashboardData.isEmpty {
+            EmptyDashboardView()
+                .navigationBarBackButtonHidden(true)
+                .toolbar(.hidden, for: .navigationBar)
+        } else {
             ScrollView {
                 StatisticsAndPerformanceSection(
                     selectedPeriod: $selectedPeriod,
