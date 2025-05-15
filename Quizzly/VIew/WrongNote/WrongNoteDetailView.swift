@@ -9,7 +9,8 @@ import SwiftUI
 
 struct WrongAnswerDetailView: View {
     let note: QuizNote
-
+    @State private var memoText: String = ""
+    
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 30) {
@@ -79,21 +80,21 @@ struct WrongAnswerDetailView: View {
                                     .background(
                                         Circle()
                                             .fill(
-                                                choice.label == note.correctAnswer ? .green :
-                                                choice.label == note.userAnswer ? .red :
+                                                choice.text == note.correctAnswer ? .green :
+                                                choice.text == note.userAnswer ? .red :
                                                         .clear
                                             )
                                     )
                                     .foregroundColor(
-                                        choice.label == note.correctAnswer ? .white :
-                                        choice.label == note.userAnswer ? .white :
+                                        choice.text == note.correctAnswer ? .white :
+                                        choice.text == note.userAnswer ? .white :
                                         .primary
                                     )
                                     .overlay(
                                         Circle()
                                             .stroke(
-                                                choice.label == note.correctAnswer ? .green :
-                                                choice.label == note.userAnswer ? .red :
+                                                choice.text == note.correctAnswer ? .green :
+                                                choice.text == note.userAnswer ? .red :
                                                 .gray.opacity(0.6),
                                                 lineWidth: 1
                                             )
@@ -108,8 +109,8 @@ struct WrongAnswerDetailView: View {
                             .background(.white)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .stroke(choice.label == note.userAnswer ? .red :
-                                            choice.label == note.correctAnswer ? .green :
+                                    .stroke(choice.text == note.userAnswer ? .red :
+                                            choice.text == note.correctAnswer ? .green :
                                             .gray.opacity(0.5),
                                             lineWidth: 3)
                             )
@@ -227,30 +228,41 @@ struct WrongAnswerDetailView: View {
             }
             .padding()
         }
+//        .onAppear {
+//            print(note)
+//        }
+        .onAppear {
+            memoText = note.memo
+        }
+        .onAppear {
+            print("🧭 WrongAnswerDetailView loaded")
+            print("📌 note.question:", note.question)
+        }
+
     }
 }
 
-#Preview {
-    WrongAnswerDetailView(note:
-        QuizNote(
-            question: "TCP와 UDP의 차이점으로 올바르지 않은 것은?",
-            userAnswer: "C",
-            correctAnswer: "D",
-            explanation: "TCP는 혼잡 제어 기능을 제공하지만, UDP는 제공하지 않습니다.",
-            level: "Level 4 (어려움)",
-            category: "네트워크",
-            dateAdded: "2025년 5월 14일 추가됨",
-            choices: [
-                .init(label: "A", text: "TCP는 연결 지향적이고, UDP는 비연결 지향적이다."),
-                .init(label: "B", text: "TCP는 신뢰성 있는 데이터 전송을 보장하고, UDP는 그렇지 않다."),
-                .init(label: "C", text: "TCP와 UDP 모두 혼잡 제어 기능을 제공한다."),
-                .init(label: "D", text: "UDP는 TCP보다 일반적으로 더 빠르다.")
-            ],
-            recommendations: [
-                .init(title: "TCP와 UDP의 비교 및 활용", duration: "15분 학습코스"),
-                .init(title: "네트워크 프로토콜의 이해", duration: "8분 비디오")
-            ],
-            memo: "TCP는 혼잡 제어, 흐름 제어, 오류 제어를 모두 제공하지만 UDP는 이런 기능들이 없다. 대신 UDP가 더 빠르고 오버헤드가 적다."
-        )
-    )
-}
+//#Preview {
+//    WrongAnswerDetailView(note:
+//        QuizNote(
+//            question: "TCP와 UDP의 차이점으로 올바르지 않은 것은?",
+//            userAnswer: "C",
+//            correctAnswer: "D",
+//            explanation: "TCP는 혼잡 제어 기능을 제공하지만, UDP는 제공하지 않습니다.",
+//            level: "Level 4 (어려움)",
+//            category: "네트워크",
+//            dateAdded: "2025년 5월 14일 추가됨",
+//            choices: [
+//                .init(label: "A", text: "TCP는 연결 지향적이고, UDP는 비연결 지향적이다."),
+//                .init(label: "B", text: "TCP는 신뢰성 있는 데이터 전송을 보장하고, UDP는 그렇지 않다."),
+//                .init(label: "C", text: "TCP와 UDP 모두 혼잡 제어 기능을 제공한다."),
+//                .init(label: "D", text: "UDP는 TCP보다 일반적으로 더 빠르다.")
+//            ],
+//            recommendations: [
+//                .init(title: "TCP와 UDP의 비교 및 활용", duration: "15분 학습코스"),
+//                .init(title: "네트워크 프로토콜의 이해", duration: "8분 비디오")
+//            ],
+//            memo: "TCP는 혼잡 제어, 흐름 제어, 오류 제어를 모두 제공하지만 UDP는 이런 기능들이 없다. 대신 UDP가 더 빠르고 오버헤드가 적다."
+//        )
+//    )
+//}

@@ -227,8 +227,8 @@ struct QuizView: View {
                     Choice(label: String(UnicodeScalar(65 + index)!), text: option)
                 },
                 recommendations: [
-                    LearningRecommendation(title: "이 주제 복습", duration: "10분"),
-                    LearningRecommendation(title: "개념 다시 보기", duration: "7분")
+                    LearningRecommendation(id: UUID(), title: "이 주제 복습", duration: "10분"),
+                    LearningRecommendation(id: UUID(), title: "개념 다시 보기", duration: "7분")
                 ],
                 memo: ""
             )

@@ -99,36 +99,42 @@ struct QuizResultView: View {
                     .fontWeight(.semibold)
 
                 ForEach(notes) { note in
-                    VStack(alignment: .leading, spacing: 7) {
-                        Text(note.question)
-                            .font(.footnote)
-                            .fontWeight(.semibold)
-
-                        HStack(spacing: 15) {
-                            Label("내 답안: \(note.userAnswer)", systemImage: "xmark.circle")
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .foregroundColor(.red)
-
-                            Label("정답: \(note.correctAnswer)", systemImage: "checkmark.circle")
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .foregroundColor(.green)
+                    Button {
+                        navigationPath.append(note)
+                    } label: {
+                        VStack(alignment: .leading, spacing: 7) {
+                            Text(note.question)
+                                .font(.footnote)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.black)
+                                .multilineTextAlignment(.leading)
+                            
+                            HStack(spacing: 15) {
+                                Label("내 답안: \(note.userAnswer)", systemImage: "xmark.circle")
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.red)
+                                
+                                Label("정답: \(note.correctAnswer)", systemImage: "checkmark.circle")
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.green)
+                            }
+                            
+                            Text(note.explanation)
+                                .font(.caption2)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.black.opacity(0.5))
                         }
-
-                        Text(note.explanation)
-                            .font(.caption2)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.black.opacity(0.5))
+                        .padding(13)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(.red.opacity(0.06))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(.red.opacity(0.1), lineWidth: 3)
+                        )
+                        .cornerRadius(12)
                     }
-                    .padding(13)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(.red.opacity(0.06))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(.red.opacity(0.1), lineWidth: 3)
-                    )
-                    .cornerRadius(12)
                 }
             }
 
@@ -206,31 +212,61 @@ struct QuizResultView: View {
                 difficulty: .level1
             )
         }
+        .navigationDestination(for: QuizNote.self) { selectedNote in
+            WrongAnswerDetailView(note: selectedNote)
+        }
     }
 }
 
-struct QuizNote: Identifiable {
-    let id = UUID()
+struct QuizNote: Identifiable, Hashable {
+    let id: UUID
     let question: String
     let userAnswer: String
     let correctAnswer: String
     let explanation: String
-    
     let level: String
     let category: String
     let dateAdded: String
     let choices: [Choice]
     let recommendations: [LearningRecommendation]
     let memo: String
+
+    // 명시적 init 필요
+    init(
+        id: UUID = UUID(),
+        question: String,
+        userAnswer: String,
+        correctAnswer: String,
+        explanation: String,
+        level: String,
+        category: String,
+        dateAdded: String,
+        choices: [Choice],
+        recommendations: [LearningRecommendation],
+        memo: String
+    ) {
+        self.id = id
+        self.question = question
+        self.userAnswer = userAnswer
+        self.correctAnswer = correctAnswer
+        self.explanation = explanation
+        self.level = level
+        self.category = category
+        self.dateAdded = dateAdded
+        self.choices = choices
+        self.recommendations = recommendations
+        self.memo = memo
+    }
 }
 
-struct Choice {
+struct Choice: Hashable, Codable {
     let label: String
     let text: String
 }
 
-struct LearningRecommendation: Identifiable, Hashable {
-    let id = UUID()
+struct LearningRecommendation: Identifiable, Hashable, Codable {
+    let id: UUID
     let title: String
     let duration: String
 }
+
