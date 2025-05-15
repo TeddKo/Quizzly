@@ -132,6 +132,7 @@ struct RecommendedQuizView: View {
 struct CategorySectionView: View {
     @Binding var showingAllCategories: Bool
     let categories: [QuizCategory]
+    @Binding var navigationPath: NavigationPath
     @EnvironmentObject var categoryViewModel: CategoryViewModel
 
     @State private var showingAddCategorySheet = false
@@ -240,6 +241,7 @@ struct CategorySectionView: View {
                                         editingCategoryID = nil
                                     }
                                 }
+                                navigationPath.append(category)
                             }
                     }
                 }
@@ -403,7 +405,8 @@ struct HomeView: View {
                 sectionBackground {
                     CategorySectionView(
                         showingAllCategories: $showingAllCategories,
-                        categories: categoryViewModel.categories
+                        categories: categoryViewModel.categories,
+                        navigationPath: $navigationPath
                     )
                 }
                 
