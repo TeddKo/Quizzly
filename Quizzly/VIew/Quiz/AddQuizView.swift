@@ -175,6 +175,8 @@ struct AddQuizView: View {
         .padding(.top, 50)
         .ignoresSafeArea(edges: [.top, .bottom])
         .background(.gray.opacity(0.1))
+        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
     }
     
     private func saveQuiz() {

@@ -217,6 +217,8 @@ struct DashboardView: View {
             .padding(.top, 50)
             .background(.gray.opacity(0.1))
             .ignoresSafeArea(edges: [.top, .bottom])
+            .navigationBarBackButtonHidden(true)
+            .toolbar(.hidden, for: .navigationBar)
         }
     }
 }
