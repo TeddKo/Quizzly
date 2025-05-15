@@ -42,8 +42,7 @@ struct HomeView: View {
             VStack(spacing: 24) {
                 
                 backgroundView {
-                    VStack(alignment: .leading, spacing: 15) {
-                        
+                    VStack(alignment: .leading, spacing: 15) {                        
                         profileView(
                             name: profile.name,
                             themeColorHex: profile.themeColorHex
@@ -66,8 +65,6 @@ struct HomeView: View {
             }
             .padding()
         }
-        .navigationTitle("홈")
-        .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .background(.gray.opacity(0.1))
     }
