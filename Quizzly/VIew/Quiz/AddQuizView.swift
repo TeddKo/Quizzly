@@ -41,13 +41,13 @@ struct AddQuizView: View {
                 Spacer()
             }
             .padding()
-            .background(Color.white)
+            .background(Color.dynamicBackground)
             .clipShape(RoundedRectangle(cornerRadius: 16))
         }
         .padding()
         .padding(.top, 50)
         .ignoresSafeArea(edges: [.top, .bottom])
-        .background(.gray.opacity(0.1))
+        .background(.secondary.opacity(0.1))
     }
     
     private func isFormValid() -> Bool {
@@ -106,7 +106,7 @@ struct CategoryOriginalPickerView: View {
             Text("카테고리")
                 .font(.subheadline)
                 .fontWeight(.medium)
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
             
             Menu {
                 Picker("카테고리", selection: $selectedCategory) {
@@ -123,13 +123,13 @@ struct CategoryOriginalPickerView: View {
                     Image(systemName: "chevron.down")
                         .font(.caption)
                         .fontWeight(.bold)
-                        .foregroundColor(.gray)
+                        .foregroundColor(.secondary)
                 }
                 .padding(10)
                 .frame(maxWidth: .infinity)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                        .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
                 )
             }
         }
@@ -144,7 +144,7 @@ struct DifficultyOriginalPickerView: View {
             Text("난이도")
                 .font(.subheadline)
                 .fontWeight(.medium)
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
             
             Picker("난이도", selection: $difficultyLevel) {
                 ForEach(DifficultyLevel.allCases, id: \.self) { level in
@@ -163,7 +163,7 @@ struct QuestionOriginalInputView: View {
         VStack(alignment: .leading, spacing: 6) {
             Text("질문")
                 .font(.subheadline)
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
             
             TextEditor(text: $questionDescription)
                 .frame(height: 70)
@@ -171,7 +171,7 @@ struct QuestionOriginalInputView: View {
                 .cornerRadius(10)
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                        .stroke(Color.secondary.opacity(0.4), lineWidth: 1)
                 )
         }
     }
@@ -186,7 +186,7 @@ struct OptionsOriginalListView: View {
             Text("선택지")
                 .font(.subheadline)
                 .fontWeight(.medium)
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
             
             ForEach(0..<4, id: \.self) { index in
                 OptionOriginalInputRowView(
@@ -214,12 +214,12 @@ struct OptionOriginalInputRowView: View {
             Text(optionLabel)
                 .font(.footnote)
                 .fontWeight(.semibold)
-                .foregroundColor(isCorrectAnswer ? .white : .black.opacity(0.5))
+                .foregroundColor(isCorrectAnswer ? Color.dynamicBackground : .primary.opacity(0.5))
                 .frame(width: 30, height: 30)
-                .background(isCorrectAnswer ? .blue : .clear)
+                .background(isCorrectAnswer ? Color.adaptiveBlue : .clear)
                 .overlay(
                     Circle()
-                        .stroke(isCorrectAnswer ? .blue : .gray.opacity(0.5), lineWidth: 2)
+                        .stroke(isCorrectAnswer ? Color.adaptiveBlue : .secondary.opacity(0.5), lineWidth: 2)
                 )
                 .clipShape(Circle())
             
@@ -227,14 +227,14 @@ struct OptionOriginalInputRowView: View {
                 .padding(8)
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(isCorrectAnswer ? .green : Color.gray.opacity(0.5), lineWidth: isCorrectAnswer ? 2 : 1)
+                        .stroke(isCorrectAnswer ? Color.adaptiveGreen : Color.secondary.opacity(0.5), lineWidth: isCorrectAnswer ? 2 : 1)
                 )
             
             Spacer()
             
             if isCorrectAnswer {
                 Image(systemName: "checkmark")
-                    .foregroundColor(.green)
+                    .foregroundColor(Color.adaptiveGreen)
             }
         }
         .contentShape(Rectangle())
@@ -252,7 +252,7 @@ struct ExplanationOriginalInputView: View {
             Text("해설 (선택 사항)")
                 .font(.subheadline)
                 .fontWeight(.medium)
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
             
             TextEditor(text: $explanation)
                 .frame(height: 50)
@@ -260,7 +260,7 @@ struct ExplanationOriginalInputView: View {
                 .cornerRadius(10)
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                        .stroke(Color.secondary.opacity(0.4), lineWidth: 1)
                 )
         }
     }

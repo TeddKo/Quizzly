@@ -75,7 +75,7 @@ struct DashboardView: View {
             }
             .padding()
             .padding(.top, 50)
-            .background(.gray.opacity(0.1))
+            .background(Color.adaptiveGrayOverlay)
             .ignoresSafeArea(edges: [.top, .bottom])
         }
     }
@@ -96,9 +96,9 @@ struct StatisticsAndPerformanceSection: View {
             }
         }
         .padding()
-        .background(.white)
+        .background(Color.dynamicBackground)
         .cornerRadius(16)
-        .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+        .shadow(color: Color.adaptiveGrayOverlay, radius: 5, x: 0, y: 2)
     }
 }
 
@@ -124,11 +124,11 @@ struct DashboardHeader: View {
                 HStack {
                     Text(selectedPeriod.rawValue)
                         .font(.caption)
-                        .foregroundColor(.blue)
+                        .foregroundColor(Color.adaptiveBlue)
 
                     Image(systemName: "chevron.down")
                         .font(.caption2)
-                        .foregroundColor(.blue)
+                        .foregroundColor(Color.adaptiveBlue)
                 }
             }
         }
@@ -139,8 +139,8 @@ struct DashboardHeader: View {
 struct QuizStatisticsCards: View {
     var body: some View {
         HStack(spacing: 16) {
-            StatCard(title: "퀴즈 시도 횟수", value: "32", background: Color.blue.opacity(0.1))
-            StatCard(title: "평균 정답률", value: "78%", subtitle: "↑ 5%", background: Color.green.opacity(0.1))
+            StatCard(title: "퀴즈 시도 횟수", value: "32", background: Color.adaptiveBlue.opacity(0.1))
+            StatCard(title: "평균 정답률", value: "78%", subtitle: "↑ 5%", background: Color.adaptiveGreen.opacity(0.1))
         }
     }
 }
@@ -153,9 +153,9 @@ struct CategoryPerformanceCards: View {
                 .fontWeight(.bold)
             
             HStack(spacing: 12) {
-                CategoryPerformanceCard(category: "Swift", percent: 0.9, color: .blue, icon: "chevron.left.slash.chevron.right")
+                CategoryPerformanceCard(category: "Swift", percent: 0.9, color: Color.adaptiveBlue, icon: "chevron.left.slash.chevron.right")
                 CategoryPerformanceCard(category: "자료구조", percent: 0.75, color: .purple, icon: "doc.on.clipboard")
-                CategoryPerformanceCard(category: "네트워크", percent: 0.6, color: .red, icon: "arrow.left.arrow.right")
+                CategoryPerformanceCard(category: "네트워크", percent: 0.6, color: Color.adaptiveRed, icon: "arrow.left.arrow.right")
             }
         }
     }
@@ -176,13 +176,13 @@ struct WeakCategoryView: View {
                 
                 ZStack {
                     Circle()
-                        .stroke(.gray.opacity(0.3), lineWidth: 10)
+                        .stroke(.secondary.opacity(0.3), lineWidth: 10)
                         .frame(width: 50, height: 50)
                     
                     Circle()
                         .rotation(.degrees(-90))
                         .trim(from: 0, to: weakCategoryPercent)
-                        .stroke(.red, style: .init(lineWidth: 10, lineCap: .round))
+                        .stroke(Color.adaptiveRed, style: .init(lineWidth: 10, lineCap: .round))
                         .frame(width: 50, height: 50)
                     
                     Text("\(Int(weakCategoryPercent * 100))%")
@@ -203,8 +203,8 @@ struct WeakCategoryView: View {
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity)
                     .padding(12)
-                    .background(Color.blue)
-                    .foregroundColor(.white)
+                    .background(Color.adaptiveBlue)
+                    .foregroundColor(Color.dynamicBackground)
                     .cornerRadius(10)
             }
         }
@@ -226,9 +226,9 @@ struct WrongNotesDashboardSection: View {
             }
         }
         .padding()
-        .background(.white)
+        .background(Color.dynamicBackground)
         .cornerRadius(16)
-        .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+        .shadow(color: Color.adaptiveGrayOverlay, radius: 5, x: 0, y: 2)
     }
 }
 
@@ -254,11 +254,11 @@ struct WrongNotesHeader: View {
                 HStack {
                     Text(selectedCategory.rawValue)
                         .font(.caption)
-                        .foregroundColor(.blue)
+                        .foregroundColor(Color.adaptiveBlue)
                     
                     Image(systemName: "chevron.down")
                         .font(.caption2)
-                        .foregroundColor(.blue)
+                        .foregroundColor(Color.adaptiveBlue)
                 }
             }
         }
@@ -272,7 +272,7 @@ struct WrongNotesSearchBar: View {
     var body: some View {
         HStack {
             Image(systemName: "magnifyingglass")
-                .foregroundColor(.gray)
+                .foregroundColor(.secondary)
             
             TextField("검색어를 입력하세요", text: $searchText)
         }
@@ -313,7 +313,7 @@ struct StatCard: View {
         VStack(alignment: .leading, spacing: 3) {
             Text(title)
                 .font(.caption)
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
             
             HStack(spacing: 10) {
                 Text(value)
@@ -324,7 +324,7 @@ struct StatCard: View {
                     Text(subtitle)
                         .font(.caption)
                         .fontWeight(.semibold)
-                        .foregroundColor(.green)
+                        .foregroundColor(Color.adaptiveGreen)
                 }
             }
         }
@@ -363,7 +363,7 @@ struct CategoryPerformanceCard: View {
             
             ZStack {
                 Circle()
-                    .stroke(.gray.opacity(0.3), lineWidth: 10)
+                    .stroke(.secondary.opacity(0.3), lineWidth: 10)
                     .frame(width: 55, height: 55)
                 
                 Circle()
@@ -402,7 +402,7 @@ struct WeakCategoryCard: View {
                 .scaledToFit()
                 .frame(width: 25, height: 25)
                 .fontWeight(.medium)
-                .foregroundColor(.red)
+                .foregroundColor(Color.adaptiveRed)
             
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
@@ -412,16 +412,16 @@ struct WeakCategoryCard: View {
                 Text(subtitle)
                     .font(.caption)
                     .fontWeight(.semibold)
-                    .foregroundStyle(.black.opacity(0.6))
+                    .foregroundStyle(.primary.opacity(0.6))
             }
         }
         .padding(.horizontal)
         .padding(.vertical, 15)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.red.opacity(0.06))
+        .background(Color.adaptiveRed.opacity(0.06))
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(.red.opacity(0.1), lineWidth: 3)
+                .stroke(Color.adaptiveRed.opacity(0.1), lineWidth: 3)
         )
         .cornerRadius(12)
     }
@@ -441,9 +441,9 @@ struct WrongNoteCard: View {
                 .scaledToFit()
                 .frame(width: 18, height: 18)
                 .fontWeight(.semibold)
-                .foregroundColor(.red)
+                .foregroundColor(Color.adaptiveRed)
                 .padding(8)
-                .background(.red.opacity(0.1))
+                .background(Color.adaptiveRed.opacity(0.1))
                 .cornerRadius(5)
             
             VStack(alignment: .leading, spacing: 5) {
@@ -453,7 +453,7 @@ struct WrongNoteCard: View {
                 
                     Text("\(category) • \(date)")
                         .font(.caption2)
-                        .foregroundColor(.black.opacity(0.6))
+                        .foregroundColor(.primary.opacity(0.6))
             }
             
             Spacer()
@@ -462,7 +462,7 @@ struct WrongNoteCard: View {
         .padding(.vertical, 10)
         .overlay(
             RoundedRectangle(cornerRadius: 10)
-                .stroke(.gray.opacity(0.2), lineWidth: 3)
+                .stroke(.secondary.opacity(0.2), lineWidth: 3)
         )
         .cornerRadius(10)
     }

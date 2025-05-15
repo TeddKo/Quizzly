@@ -32,19 +32,19 @@ struct QuizResultView: View {
                 Text(quizTitle)
                     .font(.footnote)
                     .fontWeight(.semibold)
-                    .foregroundColor(.black.opacity(0.5))
+                    .foregroundColor(.primary.opacity(0.5))
             }
 
             VStack(spacing: 15) {
                 ZStack {
                     Circle()
-                        .stroke(.gray.opacity(0.3), lineWidth: 20)
+                        .stroke(.secondary.opacity(0.3), lineWidth: 20)
                         .frame(width: 110, height: 110)
 
                     Circle()
                         .rotation(.degrees(-90))
                         .trim(from: 0, to: CGFloat(scorePercentage) / 100)
-                        .stroke(.blue, lineWidth: 20)
+                        .stroke(Color.adaptiveBlue, lineWidth: 20)
                         .frame(width: 110, height: 110)
 
                     Text("\(scorePercentage)%")
@@ -58,36 +58,36 @@ struct QuizResultView: View {
                         Text("\(correctCount)")
                             .font(.title3)
                             .fontWeight(.bold)
-                            .foregroundStyle(.green)
+                            .foregroundStyle(Color.adaptiveGreen)
                         
                         Text("정답")
                             .font(.footnote)
                             .fontWeight(.bold)
-                            .foregroundStyle(.black.opacity(0.5))
+                            .foregroundStyle(.primary.opacity(0.5))
                     }
                     
                     VStack {
                         Text("\(incorrectCount)")
                             .font(.title3)
                             .fontWeight(.bold)
-                            .foregroundStyle(.red)
+                            .foregroundStyle(Color.adaptiveRed)
                         
                         Text("오답")
                             .font(.footnote)
                             .fontWeight(.bold)
-                            .foregroundStyle(.black.opacity(0.5))
+                            .foregroundStyle(.primary.opacity(0.5))
                     }
                     
                     VStack {
                         Text(totalTime)
                             .font(.title3)
                             .fontWeight(.bold)
-                            .foregroundStyle(.black)
+                            .foregroundStyle(.primary)
                         
                         Text("소요시간")
                             .font(.footnote)
                             .fontWeight(.bold)
-                            .foregroundStyle(.black.opacity(0.5))
+                            .foregroundStyle(.primary.opacity(0.5))
                     }
                 }
             }
@@ -106,32 +106,32 @@ struct QuizResultView: View {
                             Text(note.question)
                                 .font(.footnote)
                                 .fontWeight(.semibold)
-                                .foregroundColor(.black)
+                                .foregroundColor(.primary)
                                 .multilineTextAlignment(.leading)
                             
                             HStack(spacing: 15) {
                                 Label("내 답안: \(note.userAnswer)", systemImage: "xmark.circle")
                                     .font(.caption)
                                     .fontWeight(.medium)
-                                    .foregroundColor(.red)
+                                    .foregroundColor(Color.adaptiveRed)
                                 
                                 Label("정답: \(note.correctAnswer)", systemImage: "checkmark.circle")
                                     .font(.caption)
                                     .fontWeight(.medium)
-                                    .foregroundColor(.green)
+                                    .foregroundColor(Color.adaptiveGreen)
                             }
                             
                             Text(note.explanation)
                                 .font(.caption2)
                                 .fontWeight(.semibold)
-                                .foregroundColor(.black.opacity(0.5))
+                                .foregroundColor(.primary.opacity(0.5))
                         }
                         .padding(13)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(.red.opacity(0.06))
+                        .background(Color.adaptiveRed.opacity(0.06))
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
-                                .stroke(.red.opacity(0.1), lineWidth: 3)
+                                .stroke(Color.adaptiveRed.opacity(0.1), lineWidth: 3)
                         )
                         .cornerRadius(12)
                     }
@@ -151,9 +151,9 @@ struct QuizResultView: View {
                             .scaledToFit()
                             .frame(width: 13, height: 13)
                             .fontWeight(.semibold)
-                            .foregroundColor(.blue)
+                            .foregroundColor(Color.adaptiveBlue)
                             .padding(8)
-                            .background(.blue.opacity(0.1))
+                            .background(Color.adaptiveBlue.opacity(0.1))
                             .cornerRadius(5)
                         
                         VStack(alignment: .leading) {
@@ -164,7 +164,7 @@ struct QuizResultView: View {
                             Text(item.duration)
                                 .font(.caption)
                                 .fontWeight(.medium)
-                                .foregroundColor(.black.opacity(0.5))
+                                .foregroundColor(.primary.opacity(0.5))
                         }
                     }
                     
@@ -181,11 +181,11 @@ struct QuizResultView: View {
                     Text("홈으로")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundStyle(.black)
+                        .foregroundStyle(.primary)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(14)
-                .background(Color.gray.opacity(0.2))
+                .background(Color.secondary.opacity(0.2))
                 .cornerRadius(8)
 
                 Button {
@@ -194,12 +194,12 @@ struct QuizResultView: View {
                     Text("다시 풀기")
                         .font(.subheadline)
                         .fontWeight(.bold)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.dynamicBackground)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(14)
-                .background(Color.blue)
-                .foregroundColor(.white)
+                .background(Color.adaptiveBlue)
+                .foregroundColor(Color.dynamicBackground)
                 .cornerRadius(8)
             }
         }

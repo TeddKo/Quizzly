@@ -23,14 +23,14 @@ struct QuizOptionRowView: View {
         } label: {
             Text(optionText)
                 .bold()
-                .foregroundStyle(isSelected ? .cyan : .black)
+                .foregroundStyle(isSelected ? Color.adaptiveCyan : .primary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 24)
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .stroke(
-                    isSelected ? Color.cyan : Color.gray.opacity(0.5),
+                    isSelected ? Color.adaptiveCyan : Color.secondary.opacity(0.5),
                     lineWidth: 2
                 )
         )
@@ -58,12 +58,12 @@ struct QuizQuestionView: View {
     var body: some View {
         ZStack(alignment: .top) {
             RoundedRectangle(cornerRadius: 20)
-                .fill(.gray.opacity(0.5))
+                .fill(Color.adaptiveGrayOverlay)
                 .frame(maxWidth: .infinity, maxHeight: 200)
                 .overlay {
                     Text(questionDescription)
                         .bold()
-                        .foregroundStyle(.black)
+                        .foregroundStyle(.primary)
                         .multilineTextAlignment(.center)
                         .padding()
                 }
@@ -114,16 +114,16 @@ struct QuizView: View {
                     handleNextButtonTap(for: quiz)
                 } label: {
                     Text(currentIndex == filteredQuizzes.count - 1 ? "Finish" : "Next")
-                        .tint(.white)
+                        .foregroundColor(selectedOption == nil ? .gray : Color.dynamicBackground)
                         .bold()
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(.cyan)
+                        .background(Color.adaptiveBlue)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
                 .background {
                     RoundedRectangle(cornerRadius: 12)
-                        .foregroundStyle(.cyan)
+                        .foregroundStyle(Color.adaptiveBlue)
                         .offset(y: 10)
                         .opacity(0.4)
                         .blur(radius: 12)
@@ -148,11 +148,11 @@ struct QuizView: View {
                         .scaledToFit()
                         .frame(width: 14, height: 14)
                         .bold()
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                         .frame(width: 36, height: 36)
                         .overlay(
                             Circle()
-                                .stroke(.black.opacity(0.5), lineWidth: 1.3)
+                                .stroke(.primary.opacity(0.5), lineWidth: 1.3)
                         )
                 }
             }

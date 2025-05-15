@@ -28,7 +28,7 @@ struct WrongAnswerDetailView: View {
                             .padding(8)
                             .overlay(
                                 Circle()
-                                    .stroke(.gray.opacity(0.5), lineWidth: 2)
+                                    .stroke(.secondary.opacity(0.5), lineWidth: 2)
                             )
                             .clipShape(Circle())
                     }
@@ -48,8 +48,8 @@ struct WrongAnswerDetailView: View {
                                 .font(.caption2)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
-                                .background(Color.red.opacity(0.1))
-                                .foregroundColor(.red)
+                                .background(Color.adaptiveRed.opacity(0.1))
+                                .foregroundColor(Color.adaptiveRed)
                                 .clipShape(Capsule())
                             
                             Spacer()
@@ -57,7 +57,7 @@ struct WrongAnswerDetailView: View {
                             Text(note.dateAdded)
                                 .font(.caption)
                                 .fontWeight(.semibold)
-                                .foregroundColor(.black.opacity(0.5))
+                                .foregroundColor(.primary.opacity(0.5))
                         }
                         Text(note.question)
                             .font(.headline)
@@ -66,7 +66,7 @@ struct WrongAnswerDetailView: View {
                         Text("난이도: \(note.level)")
                             .font(.footnote)
                             .fontWeight(.semibold)
-                            .foregroundColor(.black.opacity(0.5))
+                            .foregroundColor(.primary.opacity(0.5))
                     }
                     
                     // MARK: 선택지
@@ -80,22 +80,22 @@ struct WrongAnswerDetailView: View {
                                     .background(
                                         Circle()
                                             .fill(
-                                                choice.text == note.correctAnswer ? .green :
-                                                choice.text == note.userAnswer ? .red :
+                                                choice.text == note.correctAnswer ? Color.adaptiveGreen :
+                                                choice.text == note.userAnswer ? Color.adaptiveRed :
                                                         .clear
                                             )
                                     )
                                     .foregroundColor(
-                                        choice.text == note.correctAnswer ? .white :
-                                        choice.text == note.userAnswer ? .white :
+                                        choice.text == note.correctAnswer ? Color.dynamicBackground :
+                                        choice.text == note.userAnswer ? Color.dynamicBackground :
                                         .primary
                                     )
                                     .overlay(
                                         Circle()
                                             .stroke(
-                                                choice.text == note.correctAnswer ? .green :
-                                                choice.text == note.userAnswer ? .red :
-                                                .gray.opacity(0.6),
+                                                choice.text == note.correctAnswer ? Color.adaptiveGreen:
+                                                choice.text == note.userAnswer ? Color.adaptiveRed :
+                                                .secondary.opacity(0.6),
                                                 lineWidth: 1
                                             )
                                     )
@@ -106,12 +106,12 @@ struct WrongAnswerDetailView: View {
                                 Spacer()
                             }
                             .padding(13)
-                            .background(.white)
+                            .background(Color.dynamicBackground)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .stroke(choice.text == note.userAnswer ? .red :
-                                            choice.text == note.correctAnswer ? .green :
-                                            .gray.opacity(0.5),
+                                    .stroke(choice.text == note.userAnswer ? Color.adaptiveRed :
+                                            choice.text == note.correctAnswer ? Color.adaptiveGreen :
+                                            .secondary.opacity(0.5),
                                             lineWidth: 3)
                             )
                             .cornerRadius(8)
@@ -129,19 +129,19 @@ struct WrongAnswerDetailView: View {
                     }
                     .padding(13)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(.white)
+                    .background(Color.dynamicBackground)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(.gray.opacity(0.2), lineWidth: 3)
+                            .stroke(.secondary.opacity(0.2), lineWidth: 3)
                     )
                     .cornerRadius(8)
                 }
                 .padding(13)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(.red.opacity(0.06))
+                .background(Color.adaptiveRed.opacity(0.06))
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(.red.opacity(0.06), lineWidth: 3)
+                        .stroke(Color.adaptiveRed.opacity(0.06), lineWidth: 3)
                 )
                 .cornerRadius(8)
 
@@ -158,9 +158,9 @@ struct WrongAnswerDetailView: View {
                                 .scaledToFit()
                                 .frame(width: 13, height: 13)
                                 .fontWeight(.semibold)
-                                .foregroundColor(.blue)
+                                .foregroundColor(Color.adaptiveBlue)
                                 .padding(8)
-                                .background(.blue.opacity(0.1))
+                                .background(Color.adaptiveBlue.opacity(0.1))
                                 .cornerRadius(5)
                             
                             VStack(alignment: .leading) {
@@ -171,7 +171,7 @@ struct WrongAnswerDetailView: View {
                                 Text(rec.duration)
                                     .font(.caption)
                                     .fontWeight(.medium)
-                                    .foregroundColor(.black.opacity(0.5))
+                                    .foregroundColor(.primary.opacity(0.5))
                             }
                         }
                         
@@ -193,7 +193,7 @@ struct WrongAnswerDetailView: View {
                         .cornerRadius(10)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                                .stroke(Color.secondary.opacity(0.4), lineWidth: 1)
                         )
                 }
 
@@ -204,11 +204,11 @@ struct WrongAnswerDetailView: View {
                         Text("목록으로")
                             .font(.subheadline)
                             .fontWeight(.semibold)
-                            .foregroundStyle(.black)
+                            .foregroundStyle(.primary)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(14)
-                    .background(Color.gray.opacity(0.2))
+                    .background(Color.secondary.opacity(0.2))
                     .cornerRadius(8)
 
                     Button {
@@ -217,12 +217,12 @@ struct WrongAnswerDetailView: View {
                         Text("다시 풀기")
                             .font(.subheadline)
                             .fontWeight(.bold)
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color.dynamicBackground)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(14)
-                    .background(Color.blue)
-                    .foregroundColor(.white)
+                    .background(Color.adaptiveBlue)
+                    .foregroundColor(Color.dynamicBackground)
                     .cornerRadius(8)
                 }
             }

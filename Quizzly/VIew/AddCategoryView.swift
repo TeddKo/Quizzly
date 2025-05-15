@@ -13,7 +13,7 @@ struct AddCategoryView: View {
 
     @State private var categoryName: String = ""
     @State private var categoryIconName: String = ""
-    @State private var categoryThemeColor: Color = .gray
+    @State private var categoryThemeColor: Color = .secondary
     @State private var isPresented: Bool = false
     
     @EnvironmentObject private var categoryViewModel: CategoryViewModel
