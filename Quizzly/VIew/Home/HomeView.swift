@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 let recentCards: [RecentCard] = [
     RecentCard(title: "Swift 기초 문법", percent: 0.9, date: "오늘", isCorrect: true),
@@ -37,12 +38,17 @@ struct HomeView: View {
     
     @State private var showingAllCategories = false
     
+    @Query private var allQuizzes: [Quiz]
+    @State private var selectedCategory: Category? = nil
+    @State private var showAddQuizView = false
+    @State private var showEmptyAlert = false
+    
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 24) {
                 
                 backgroundView {
-                    VStack(alignment: .leading, spacing: 15) {                        
+                    VStack(alignment: .leading, spacing: 15) {
                         profileView(
                             name: profile.name,
                             themeColorHex: profile.themeColorHex
@@ -55,7 +61,14 @@ struct HomeView: View {
                 }
                 
                 backgroundView {
-                    categoryView(showingAllCategories: $showingAllCategories, allCategories: allCategories)
+                    categoryView(
+                        showingAllCategories: $showingAllCategories,
+                        allCategories: allCategories,
+                        allQuizzes: allQuizzes,
+                        selectedCategory: $selectedCategory,
+                        showEmptyAlert: $showEmptyAlert,
+                        navigationPath: $navigationPath
+                    )
                 }
                 
                 
@@ -68,6 +81,16 @@ struct HomeView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
         .background(.gray.opacity(0.1))
+        
+        .alert("해당 카테고리에 퀴즈가 없습니다", isPresented: $showEmptyAlert) {
+            Button("퀴즈 만들기") {
+                showAddQuizView = true
+            }
+            Button("취소", role: .cancel) {}
+        }
+        .sheet(isPresented: $showAddQuizView) {
+            AddQuizView()
+        }
     }
 }
 
@@ -195,6 +218,10 @@ private func backgroundView(@ViewBuilder content: () -> some View) -> some View 
 private func categoryView(
     showingAllCategories: Binding<Bool>,
     allCategories: [Category],
+    allQuizzes: [Quiz],
+    selectedCategory: Binding<Category?>,
+    showEmptyAlert: Binding<Bool>,
+    navigationPath: Binding<NavigationPath>
 ) -> some View {
     // MARK: 카테고리
     VStack(alignment: .leading, spacing: 10) {
@@ -211,7 +238,7 @@ private func categoryView(
                 }
             } label: {
                 Text(showingAllCategories.wrappedValue ? "간단히 보기" : "모두 보기")
-                .font(.footnote)
+                    .font(.footnote)
             }
         }
         
@@ -220,12 +247,25 @@ private func categoryView(
         VStack {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                 ForEach(displayedCategories) { category in
-                    CategoryCard(
-                        title: category.title,
-                        icon: category.icon,
-                        count: category.count,
-                        color: category.color
-                    )
+                    Button {
+                        let quizzesInCategory = allQuizzes.filter {
+                            $0.quizCategory?.name == category.title
+                        }
+                        
+                        if quizzesInCategory.isEmpty {
+                            selectedCategory.wrappedValue = category
+                            showEmptyAlert.wrappedValue = true
+                        } else {
+                            navigationPath.wrappedValue.append(category)
+                        }
+                    } label: {
+                        CategoryCard(
+                            title: category.title,
+                            icon: category.icon,
+                            count: category.count,
+                            color: category.color
+                        )
+                    }
                 }
             }
         }
@@ -251,7 +291,7 @@ private func recentQuizView(
                     isCorrect: card.isCorrect
                 )
             }
-
+            
             if index < recentCards.count - 1 {
                 Divider()
             }
@@ -271,6 +311,7 @@ struct CategoryCard: View {
                 Text(title)
                     .font(.subheadline)
                     .bold()
+                    .foregroundColor(.primary)
                 
                 Text("문제 \(count)개")
                     .font(.footnote)
@@ -324,7 +365,7 @@ struct RecentCard: View, Identifiable, Hashable {
                 Text(title)
                     .font(.subheadline)
                     .bold()
-
+                
                 Text("\(Int(percent * 100))% 정답 · \(date)")
                     .font(.caption)
                     .fontWeight(.semibold)
