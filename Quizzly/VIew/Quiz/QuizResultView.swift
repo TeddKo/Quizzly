@@ -100,7 +100,6 @@ struct QuizResultView: View {
             }
             .onAppear {
                 scorePercentage = Int((Double(quizViewModel.correctCount)/Double(quizViewModel.totalProblemCount))*100)
-                print(scorePercentage)
             }
 
             // MARK: 오답 노트

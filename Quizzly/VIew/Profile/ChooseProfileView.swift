@@ -80,6 +80,7 @@ struct ChooseProfileView: View {
                 MainTabView(profile: profile, navigationPath: $navigationPath,userID: profile.id.uuidString)
                     .environmentObject(quizViewModel)
                     .environmentObject(categoryViewModel)
+                    .environmentObject(homeViewModel)
 
             }
             .navigationDestination(for: QuizCategory.self) { category in

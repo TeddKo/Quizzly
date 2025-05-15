@@ -37,6 +37,7 @@ struct HomeView: View {
     
     @State private var showingAllCategories = false
     @EnvironmentObject var categoryViewModel:CategoryViewModel
+    @EnvironmentObject var homeViewModel:HomeViewModel
     @AppStorage("currentUserUUID") var id = ""
     var userID:String
 //    var allCategories:[QuizCategory]
@@ -87,7 +88,7 @@ struct HomeView: View {
                                     .foregroundColor(.black.opacity(0.5))
                                 
                                 // TODO: 실제 퍼센트로 수정
-                                Text("78%")
+                                Text("\(homeViewModel.overallScoreRate)%")
                                     .font(.title3)
                                     .bold()
                             }
@@ -106,7 +107,9 @@ struct HomeView: View {
                                     .frame(width: 55, height: 55)
                             }
                             .clipShape(.circle)
-                        }
+                        }.onAppear(perform: {
+                            homeViewModel.getOverallScoreRate()
+                        })
                         .padding(13)
                         .background(.blue.opacity(0.08))
                         .overlay(

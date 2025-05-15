@@ -23,9 +23,8 @@ class QuizViewModel: ObservableObject {
     @Published var oneProblemStartTime: Date = Date.now
     @Published var correctCount: Int = 0
     @Published var totalProblemCount: Int = 0
+    @Published var overallScoreRate: Int = 0
 
-    
-    
     private var modelContext: ModelContext
 
     init(modelContext: ModelContext) {
@@ -33,7 +32,6 @@ class QuizViewModel: ObservableObject {
         fetchQuiz()
     }
 
-    //    TODO: - CRUD (quizs)
     func addQuiz(item: Quiz) {
         do {
             modelContext.insert(item)
@@ -65,15 +63,16 @@ class QuizViewModel: ObservableObject {
             quizzes = []
         }
     }
+    
 
     func answerQuiz(selectedIndex: String, quiz: Quiz) {
-        totalProblemCount = totalProblemCount+1
+        totalProblemCount = totalProblemCount + 1
         let currentUserID = UserDefaults.standard.string(forKey: "currentUserUUID") ?? ""
         guard let uUID = UUID(uuidString: currentUserID) else { return }
         let predicate = #Predicate<Profile> { $0.id == uUID }
         let descriptor = FetchDescriptor<Profile>(predicate: predicate)
         let chosenAnswer = quiz.options.firstIndex(of: selectedIndex) ?? 0
-        var isCorrect:Bool = false
+        var isCorrect: Bool = false
         let solvedTime = Date.now
         let duration = solvedTime.timeIntervalSince(oneProblemStartTime)
         if selectedIndex == quiz.correctAnswer {
@@ -115,16 +114,6 @@ class QuizViewModel: ObservableObject {
         formattedDuration = formatter.string(from: duration) ?? "0:00"
     }
 
-    func deleteQuiz(quiz: Quiz) {
-        do {
-            modelContext.delete(quiz)
-            try saveContext()
-        } catch {
-            print(error)
-        }
-        fetchQuiz()
-    }
-
     func filteredQuizByLevel(level: Int) {
         let predicate = #Predicate<Quiz> { quiz in
             quiz.difficultyLevel.rawValue > level
@@ -158,5 +147,15 @@ class QuizViewModel: ObservableObject {
                 print(error)
             }
         }
+    }
+
+    func deleteQuiz(quiz: Quiz) {
+        do {
+            modelContext.delete(quiz)
+            try saveContext()
+        } catch {
+            print(error)
+        }
+        fetchQuiz()
     }
 }

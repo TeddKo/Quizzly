@@ -12,10 +12,12 @@ import SwiftUI
 class HomeViewModel: ObservableObject {
 
     @Published var profiles: [Profile] = []
+    @Published var overallScoreRate:Int = 0
     private var modelContext: ModelContext
 
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
+        getOverallScoreRate()
     }
 
     func addProfile(item: Profile) {
@@ -57,6 +59,27 @@ class HomeViewModel: ObservableObject {
                 modelContext.rollback()
                 print(error)
             }
+        }
+    }
+    
+    func getOverallScoreRate(){
+        let currentUserID = UserDefaults.standard.string(forKey: "currentUserUUID") ?? ""
+        guard let userUUID = UUID(uuidString: currentUserID) else { return }
+        var answers:[QuizAttempt]
+        var totalCount: Int = 0
+        var answerCount: Int = 0
+        do {
+            let predicate = #Predicate<QuizAttempt>{ attempt in
+                attempt.profile?.id == userUUID
+            }
+            let descriptor = FetchDescriptor(predicate: predicate)
+            answers = try modelContext.fetch(descriptor)
+            answerCount = answers.count{$0.wasCorrect == true }
+            totalCount = answers.count
+            overallScoreRate = Int(Double(answerCount)/Double(totalCount) * 100)
+            print(overallScoreRate)
+        } catch  {
+            print(error)
         }
     }
 }
