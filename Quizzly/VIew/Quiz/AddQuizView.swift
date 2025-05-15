@@ -199,12 +199,12 @@ private func optionEditorView(
                     Text("\(Character(UnicodeScalar(65 + index)!))")
                         .font(.footnote)
                         .fontWeight(.semibold)
-                        .foregroundColor(correctAnswerIndex == index ? .white : .black.opacity(0.5))
+                        .foregroundColor(correctAnswerIndex.wrappedValue == index ? .white : .black.opacity(0.5))
                         .frame(width: 30, height: 30)
-                        .background(correctAnswerIndex == index ? .blue : .clear)
+                        .background(correctAnswerIndex.wrappedValue == index ? .blue : .clear)
                         .overlay(
                             Circle()
-                                .stroke(correctAnswerIndex == index ? .blue : .gray.opacity(0.5), lineWidth: 2)
+                                .stroke(correctAnswerIndex.wrappedValue == index ? .blue : .gray.opacity(0.5), lineWidth: 2)
                         )
                         .clipShape(Circle())
                     
@@ -212,19 +212,19 @@ private func optionEditorView(
                         .padding(8)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
-                                .stroke(correctAnswerIndex == index ? .green : .gray.opacity(0.5), lineWidth: correctAnswerIndex == index ? 2 : 1)
+                                .stroke(correctAnswerIndex.wrappedValue == index ? .green : .gray.opacity(0.5), lineWidth: correctAnswerIndex.wrappedValue == index ? 2 : 1)
                         )
                     
                     Spacer()
                     
-                    if correctAnswerIndex == index {
+                    if correctAnswerIndex.wrappedValue == index {
                         Image(systemName: "checkmark")
                             .foregroundColor(.green)
                     }
                 }
                 .contentShape(Rectangle())
                 .onTapGesture {
-                    correctAnswerIndex = index
+                    correctAnswerIndex.wrappedValue = index
                 }
             }
         }
