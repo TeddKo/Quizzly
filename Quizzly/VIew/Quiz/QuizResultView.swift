@@ -19,7 +19,8 @@ struct QuizResultView: View {
     let quizTitle: String
     let notes: [QuizNote]
     let recommendations: [LearningRecommendation]
-    let category: Category
+    let category: QuizCategory
+    let questions: [Quiz]
     
     var body: some View {
         VStack(spacing: 24) {
@@ -203,7 +204,8 @@ struct QuizResultView: View {
             QuizView(
                 navigationPath: $navigationPath,
                 category: category,
-                difficulty: .level1
+                difficulty: .level1,
+                questions: questions
             )
         }
     }
