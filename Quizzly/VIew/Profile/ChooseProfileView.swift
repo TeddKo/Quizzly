@@ -75,6 +75,7 @@ struct ChooseProfileView: View {
             }
             .navigationDestination(for: Profile.self) { profile in
                 MainTabView(profile: profile, navigationPath: $navigationPath)
+                MainTabView(profile: profile, navigationPath: $navigationPath,userID:profile.id.uuidString)
                     .environmentObject(categoryViewModel)
             }
 //            .navigationDestination(for: Profile.self) { profile in
@@ -86,11 +87,6 @@ struct ChooseProfileView: View {
             }
             .onAppear {
                 homeViewModel.fetchProfile()
-            }
-            .onDisappear {
-                homeViewModel.deleteProfile()
-                //임시로 뷰가 사라지면 모든 프로필들이 지워지게 해놨습니다.
-                //참고 부탁 드립니다.
             }
         }
     }

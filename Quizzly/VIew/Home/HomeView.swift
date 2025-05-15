@@ -379,6 +379,8 @@ struct HomeView: View {
     
     @State private var showingAllCategories = false
     @EnvironmentObject private var categoryViewModel: CategoryViewModel
+    @AppStorage("currentUserUUID") var id = ""
+    var userID:String
     
     private func sectionBackground<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         content()
@@ -431,6 +433,7 @@ struct HomeView: View {
         .background(Color(UIColor.systemGroupedBackground))
         .onAppear {
             categoryViewModel.fetchCategory()
+            id = userID
         }
     }
 }
