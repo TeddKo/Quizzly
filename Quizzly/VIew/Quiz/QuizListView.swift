@@ -16,6 +16,11 @@ struct QuizListView: View {
     @Query private var allQuizzes: [Quiz]
 
     @State private var showingAddQuizSheet = false
+    @StateObject var quizViewViewModel: QuizViewModel
+    
+    init(modelContext:ModelContext){
+        _quizViewViewModel = StateObject(wrappedValue: QuizViewModel(modelContext: modelContext.container.mainContext))
+    }
 
     var body: some View {
         NavigationStack {
