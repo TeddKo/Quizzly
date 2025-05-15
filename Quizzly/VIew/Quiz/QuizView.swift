@@ -82,6 +82,9 @@ struct QuizView: View {
     @State private var currentIndex: Int = 0
     @State private var showResult: Bool = false
     @State private var correctCount: Int = 0
+    
+    @EnvironmentObject var categoryViewModel:CategoryViewModel
+    @EnvironmentObject var quizViewModel: QuizViewModel
 
     @Query(sort: \Quiz.questionDescription) private var allFetchedQuizzes: [Quiz]
     
