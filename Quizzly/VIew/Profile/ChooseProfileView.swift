@@ -93,8 +93,6 @@ struct ChooseProfileView: View {
             .onDisappear {
                 allCategories = categoryViewModel.quizCategories
 //                homeViewModel.deleteProfile()
-                //임시로 뷰가 사라지면 모든 프로필들이 지워지게 해놨습니다.
-                //참고 부탁 드립니다.
             }
         }
     }

@@ -21,7 +21,10 @@ struct QuizView: View {
     @State private var correctCount: Int = 0
     @EnvironmentObject var categoryViewModel: CategoryViewModel
     @EnvironmentObject var quizViewModel: QuizViewModel
-
+    @State var currentUserID:String = ""
+    
+    
+    
     @Query(sort: \Quiz.questionDescription) private var quizzes: [Quiz]
 
     var category: QuizCategory
@@ -73,11 +76,13 @@ struct QuizView: View {
             }
 
             Button {
+                guard let selectedIndex = selectedOption else { return }
                 if let selected = selectedOption,
                     selected == quizList[currentIndex].correctAnswer
                 {
                     correctCount += 1
                 }
+                quizViewModel.answerQuiz(selectedIndex: selectedIndex, quiz: quizList[currentIndex])
 
                 if currentIndex < quizList.count - 1 {
                     currentIndex += 1
@@ -106,14 +111,13 @@ struct QuizView: View {
             .navigationDestination(isPresented: $showResult) {
                                 QuizResultView(
                                     navigationPath: $navigationPath,
-//                                    correctCount: correctCount,
-//                                    incorrectCount: quizList.count - correctCount,
+                                    correctCount: quizViewModel.correctCount,
+                                    incorrectCount: quizViewModel.totalProblemCount - quizViewModel.correctCount,
 //                                    totalTime: "03:24",
-//                                    scorePercentage: Int((Double(correctCount) / Double(quizList.count)) * 100),
-//                                    quizTitle: "\(category.title) 퀴즈",
+//                                    scorePercentage: ( quizViewModel.correctCount / quizViewModel.totalProblemCount ) * 100,
 //                                    notes: [],
 //                                    recommendations: [],
-                                    category: category
+                                    category: category,
                                 )
                                 .environmentObject(quizViewModel)
             }
@@ -122,8 +126,8 @@ struct QuizView: View {
                 quizList = quizViewModel.filterQuizzes
                 isCount = quizList.count
                 quizViewModel.startTime = Date.now
-            }
-            .onDisappear {
+                currentUserID = UserDefaults.standard.string(forKey: "currentUserUUID") ?? ""
+                quizViewModel.totalProblemCount = 0
             }
         }
         .padding(.horizontal)

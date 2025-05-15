@@ -13,10 +13,10 @@ struct QuizResultView: View {
     @EnvironmentObject var quizViewModel:QuizViewModel
     @State private var retry: Bool = false
     
-//    let correctCount: Int
-//    let incorrectCount: Int
+    let correctCount: Int
+    let incorrectCount: Int
 //    let totalTime: String
-//    let scorePercentage: Int
+    @State var scorePercentage:Int = 0
     @State var quizTitle: String = ""
 //    let notes: [QuizNote]
 //    let recommendations: [LearningRecommendation]
@@ -43,25 +43,25 @@ struct QuizResultView: View {
                         .stroke(.gray.opacity(0.3), lineWidth: 20)
                         .frame(width: 110, height: 110)
 
-//                    Circle()
-//                        .rotation(.degrees(-90))
-//                        .trim(from: 0, to: CGFloat(scorePercentage) / 100)
-//                        .stroke(.blue, lineWidth: 20)
-//                        .frame(width: 110, height: 110)
-//
-//                    Text("\(scorePercentage)%")
-//                        .font(.title3)
-//                        .bold()
+                    Circle()
+                        .rotation(.degrees(-90))
+                        .trim(from: 0, to: CGFloat(scorePercentage) / 100)
+                        .stroke(.blue, lineWidth: 20)
+                        .frame(width: 110, height: 110)
+
+                    Text("\(scorePercentage)%")
+                        .font(.title3)
+                        .bold()
                 }
                 .clipShape(.circle)
             
                 HStack(spacing: 24) {
                     VStack {
-//                        Text("\(correctCount)")
-//                            .font(.title3)
-//                            .fontWeight(.bold)
-//                            .foregroundStyle(.green)
-//                        
+                        Text("\(correctCount)")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.green)
+                        
                         Text("정답")
                             .font(.footnote)
                             .fontWeight(.bold)
@@ -69,11 +69,11 @@ struct QuizResultView: View {
                     }
                     
                     VStack {
-//                        Text("\(incorrectCount)")
-//                            .font(.title3)
-//                            .fontWeight(.bold)
-//                            .foregroundStyle(.red)
-//                        
+                        Text("\(incorrectCount)")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.red)
+                        
                         Text("오답")
                             .font(.footnote)
                             .fontWeight(.bold)
@@ -94,9 +94,13 @@ struct QuizResultView: View {
                 }
                 .onAppear {
                     quizTitle = category.name
-                    quizViewModel.calculateDuration()
+                    quizViewModel.calculateTotalDuration()
                     totalTime = quizViewModel.formattedDuration
                 }
+            }
+            .onAppear {
+                scorePercentage = Int((Double(quizViewModel.correctCount)/Double(quizViewModel.totalProblemCount))*100)
+                print(scorePercentage)
             }
 
             // MARK: 오답 노트
@@ -178,6 +182,10 @@ struct QuizResultView: View {
             HStack {
                 Button {
                     navigationPath.removeLast(1)
+                    quizViewModel.startTime = Date.init()
+                    quizViewModel.endTime = Date.init()
+                    quizViewModel.totalProblemCount = 0
+                    quizViewModel.correctCount = 0
                 } label: {
                     Text("홈으로")
                         .font(.subheadline)
@@ -193,6 +201,8 @@ struct QuizResultView: View {
                     retry = true
                     quizViewModel.startTime = Date.init()
                     quizViewModel.endTime = Date.init()
+                    quizViewModel.totalProblemCount = 0
+                    quizViewModel.correctCount = 0
                 } label: {
                     Text("다시 풀기")
                         .font(.subheadline)
