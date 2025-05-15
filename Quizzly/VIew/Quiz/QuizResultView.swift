@@ -19,7 +19,7 @@ struct QuizResultView: View {
     let quizTitle: String
     let notes: [QuizNote]
     let recommendations: [LearningRecommendation]
-    let category: Category
+    let category: QuizCategory
     
     var body: some View {
         VStack(spacing: 24) {
@@ -234,5 +234,3 @@ struct LearningRecommendation: Identifiable, Hashable {
     let title: String
     let duration: String
 }
-
-
