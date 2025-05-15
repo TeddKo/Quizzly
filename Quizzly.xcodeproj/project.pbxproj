@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8DF99A622DD6322F0018ABFF /* SFSymbolsPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 8DF99A612DD6322F0018ABFF /* SFSymbolsPicker */; };
+		8DF99AB72DD63CE50018ABFF /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 8DF99AB62DD63CE50018ABFF /* SymbolPicker */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,7 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8DF99A622DD6322F0018ABFF /* SFSymbolsPicker in Frameworks */,
+				8DF99AB72DD63CE50018ABFF /* SymbolPicker in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,7 +105,7 @@
 			);
 			name = Quizzly;
 			packageProductDependencies = (
-				8DF99A612DD6322F0018ABFF /* SFSymbolsPicker */,
+				8DF99AB62DD63CE50018ABFF /* SymbolPicker */,
 			);
 			productName = Quizzly;
 			productReference = 8D134FEE2DD175DF000BCFD4 /* Quizzly.app */;
@@ -184,7 +184,7 @@
 			mainGroup = 8D134FE52DD175DF000BCFD4;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				8DF99A602DD6322F0018ABFF /* XCRemoteSwiftPackageReference "SFSymbolsPicker" */,
+				8DF99AB52DD63CE50018ABFF /* XCRemoteSwiftPackageReference "SymbolPicker" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8D134FEF2DD175DF000BCFD4 /* Products */;
@@ -553,21 +553,21 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		8DF99A602DD6322F0018ABFF /* XCRemoteSwiftPackageReference "SFSymbolsPicker" */ = {
+		8DF99AB52DD63CE50018ABFF /* XCRemoteSwiftPackageReference "SymbolPicker" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/alessiorubicini/SFSymbolsPicker";
+			repositoryURL = "https://github.com/xnth97/SymbolPicker";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.7;
+				minimumVersion = 1.6.2;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		8DF99A612DD6322F0018ABFF /* SFSymbolsPicker */ = {
+		8DF99AB62DD63CE50018ABFF /* SymbolPicker */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 8DF99A602DD6322F0018ABFF /* XCRemoteSwiftPackageReference "SFSymbolsPicker" */;
-			productName = SFSymbolsPicker;
+			package = 8DF99AB52DD63CE50018ABFF /* XCRemoteSwiftPackageReference "SymbolPicker" */;
+			productName = SymbolPicker;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
