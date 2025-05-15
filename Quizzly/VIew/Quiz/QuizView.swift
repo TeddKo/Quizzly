@@ -22,33 +22,6 @@ struct QuizView: View {
     
     let category: QuizCategory
     let difficulty: DifficultyLevel
-    
-    // TODO: mock 데이터 실제 데이터로 바꾸기
-    let mockOptions = [
-        "Volleyball",
-        "Football",
-        "Basketball",
-        "Badminton"
-    ]
-    
-    let quizList: [Quiz] = [
-        Quiz(
-            id: UUID(),
-            questionDescription: "What is the most popular sport throughout the world?",
-            options: ["Volleyball", "Football", "Basketball", "Badminton"],
-            correctAnswerIndex: 1, // "Football"
-            difficultyLevel: .level1,
-            quizCategory: QuizCategory(name: "World", iconName: "globe", themeColorHex: "#3498db")
-        ),
-        Quiz(
-            id: UUID(),
-            questionDescription: "Which keyword is used to define a constant in Swift?",
-            options: ["let", "var", "const", "def"],
-            correctAnswerIndex: 0, // "let"
-            difficultyLevel: .level1,
-            quizCategory: QuizCategory(name: "Swift", iconName: "swift", themeColorHex: "#e67e22")
-        )
-    ]
     let questions: [Quiz]
     
     var body: some View {
