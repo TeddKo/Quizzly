@@ -25,7 +25,6 @@ struct MainTabView: View {
     
     var body: some View {
         TabView {
-            HomeView(profile: profile, navigationPath: $navigationPath)
             HomeView(profile: profile, navigationPath: $navigationPath,userID:userID)
                 .environmentObject(homeViewModel)
                 .tabItem {
@@ -45,9 +44,9 @@ struct MainTabView: View {
     }
 }
 
-#Preview {
-    MainTabView(
-        profile: Profile(name: "민지", createdAt: .now),
-        navigationPath: .constant(NavigationPath())
-    )
-}
+//#Preview {
+//    MainTabView(
+//        profile: Profile(name: "민지", createdAt: .now),
+//        navigationPath: .constant(NavigationPath())
+//    )
+//}

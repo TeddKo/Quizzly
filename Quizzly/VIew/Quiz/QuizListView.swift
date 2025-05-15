@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct QuizListView: View {
-    let category: QuizCategory
+//    let category: QuizCategory
 
     @Environment(\.modelContext) private var modelContext
 
@@ -33,7 +33,8 @@ struct QuizListView: View {
                 }
                 .onDelete(perform: deleteQuizzes)
             }
-            .navigationTitle("‘\(category.name)’ 퀴즈")
+//            .navigationTitle("‘\(category.name)’ 퀴즈")
+            .navigationTitle("‘test’ 퀴즈")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
@@ -65,26 +66,26 @@ struct QuizListView: View {
     }
 }
 
-#Preview {
-    let sampleCategory = QuizCategory(
-        name: "iOS",
-        iconName: "iphone",
-        themeColorHex: "#34C759"
-    )
-
-    let sampleQuiz = Quiz(
-        questionDescription: "What is SwiftUI used for?",
-        options: ["Networking", "UI Development", "Database", "Audio"],
-        correctAnswerIndex: 1,
-        explanation: "SwiftUI is Apple's declarative UI framework.",
-        difficultyLevel: .level2,
-        quizCategory: sampleCategory
-    )
-
-    let container = try! ModelContainer(for: Quiz.self, QuizCategory.self, configurations: .init(isStoredInMemoryOnly: true))
-    container.mainContext.insert(sampleCategory)
-    container.mainContext.insert(sampleQuiz)
-
-    return QuizListView(category: sampleCategory)
-        .modelContainer(container)
-}
+//#Preview {
+//    let sampleCategory = QuizCategory(
+//        name: "iOS",
+//        iconName: "iphone",
+//        themeColorHex: "#34C759"
+//    )
+//
+//    let sampleQuiz = Quiz(
+//        questionDescription: "What is SwiftUI used for?",
+//        options: ["Networking", "UI Development", "Database", "Audio"],
+//        correctAnswerIndex: 1,
+//        explanation: "SwiftUI is Apple's declarative UI framework.",
+//        difficultyLevel: .level2,
+//        quizCategory: sampleCategory
+//    )
+//
+//    let container = try! ModelContainer(for: Quiz.self, QuizCategory.self, configurations: .init(isStoredInMemoryOnly: true))
+//    container.mainContext.insert(sampleCategory)
+//    container.mainContext.insert(sampleQuiz)
+//
+//    return QuizListView(category: sampleCategory)
+//        .modelContainer(container)
+//}

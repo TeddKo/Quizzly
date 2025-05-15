@@ -51,7 +51,6 @@ struct TotalCorrectRateView: View {
                     .fontWeight(.semibold)
                     .foregroundColor(.black.opacity(0.5))
                 
-                Text("\(Int(overallCorrectRate * 100))%")
                 Text("\(overallScoreRate)%")
                     .font(.title3)
                     .bold()
@@ -66,7 +65,6 @@ struct TotalCorrectRateView: View {
                 
                 Circle()
                     .rotation(.degrees(-90))
-                    .trim(from: 0, to: CGFloat(overallCorrectRate))
                     .trim(from: 0, to: CGFloat(overallScoreRate))
                     .stroke(.blue, style: .init(lineWidth: 10, lineCap: .round))
                     .frame(width: 55, height: 55)
@@ -133,6 +131,7 @@ struct RecommendedQuizView: View {
 struct CategorySectionView: View {
     @Binding var showingAllCategories: Bool
     let categories: [QuizCategory]
+    @Binding var navigationPath: NavigationPath
     @EnvironmentObject var categoryViewModel: CategoryViewModel
 
     @State private var showingAddCategorySheet = false
@@ -241,6 +240,7 @@ struct CategorySectionView: View {
                                         editingCategoryID = nil
                                     }
                                 }
+                                navigationPath.append(category)
                             }
                     }
                 }
@@ -399,7 +399,6 @@ struct HomeView: View {
                 sectionBackground {
                     VStack(alignment: .leading, spacing: 15) {
                         ProfileInfoView(name: profile.name, themeColorHex: profile.themeColorHex)
-                        TotalCorrectRateView() // TODO: 실제 정답률 데이터 전달
                         TotalCorrectRateView(overallScoreRate: homeViewModel.overallScoreRate) // TODO: 실제 정답률 데이터 전달
                         RecommendedQuizView()  // TODO: 실제 추천 퀴즈 데이터 전달
                     }
@@ -408,7 +407,8 @@ struct HomeView: View {
                 sectionBackground {
                     CategorySectionView(
                         showingAllCategories: $showingAllCategories,
-                        categories: categoryViewModel.categories
+                        categories: categoryViewModel.categories,
+                        navigationPath: $navigationPath
                     )
                 }
                 
@@ -441,37 +441,37 @@ struct HomeView: View {
     }
 }
 
-struct HomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try! ModelContainer(for: Profile.self, QuizCategory.self, Quiz.self, QuizAttempt.self, configurations: config)
-        
-        let sampleProfile = Profile(name: "민지", createdAt: Date.now, themeColorHex: "#34C759")
-        container.mainContext.insert(sampleProfile)
-        
-        let sampleCategory1 = QuizCategory(name: "Swift", iconName: "swift", themeColorHex: "#FF9500")
-        let sampleCategory2 = QuizCategory(name: "알고리즘", iconName: "slider.horizontal.3", themeColorHex: "#007AFF")
-        container.mainContext.insert(sampleCategory1)
-        container.mainContext.insert(sampleCategory2)
-        
-        let sampleQuiz1 = Quiz(questionDescription: "Swift에서 상수를 선언하는 키워드는?", options: ["var", "let", "const"], correctAnswerIndex: 1, difficultyLevel: .level1, quizCategory: sampleCategory1)
-        container.mainContext.insert(sampleQuiz1)
-        
-        let sampleAttempt1 = QuizAttempt(attemptDate: Date().addingTimeInterval(-3600), selectedAnswerIndex: 1, wasCorrect: true, profile: sampleProfile, quiz: sampleQuiz1)
-        let sampleAttempt2 = QuizAttempt(attemptDate: Date(), selectedAnswerIndex: 0, wasCorrect: false, profile: sampleProfile, quiz: sampleQuiz1)
-        sampleProfile.attempts?.append(sampleAttempt1)
-        sampleProfile.attempts?.append(sampleAttempt2)
-        
-        let categoryVM = CategoryViewModel(modelContext: container.mainContext)
-        categoryVM.fetchCategory()
-        
-        return NavigationStack {
-            HomeView(
-                profile: sampleProfile,
-                navigationPath: .constant(NavigationPath())
-            )
-            .environmentObject(categoryVM)
-            .modelContainer(container)
-        }
-    }
-}
+//struct HomeView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+//        let container = try! ModelContainer(for: Profile.self, QuizCategory.self, Quiz.self, QuizAttempt.self, configurations: config)
+//        
+//        let sampleProfile = Profile(name: "민지", createdAt: Date.now, themeColorHex: "#34C759")
+//        container.mainContext.insert(sampleProfile)
+//        
+//        let sampleCategory1 = QuizCategory(name: "Swift", iconName: "swift", themeColorHex: "#FF9500")
+//        let sampleCategory2 = QuizCategory(name: "알고리즘", iconName: "slider.horizontal.3", themeColorHex: "#007AFF")
+//        container.mainContext.insert(sampleCategory1)
+//        container.mainContext.insert(sampleCategory2)
+//        
+//        let sampleQuiz1 = Quiz(questionDescription: "Swift에서 상수를 선언하는 키워드는?", options: ["var", "let", "const"], correctAnswerIndex: 1, difficultyLevel: .level1, quizCategory: sampleCategory1)
+//        container.mainContext.insert(sampleQuiz1)
+//        
+//        let sampleAttempt1 = QuizAttempt(attemptDate: Date().addingTimeInterval(-3600), selectedAnswerIndex: 1, wasCorrect: true, profile: sampleProfile, quiz: sampleQuiz1)
+//        let sampleAttempt2 = QuizAttempt(attemptDate: Date(), selectedAnswerIndex: 0, wasCorrect: false, profile: sampleProfile, quiz: sampleQuiz1)
+//        sampleProfile.attempts?.append(sampleAttempt1)
+//        sampleProfile.attempts?.append(sampleAttempt2)
+//        
+//        let categoryVM = CategoryViewModel(modelContext: container.mainContext)
+//        categoryVM.fetchCategory()
+//        
+//        return NavigationStack {
+//            HomeView(
+//                profile: sampleProfile,
+//                navigationPath: .constant(NavigationPath())
+//            )
+//            .environmentObject(categoryVM)
+//            .modelContainer(container)
+//        }
+//    }
+//}
