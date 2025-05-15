@@ -84,6 +84,7 @@ struct QuizView: View {
                     selectedOption = nil
                 } else {
                     showResult = true
+                    quizViewModel.endTime = Date.now
                 }
             } label: {
                 Text(currentIndex == quizList.count - 1 ? "Finish" : "Next")
@@ -119,6 +120,11 @@ struct QuizView: View {
                 quizViewModel.fetchQuiz(category: category)
                 quizList = quizViewModel.filterQuizzes
                 isCount = quizList.count
+                quizViewModel.startTime = Date.now
+            }
+            .onDisappear {
+                quizViewModel.calculateDuration()
+                print(quizViewModel.formattedDuration)
             }
         }
         .padding(.horizontal)

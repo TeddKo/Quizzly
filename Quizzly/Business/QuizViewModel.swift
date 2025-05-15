@@ -15,6 +15,11 @@ class QuizViewModel: ObservableObject {
     @Published var quizzes: [Quiz] = []
     @Published var category: QuizCategory = QuizCategory(name: "")
     @Published var filterQuizzes:[Quiz] = []
+    @Published var attempts:[QuizAttempt] = []
+    @Published var startTime:Date = Date.now
+    @Published var endTime:Date = Date.now
+    @Published var takenTime:Double = 0.0
+    @Published var formattedDuration:String = ""
     
     private var modelContext: ModelContext
 
@@ -70,6 +75,16 @@ class QuizViewModel: ObservableObject {
         }
     }
     
+    func calculateDuration(){
+        let duration = endTime.timeIntervalSince(startTime)
+        takenTime = duration
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.minute, .second]
+        formatter.unitsStyle = .positional
+        formatter.zeroFormattingBehavior = [.pad]
+        formattedDuration = formatter.string(from: duration) ?? "0:00"
+    }
+    
     func deleteQuiz(quiz: Quiz) {
         do {
             modelContext.delete(quiz)
@@ -103,7 +118,7 @@ class QuizViewModel: ObservableObject {
             print("Filtering Error")
         }
     }
-
+    
     func saveContext() throws {
         if modelContext.hasChanges {
             do {
