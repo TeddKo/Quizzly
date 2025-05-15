@@ -327,7 +327,7 @@ struct Test: View {
                         Button(action: addNewItem) {
                             Image(systemName: "plus.circle.fill")
                                 .font(.largeTitle)
-                                .foregroundColor(.green)
+                                .foregroundColor(Color.adaptiveGreen)
                         }
                         .padding(10)
                     }
@@ -346,7 +346,7 @@ struct Test: View {
                         Button(action: addNewItem) {
                             Image(systemName: "plus.circle.fill")
                                 .font(.largeTitle)
-                                .foregroundColor(.green)
+                                .foregroundColor(Color.adaptiveGreen)
                         }
                         .padding(10)
                     }
@@ -356,7 +356,7 @@ struct Test: View {
             }
             .padding()
             .navigationTitle("Flow Layout Demo")
-            .background(Color.gray.opacity(0.1).edgesIgnoringSafeArea(.all))
+            .background(Color.secondary.opacity(0.1).edgesIgnoringSafeArea(.all))
             .onTapGesture {
                 if editingItemId != nil {
                     withAnimation {
@@ -374,8 +374,7 @@ struct Test: View {
         Text(item.text)
             .font(.headline)
             .padding()
-            .background(isEditingThisItem ? Color.orange.opacity(0.8) : Color.blue)
-            .foregroundColor(.white)
+            .background(isEditingThisItem ? Color.orange.opacity(0.8) : Color.adaptiveBlue)
             .cornerRadius(16)
             .shadow(radius: isEditingThisItem ? 5 : 0)
             .rotationEffect(isEditingThisItem ? Angle.degrees(2.0) : Angle.degrees(0))
@@ -397,8 +396,7 @@ struct Test: View {
                         } label: {
                             Image(systemName: "xmark.circle.fill")
                                 .font(.title2)
-                                .foregroundColor(.red)
-                                .background(Circle().fill(Color.white).padding(2))
+                                .foregroundColor(Color.adaptiveRed)
                         }
                         .offset(x: 10, y: -10)
                         .transition(.scale.combined(with: .opacity))

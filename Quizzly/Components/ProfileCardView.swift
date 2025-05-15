@@ -14,7 +14,7 @@ struct ProfileCardView: View {
         VStack {
             ZStack {
                 Circle()
-                    .fill(profile.themeColorHex?.asHexColor ?? .gray)
+                    .fill(profile.themeColorHex?.asHexColor ?? .secondary)
                     .frame(width: 50, height: 50)
                 
                 Image(systemName: "person.fill")
@@ -23,11 +23,11 @@ struct ProfileCardView: View {
                     .frame(width: 18, height: 18)
                     .foregroundStyle(profile.themeColorHex?.asHexColor == .white ? .black : .white)
             }
-            .shadow(color: .gray.opacity(0.3), radius: 7, x: 0, y: 3)
+            .shadow(color: Color.adaptiveGrayOverlay, radius: 7, x: 0, y: 3)
             
             Text(profile.name)
                 .font(.caption)
-                .foregroundStyle(.black)
+                .foregroundStyle(.primary)
         }
     }
 }

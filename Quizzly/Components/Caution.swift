@@ -26,7 +26,7 @@ struct Caution: View {
             }
             .padding(15)
             .frame(maxWidth: .infinity, minHeight: 80)
-            .background(Color.gray.opacity(0.08))
+            .background(Color.secondary.opacity(0.08))
             .cornerRadius(8)
         }
     }
