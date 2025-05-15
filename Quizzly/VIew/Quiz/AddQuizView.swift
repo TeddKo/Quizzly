@@ -9,7 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct AddQuizView: View {
-    @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject var quizViewModel: QuizViewModel
+    @EnvironmentObject var categoryViewModel: CategoryViewModel
     @Environment(\.dismiss) var dismiss
 
     @State private var questionDescription: String = ""
@@ -18,59 +19,95 @@ struct AddQuizView: View {
     @State private var explanation: String = ""
     @State private var difficultyLevel: DifficultyLevel = .level3
     @State private var imagePath: String? = nil
-    
     @State private var selectedCategory: QuizCategory? = nil
-    
-    @Query(sort: \QuizCategory.name) private var categories: [QuizCategory]
+    @State private var canSaveChanges: Bool = false
 
     var body: some View {
-        VStack {
-            VStack(alignment: .leading, spacing: 30) {
-                AddQuizOriginalHeaderView(onSave: saveQuiz, onDismiss: { dismiss() }, isSaveEnabled: isFormValid())
-                
-                CategoryOriginalPickerView(selectedCategory: $selectedCategory, categories: categories, modelContext: modelContext)
-                
-                DifficultyOriginalPickerView(difficultyLevel: $difficultyLevel)
-                
-                QuestionOriginalInputView(questionDescription: $questionDescription)
-                
-                OptionsOriginalListView(options: $options, correctAnswerIndex: $correctAnswerIndex)
-                
-                ExplanationOriginalInputView(explanation: $explanation)
-                
-                Spacer()
+        VStack(spacing: 0) {
+            AddQuizOriginalHeaderView(
+                onSave: saveQuiz,
+                onDismiss: { dismiss() },
+                isSaveEnabled: canSaveChanges
+            )
+            .padding(.horizontal)
+            .padding(.top)
+
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 24) {
+                    CategoryOriginalPickerView(
+                        selectedCategory: $selectedCategory,
+                        categories: categoryViewModel.categories
+                    )
+                    
+                    DifficultyOriginalPickerView(difficultyLevel: $difficultyLevel)
+                    
+                    QuestionOriginalInputView(questionDescription: $questionDescription)
+                    
+                    OptionsOriginalListView(options: $options, correctAnswerIndex: $correctAnswerIndex)
+                    
+                    ExplanationOriginalInputView(explanation: $explanation)
+                    
+                }
+                .padding()
             }
-            .padding()
             .background(Color.white)
             .clipShape(RoundedRectangle(cornerRadius: 16))
+            .padding(.horizontal)
+            .padding(.bottom)
+
         }
-        .padding()
-        .padding(.top, 50)
-        .ignoresSafeArea(edges: [.top, .bottom])
-        .background(.gray.opacity(0.1))
+        
+        .ignoresSafeArea(.keyboard, edges: .top)
+        .background(Color(UIColor.systemGroupedBackground).edgesIgnoringSafeArea(.all)) // 전체 배경색
+        .onAppear {
+            if categoryViewModel.categories.isEmpty {
+                 categoryViewModel.fetchCategory()
+            }
+            validateForm()
+        }
+        .onChange(of: questionDescription) { _, _ in validateForm() }
+        .onChange(of: options) { _, _ in validateForm() }
+        .onChange(of: correctAnswerIndex) { _, _ in validateForm() }
+        .onChange(of: selectedCategory) { _, _ in validateForm() }
+        .onChange(of: difficultyLevel) { _, _ in validateForm() }
+        .onChange(of: explanation) { _, _ in validateForm() }
     }
     
-    private func isFormValid() -> Bool {
-        return selectedCategory != nil &&
-               !questionDescription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-               options.allSatisfy { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    private func validateForm() {
+        canSaveChanges = selectedCategory != nil &&
+                         !questionDescription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+                         options.allSatisfy { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty } &&
+                         options.indices.contains(correctAnswerIndex)
     }
 
     private func saveQuiz() {
-        guard let category = selectedCategory, isFormValid() else { return }
+        guard let category = selectedCategory, canSaveChanges else {
+            print("AddQuizView: Form is not valid, category not selected, or save not enabled.")
+            return
+        }
         
-        let newQuiz = Quiz(
+        quizViewModel.addQuiz(
             questionDescription: questionDescription,
             options: options,
             correctAnswerIndex: correctAnswerIndex,
             explanation: explanation.isEmpty ? nil : explanation,
             difficultyLevel: difficultyLevel,
-            quizCategory: category,
+            category: category,
             imagePath: imagePath
         )
         
-        modelContext.insert(newQuiz)
-        dismiss()
+        DispatchQueue.main.async {
+            categoryViewModel.fetchCategory()
+        }
+        
+        questionDescription = ""
+        options = Array(repeating: "", count: 4)
+        correctAnswerIndex = 0
+        explanation = ""
+        difficultyLevel = .level3
+        selectedCategory = nil
+        imagePath = nil
+        canSaveChanges = false
     }
 }
 
@@ -84,22 +121,20 @@ struct AddQuizOriginalHeaderView: View {
             Text("퀴즈 생성")
                 .font(.title2)
                 .bold()
-            
             Spacer()
-            
             Button("저장") {
                 onSave()
             }
             .fontWeight(.semibold)
             .disabled(!isSaveEnabled)
         }
+        .padding(.vertical, 8)
     }
 }
 
 struct CategoryOriginalPickerView: View {
     @Binding var selectedCategory: QuizCategory?
     let categories: [QuizCategory]
-    let modelContext: ModelContext
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -110,15 +145,15 @@ struct CategoryOriginalPickerView: View {
             
             Menu {
                 Picker("카테고리", selection: $selectedCategory) {
-                    Text("선택").tag(QuizCategory?.none)
+                    Text("선택").tag(nil as QuizCategory?)
                     ForEach(categories) { category in
-                        Text(category.name).tag(QuizCategory?.some(category))
+                        Text(category.name).tag(category as QuizCategory?)
                     }
                 }
             } label: {
                 HStack {
                     Text(selectedCategory?.name ?? "선택")
-                        .foregroundColor(.primary)
+                        .foregroundColor(selectedCategory == nil ? .gray : .primary)
                     Spacer()
                     Image(systemName: "chevron.down")
                         .font(.caption)
@@ -216,10 +251,10 @@ struct OptionOriginalInputRowView: View {
                 .fontWeight(.semibold)
                 .foregroundColor(isCorrectAnswer ? .white : .black.opacity(0.5))
                 .frame(width: 30, height: 30)
-                .background(isCorrectAnswer ? .blue : .clear)
+                .background(isCorrectAnswer ? Color.blue : Color.clear)
                 .overlay(
                     Circle()
-                        .stroke(isCorrectAnswer ? .blue : .gray.opacity(0.5), lineWidth: 2)
+                        .stroke(isCorrectAnswer ? Color.blue : Color.gray.opacity(0.5), lineWidth: 2)
                 )
                 .clipShape(Circle())
             
@@ -227,7 +262,7 @@ struct OptionOriginalInputRowView: View {
                 .padding(8)
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(isCorrectAnswer ? .green : Color.gray.opacity(0.5), lineWidth: isCorrectAnswer ? 2 : 1)
+                        .stroke(isCorrectAnswer ? Color.green : Color.gray.opacity(0.5), lineWidth: isCorrectAnswer ? 2 : 1)
                 )
             
             Spacer()
@@ -266,15 +301,36 @@ struct ExplanationOriginalInputView: View {
     }
 }
 
+
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: QuizCategory.self, Quiz.self, configurations: config)
+    let modelContext = container.mainContext
 
-    let sampleCategory1 = QuizCategory(name: "Sample Category 1")
-    let sampleCategory2 = QuizCategory(name: "Sample Category 2")
-    container.mainContext.insert(sampleCategory1)
-    container.mainContext.insert(sampleCategory2)
+    let sampleCategory1 = QuizCategory(name: "일상 영어", iconName: "text.bubble")
+    modelContext.insert(sampleCategory1)
     
-    return AddQuizView()
+    let quizVM = QuizViewModel(modelContext: modelContext)
+    let categoryVM = CategoryViewModel(modelContext: modelContext)
+    
+    struct PreviewContainer: View {
+        @StateObject var qVM: QuizViewModel
+        @StateObject var cVM: CategoryViewModel
+        
+        init(quizVM: QuizViewModel, categoryVM: CategoryViewModel) {
+            _qVM = StateObject(wrappedValue: quizVM)
+            _cVM = StateObject(wrappedValue: categoryVM)
+        }
+        
+        var body: some View {
+            ZStack {
+                AddQuizView()
+                    .environmentObject(qVM)
+                    .environmentObject(cVM)
+            }
+        }
+    }
+
+    return PreviewContainer(quizVM: quizVM, categoryVM: categoryVM)
         .modelContainer(container)
 }

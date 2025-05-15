@@ -8,7 +8,6 @@
 import SwiftUI
 import SwiftData
 
-// MARK: QuizOptionRowView
 struct QuizOptionRowView: View {
     let optionText: String
     @Binding var selectedOption: String?
@@ -37,7 +36,6 @@ struct QuizOptionRowView: View {
     }
 }
 
-// MARK: QuizOptionsListView
 struct QuizOptionsListView: View {
     let options: [String]
     @Binding var selectedOption: String?
@@ -51,7 +49,6 @@ struct QuizOptionsListView: View {
     }
 }
 
-// MARK: QuizQuestionView
 struct QuizQuestionView: View {
     let questionDescription: String
 
@@ -92,7 +89,7 @@ struct QuizView: View {
     
     private var filteredQuizzes: [Quiz] {
         allFetchedQuizzes.filter { quiz in
-            (quiz.quizCategory?.id == category.id) && (quiz.difficultyLevel == difficulty)
+            quiz.quizCategory?.id == category.id
         }
     }
     
@@ -227,8 +224,8 @@ struct QuizView: View {
                     Choice(label: String(UnicodeScalar(65 + index)!), text: option)
                 },
                 recommendations: [
-                    LearningRecommendation(title: "이 주제 복습", duration: "10분"),
-                    LearningRecommendation(title: "개념 다시 보기", duration: "7분")
+                    LearningRecommendation(id: UUID(), title: "이 주제 복습", duration: "10분"),
+                    LearningRecommendation(id: UUID(), title: "개념 다시 보기", duration: "7분")
                 ],
                 memo: ""
             )
