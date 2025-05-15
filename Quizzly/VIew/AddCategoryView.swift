@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import SFSymbolsPicker
 
 struct AddCategoryView: View {
     @Environment(\.dismiss) var dismiss
@@ -14,6 +15,7 @@ struct AddCategoryView: View {
     @State private var categoryName: String = ""
     @State private var categoryIconName: String = ""
     @State private var categoryThemeColor: Color = .gray
+    @State private var isPresented: Bool = false
     
     @EnvironmentObject private var categoryViewModel: CategoryViewModel
 
@@ -21,7 +23,12 @@ struct AddCategoryView: View {
         NavigationStack {
             Form {
                 TextField("카테고리 이름", text: $categoryName)
-                TextField("아이콘 이름", text: $categoryIconName)
+                Button {
+                    isPresented = true
+                } label: {
+                    SymbolPicker(categoryIconName: $categoryIconName, isPresented: $isPresented)
+                }
+                .tint(.primary)
                 ColorPicker("테마 색상 선택", selection: $categoryThemeColor, supportsOpacity: false)
             }
             .navigationTitle("카테고리 추가")
