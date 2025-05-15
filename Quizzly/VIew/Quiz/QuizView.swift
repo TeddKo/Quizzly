@@ -22,7 +22,7 @@ struct QuizView: View {
 
     @Query(sort: \Quiz.questionDescription) private var quizzes: [Quiz]
     
-    let category: Category
+    let category: QuizCategory
     let difficulty: DifficultyLevel
     
     // TODO: mock 데이터 실제 데이터로 바꾸기
@@ -51,6 +51,7 @@ struct QuizView: View {
             quizCategory: QuizCategory(name: "Swift", iconName: "swift", themeColorHex: "#e67e22")
         )
     ]
+    let questions: [Quiz]
     
     var body: some View {
         VStack(spacing: 30) {
@@ -59,7 +60,7 @@ struct QuizView: View {
                     .fill(.gray.opacity(0.5))
                     .frame(maxWidth: .infinity, maxHeight: 200)
                     .overlay {
-                        Text(quizList[currentIndex].questionDescription)
+                        Text(questions[currentIndex].questionDescription)
                             .bold()
                             .foregroundStyle(.black)
                             .multilineTextAlignment(.center)
@@ -67,7 +68,7 @@ struct QuizView: View {
             }
             
             VStack(spacing: 12) {
-                ForEach(quizList[currentIndex].options, id: \.self) { option in
+                ForEach(questions[currentIndex].options, id: \.self) { option in
                     Button {
                         selectedOption = option
                     } label: {
@@ -89,18 +90,19 @@ struct QuizView: View {
             
             Button {
                 if let selected = selectedOption,
-                   selected == quizList[currentIndex].correctAnswer {
+                   selected == questions[currentIndex].correctAnswer {
                     correctCount += 1
                 }
 
-                if currentIndex < quizList.count - 1 {
+                if currentIndex < questions.count - 1 {
                     currentIndex += 1
                     selectedOption = nil
                 } else {
+                    evaluateQuizResults(from: questions)
                     showResult = true
                 }
             } label: {
-                Text(currentIndex == quizList.count - 1 ? "Finish" : "Next")
+                Text(currentIndex == questions.count - 1 ? "Finish" : "Next")
                     .tint(.white)
                     .bold()
                     .padding()
@@ -120,13 +122,14 @@ struct QuizView: View {
                 QuizResultView(
                     navigationPath: $navigationPath,
                     correctCount: correctCount,
-                    incorrectCount: quizList.count - correctCount,
+                    incorrectCount: questions.count - correctCount,
                     totalTime: "03:24",
-                    scorePercentage: Int((Double(correctCount) / Double(quizList.count)) * 100),
-                    quizTitle: "\(category.title) 퀴즈",
                     notes: [],
+                    scorePercentage: Int((Double(correctCount) / Double(questions.count)) * 100),
+                    quizTitle: "\(category.name) 퀴즈",
                     recommendations: [],
-                    category: category
+                    category: category,
+                    questions: questions
                 )
             }
 
