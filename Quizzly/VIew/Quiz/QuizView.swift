@@ -50,14 +50,20 @@ struct QuizView: View {
     
     @Binding var navigationPath: NavigationPath
 
+    // 기존 상태 변수들
     @State private var selectedOption: String? = nil
     @State private var currentIndex: Int = 0
     @State private var showResult: Bool = false
     @State private var correctCount: Int = 0
     @State private var wrongNotes: [QuizNote] = []
     @State private var userAnswers: [Int] = []
-    
     @State private var fetchedQuizzesForCategory: [Quiz] = []
+    @State private var quizStartTime: Date? = nil
+    @State private var elapsedTime: TimeInterval = 0
+    @State private var timerSubscription: Timer.TimerPublisher.Output? = nil
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    
+    @State private var totalQuizTimeTaken: String = "00:00"
 
     let category: QuizCategory
     let difficulty: DifficultyLevel
@@ -94,6 +100,7 @@ struct QuizView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button(action: {
+                    stopTimer()
                     if navigationPath.count > 0 { navigationPath.removeLast() } else { dismiss() }
                 }) {
                     Image(systemName: "xmark")
@@ -108,7 +115,7 @@ struct QuizView: View {
                 navigationPath: $navigationPath,
                 correctCount: correctCount,
                 incorrectCount: fetchedQuizzesForCategory.count - correctCount,
-                totalTime: "03:24", // TODO: 실제 시간 측정
+                totalTime: totalQuizTimeTaken,
                 scorePercentage: fetchedQuizzesForCategory.isEmpty ? 0 : Int((Double(correctCount) / Double(fetchedQuizzesForCategory.count)) * 100),
                 quizTitle: "\(category.name) 퀴즈 결과",
                 notes: wrongNotes,
@@ -118,28 +125,59 @@ struct QuizView: View {
         }
         .onAppear {
             fetchQuizzesForCurrentCategory()
-            resetQuizState()
+            resetQuizStateAndTimer()
             print("--- QuizView onAppear ---")
             print("Category: \(category.name)")
             print("Fetched quizzes count for category: \(fetchedQuizzesForCategory.count)")
         }
-        .onChange(of: category) { _, newCategory in // category가 바뀔 때만 퀴즈 다시 로드
+        .onDisappear {
+             stopTimer()
+         }
+        .onReceive(timer) { firedDate in
+            guard quizStartTime != nil, !showResult else {
+               return
+            }
+            elapsedTime = Date().timeIntervalSince(quizStartTime!)
+        }
+        .onChange(of: category) { _, newCategory in
             print("Category changed to: \(newCategory.name). Fetching quizzes.")
+            stopTimer()
             fetchQuizzesForCurrentCategory()
-            resetQuizState()
+            resetQuizStateAndTimer()
+        }
+    }
+    
+    private func startTimer() {
+        quizStartTime = Date()
+        elapsedTime = 0
+        print("Timer started at \(String(describing: quizStartTime))")
+    }
+
+    private func stopTimer() {
+        quizStartTime = nil
+        // self.timerSubscription?.cancel()
+        print("Timer stopped. Final elapsed time: \(elapsedTime)")
+    }
+
+    private func formatTime(_ interval: TimeInterval) -> String {
+        let totalSeconds = Int(interval)
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        let seconds = totalSeconds % 60
+        
+        if hours > 0 {
+            return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+        } else {
+            return String(format: "%02d:%02d", minutes, seconds)
         }
     }
     
     private func fetchQuizzesForCurrentCategory() {
         let categoryID = category.id
-        
         let predicate = #Predicate<Quiz> { quiz in
             quiz.quizCategory?.id == categoryID
         }
-        let descriptor = FetchDescriptor<Quiz>(
-            predicate: predicate,
-            sortBy: [SortDescriptor(\Quiz.questionDescription)]
-        )
+        let descriptor = FetchDescriptor<Quiz>(predicate: predicate, sortBy: [SortDescriptor(\Quiz.questionDescription)])
         
         do {
             fetchedQuizzesForCategory = try modelContext.fetch(descriptor)
@@ -150,13 +188,14 @@ struct QuizView: View {
         }
     }
 
-    private func resetQuizState() {
+    private func resetQuizStateAndTimer() {
         selectedOption = nil
         currentIndex = 0
         correctCount = 0
         wrongNotes = []
         userAnswers = []
         showResult = false
+        startTimer()
     }
     
     private func handleNextButtonTap(for quiz: Quiz) {
@@ -174,6 +213,8 @@ struct QuizView: View {
             currentIndex += 1
             selectedOption = nil
         } else {
+            stopTimer()
+            totalQuizTimeTaken = formatTime(elapsedTime)
             evaluateQuizResults(from: fetchedQuizzesForCategory)
             showResult = true
         }
@@ -195,7 +236,7 @@ struct QuizView: View {
             }
 
             return QuizNote(
-                originalQuizID: quiz.id, // 원본 Quiz의 ID
+                originalQuizID: quiz.id,
                 question: quiz.questionDescription,
                 userAnswer: selectedAnswerText,
                 correctAnswer: correctAnswerText,
