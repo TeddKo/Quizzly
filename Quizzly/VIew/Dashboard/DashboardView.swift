@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// MARK: PeriodFilter
 enum PeriodFilter: String, CaseIterable, Identifiable {
     case all = "전체"
     case thisWeek = "이번 주"
@@ -15,6 +16,7 @@ enum PeriodFilter: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
+//MARK: WrongNoteCategory
 enum WrongNoteCategory: String, CaseIterable, Identifiable {
     case all = "전체 카테고리"
     case swift = "Swift"
@@ -26,6 +28,7 @@ enum WrongNoteCategory: String, CaseIterable, Identifiable {
     var id: String { self.rawValue }
 }
 
+// MARK: WrongNote
 struct WrongNote: Identifiable {
     var id = UUID()
     var question: String
@@ -34,6 +37,7 @@ struct WrongNote: Identifiable {
     var accuracy: Int
 }
 
+// MARK: mockNotes
 let mockNotes: [WrongNote] = [
     WrongNote(question: "TCP와 UDP의 차이점으로 올바르지 않은 것은?", category: "네트워크", date: "오늘", accuracy: 75),
     WrongNote(question: "HTTP 상태 코드 401과 403의 차이점은?", category: "네트워크", date: "어제", accuracy: 62),
@@ -41,177 +45,27 @@ let mockNotes: [WrongNote] = [
     WrongNote(question: "Big-O에서 O(n log n)의 정렬 알고리즘?", category: "알고리즘", date: "5월 8일", accuracy: 55)
 ]
 
+// MARK: DashboardView
 struct DashboardView: View {
     @State private var selectedPeriod: PeriodFilter = .all
     @State private var selectedCategory: WrongNoteCategory = .all
     @State private var searchText: String = ""
     
-    // TODO: 취약 카테고리 받아서 실제 percent로 교체
     private var weakCategoryPercent = 0.6
     
     var body: some View {
         NavigationStack {
             ScrollView {
-                Group {
-                    VStack(alignment: .leading, spacing: 18) {
-                        HStack {
-                            Text("대시보드")
-                                .font(.headline)
-                                .fontWeight(.bold)
-                            
-                            Spacer()
-                            
-                            // MARK: 기간 탭 필터
-                            Menu {
-                                Picker("기간 선택", selection: $selectedPeriod) {
-                                    ForEach(PeriodFilter.allCases) { period in
-                                        Text(period.rawValue).tag(period)
-                                    }
-                                }
-                            } label: {
-                                HStack {
-                                    Text(selectedPeriod.rawValue)
-                                        .font(.caption) // ← 여기서 폰트 크기 조절
-                                        .foregroundColor(.blue)
-
-                                    Image(systemName: "chevron.down")
-                                        .font(.caption2)
-                                        .foregroundColor(.blue)
-                                }
-                            }
-                        }
-                        
-                        // MARK: 퀴즈 통계 카드
-                        HStack(spacing: 16) {
-                            StatCard(title: "퀴즈 시도 횟수", value: "32", background: Color.blue.opacity(0.1))
-                            
-                            StatCard(title: "평균 정답률", value: "78%", subtitle: "↑ 5%", background: Color.green.opacity(0.1))
-                        }
-                        
-                        // MARK: 카테고리별 성과
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("카테고리별 성과")
-                                .font(.callout)
-                                .fontWeight(.bold)
-                            
-                            HStack(spacing: 12) {
-                                CategoryPerformanceCard(category: "Swift", percent: 0.9, color: .blue, icon: "chevron.left.slash.chevron.right")
-                                
-                                CategoryPerformanceCard(category: "자료구조", percent: 0.75, color: .purple, icon: "doc.on.clipboard")
-                                
-                                CategoryPerformanceCard(category: "네트워크", percent: 0.6, color: .red, icon: "arrow.left.arrow.right")
-                            }
-                        }
-                        
-                        // MARK: 취약 카테고리
-                        VStack(alignment: .leading, spacing: 12) {
-                            
-                            HStack {
-                                Text("취약 카테고리")
-                                    .font(.callout)
-                                    .fontWeight(.bold)
-                                
-                                Spacer()
-                                
-                                ZStack {
-                                    Circle()
-                                        .stroke(.gray.opacity(0.3), lineWidth: 10)
-                                        .frame(width: 50, height: 50)
-                                    
-                                    Circle()
-                                        .rotation(.degrees(-90))
-                                        .trim(from: 0, to: weakCategoryPercent)
-                                        .stroke(.red, style: .init(lineWidth: 10, lineCap: .round))
-                                        .frame(width: 50, height: 50)
-                                    
-                                    Text("\(Int(weakCategoryPercent * 100))%")
-                                        .font(.caption)
-                                        .bold()
-                                }
-                                .clipShape(.circle)
-                            }
-                            
-                            HStack(spacing: 12) {
-                                WeakCategoryCard(title: "네트워크 (60%)", subtitle: "TCP/IP 프로토콜 관련 문제에 취약", percent: 0.6)
-                            }
-                            
-                            Button{
-                                
-                            } label: {
-                                Text("맞춤 학습 시작")
-                                    .fontWeight(.semibold)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(12)
-                                    .background(Color.blue)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(10)
-                            }
-                        }
-                    }
-                }
-                .padding()
-                .background(.white)
-                .cornerRadius(16)
-                .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+                StatisticsAndPerformanceSection(
+                    selectedPeriod: $selectedPeriod,
+                    weakCategoryPercent: weakCategoryPercent
+                )
                 
-                Group {
-                    // MARK: 오답 노트
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack {
-                            Text("오답 노트")
-                                .font(.callout)
-                                .fontWeight(.bold)
-                            
-                            Spacer()
-                            
-                            Menu {
-                                // MARK: 카테고리 탭 필터
-                                Picker("카테고리 선택", selection: $selectedCategory) {
-                                    ForEach(WrongNoteCategory.allCases) { category in
-                                        Text(category.rawValue).tag(category)
-                                    }
-                                }
-                            } label: {
-                                HStack {
-                                    Text(selectedCategory.rawValue)
-                                        .font(.caption)
-                                        .foregroundColor(.blue)
-                                    
-                                    Image(systemName: "chevron.down")
-                                        .font(.caption2)
-                                        .foregroundColor(.blue)
-                                }
-                            }
-                        }
-                        
-                        HStack {
-                            Image(systemName: "magnifyingglass")
-                                .foregroundColor(.gray)
-                            
-                            TextField("검색어를 입력하세요", text: $searchText)
-                        }
-                        .padding(10)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(10)
-                        
-                        ScrollView {
-                             VStack(spacing: 12) {
-                                 ForEach(mockNotes, id: \.id) { note in
-                                     WrongNoteCard(
-                                         question: note.question,
-                                         category: note.category,
-                                         date: note.date,
-                                         accuracy: note.accuracy
-                                     )
-                                 }
-                             }
-                         }
-                    }
-                }
-                .padding()
-                .background(.white)
-                .cornerRadius(16)
-                .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+                WrongNotesDashboardSection(
+                    selectedCategory: $selectedCategory,
+                    searchText: $searchText,
+                    notes: mockNotes
+                )
             }
             .padding()
             .padding(.top, 50)
@@ -221,7 +75,228 @@ struct DashboardView: View {
     }
 }
 
+// MARK: StatisticsAndPerformanceSection
+struct StatisticsAndPerformanceSection: View {
+    @Binding var selectedPeriod: PeriodFilter
+    let weakCategoryPercent: Double
 
+    var body: some View {
+        Group {
+            VStack(alignment: .leading, spacing: 18) {
+                DashboardHeader(selectedPeriod: $selectedPeriod)
+                QuizStatisticsCards()
+                CategoryPerformanceCards()
+                WeakCategoryView(weakCategoryPercent: weakCategoryPercent)
+            }
+        }
+        .padding()
+        .background(.white)
+        .cornerRadius(16)
+        .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+    }
+}
+
+// MARK: DashboardHeader
+struct DashboardHeader: View {
+    @Binding var selectedPeriod: PeriodFilter
+
+    var body: some View {
+        HStack {
+            Text("대시보드")
+                .font(.headline)
+                .fontWeight(.bold)
+            
+            Spacer()
+            
+            Menu {
+                Picker("기간 선택", selection: $selectedPeriod) {
+                    ForEach(PeriodFilter.allCases) { period in
+                        Text(period.rawValue).tag(period)
+                    }
+                }
+            } label: {
+                HStack {
+                    Text(selectedPeriod.rawValue)
+                        .font(.caption)
+                        .foregroundColor(.blue)
+
+                    Image(systemName: "chevron.down")
+                        .font(.caption2)
+                        .foregroundColor(.blue)
+                }
+            }
+        }
+    }
+}
+
+// MARK: QuizStatisticsCards
+struct QuizStatisticsCards: View {
+    var body: some View {
+        HStack(spacing: 16) {
+            StatCard(title: "퀴즈 시도 횟수", value: "32", background: Color.blue.opacity(0.1))
+            StatCard(title: "평균 정답률", value: "78%", subtitle: "↑ 5%", background: Color.green.opacity(0.1))
+        }
+    }
+}
+
+struct CategoryPerformanceCards: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("카테고리별 성과")
+                .font(.callout)
+                .fontWeight(.bold)
+            
+            HStack(spacing: 12) {
+                CategoryPerformanceCard(category: "Swift", percent: 0.9, color: .blue, icon: "chevron.left.slash.chevron.right")
+                CategoryPerformanceCard(category: "자료구조", percent: 0.75, color: .purple, icon: "doc.on.clipboard")
+                CategoryPerformanceCard(category: "네트워크", percent: 0.6, color: .red, icon: "arrow.left.arrow.right")
+            }
+        }
+    }
+}
+
+// MARK: WeakCategoryView
+struct WeakCategoryView: View {
+    let weakCategoryPercent: Double
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("취약 카테고리")
+                    .font(.callout)
+                    .fontWeight(.bold)
+                
+                Spacer()
+                
+                ZStack {
+                    Circle()
+                        .stroke(.gray.opacity(0.3), lineWidth: 10)
+                        .frame(width: 50, height: 50)
+                    
+                    Circle()
+                        .rotation(.degrees(-90))
+                        .trim(from: 0, to: weakCategoryPercent)
+                        .stroke(.red, style: .init(lineWidth: 10, lineCap: .round))
+                        .frame(width: 50, height: 50)
+                    
+                    Text("\(Int(weakCategoryPercent * 100))%")
+                        .font(.caption)
+                        .bold()
+                }
+                .clipShape(.circle)
+            }
+            
+            HStack(spacing: 12) {
+                WeakCategoryCard(title: "네트워크 (60%)", subtitle: "TCP/IP 프로토콜 관련 문제에 취약", percent: 0.6)
+            }
+            
+            Button{
+                
+            } label: {
+                Text("맞춤 학습 시작")
+                    .fontWeight(.semibold)
+                    .frame(maxWidth: .infinity)
+                    .padding(12)
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+        }
+    }
+}
+
+// MARK: WrongNotesDashboardSection
+struct WrongNotesDashboardSection: View {
+    @Binding var selectedCategory: WrongNoteCategory
+    @Binding var searchText: String
+    let notes: [WrongNote]
+
+    var body: some View {
+        Group {
+            VStack(alignment: .leading, spacing: 12) {
+                WrongNotesHeader(selectedCategory: $selectedCategory)
+                WrongNotesSearchBar(searchText: $searchText)
+                WrongNotesList(notes: notes)
+            }
+        }
+        .padding()
+        .background(.white)
+        .cornerRadius(16)
+        .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+    }
+}
+
+// MARK: WrongNotesHeader
+struct WrongNotesHeader: View {
+    @Binding var selectedCategory: WrongNoteCategory
+
+    var body: some View {
+        HStack {
+            Text("오답 노트")
+                .font(.callout)
+                .fontWeight(.bold)
+            
+            Spacer()
+            
+            Menu {
+                Picker("카테고리 선택", selection: $selectedCategory) {
+                    ForEach(WrongNoteCategory.allCases) { category in
+                        Text(category.rawValue).tag(category)
+                    }
+                }
+            } label: {
+                HStack {
+                    Text(selectedCategory.rawValue)
+                        .font(.caption)
+                        .foregroundColor(.blue)
+                    
+                    Image(systemName: "chevron.down")
+                        .font(.caption2)
+                        .foregroundColor(.blue)
+                }
+            }
+        }
+    }
+}
+
+// MARK: WrongNotesSearchBar
+struct WrongNotesSearchBar: View {
+    @Binding var searchText: String
+
+    var body: some View {
+        HStack {
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(.gray)
+            
+            TextField("검색어를 입력하세요", text: $searchText)
+        }
+        .padding(10)
+        .background(Color(.systemGray6))
+        .cornerRadius(10)
+    }
+}
+
+// MARK: WrongNotesList
+struct WrongNotesList: View {
+    let notes: [WrongNote]
+
+    var body: some View {
+        ScrollView {
+             VStack(spacing: 12) {
+                 ForEach(notes) { note in
+                     WrongNoteCard(
+                         question: note.question,
+                         category: note.category,
+                         date: note.date,
+                         accuracy: note.accuracy
+                     )
+                 }
+             }
+         }
+    }
+}
+
+// MARK: StatCard
 struct StatCard: View {
     let title: String
     let value: String
@@ -258,6 +333,7 @@ struct StatCard: View {
     }
 }
 
+// MARK: CategoryPerformanceCard
 struct CategoryPerformanceCard: View {
     let category: String
     let percent: Double
@@ -307,6 +383,7 @@ struct CategoryPerformanceCard: View {
     }
 }
 
+// MARK: WeakCategoryCard
 struct WeakCategoryCard: View {
     let title: String
     let subtitle: String
@@ -344,6 +421,7 @@ struct WeakCategoryCard: View {
     }
 }
 
+// MARK: WrongNoteCard
 struct WrongNoteCard: View {
     let question: String
     let category: String
