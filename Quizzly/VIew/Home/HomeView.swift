@@ -227,28 +227,34 @@ private func categoryView(
         
         let displayedCategories = showingAllCategories.wrappedValue ? allCategories : Array(allCategories.prefix(4))
         
-        VStack {
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                ForEach(displayedCategories) { category in
-                    Button {
-                        let quizzesInCategory = allQuizzes.filter {
-                            $0.quizCategory?.name == category.title
-                        }
-                        
-                        if quizzesInCategory.isEmpty {
-                            selectedCategory.wrappedValue = category
-                            showEmptyAlert.wrappedValue = true
-                        } else {
-                            navigationPath.wrappedValue.append(category)
-                        }
-                    } label: {
-                        CategoryCard(
-                            title: category.title,
-                            icon: category.icon,
-                            count: category.count,
-                            color: category.color
-                        )
+        let gridItems: [GridItem] = [
+            GridItem(.flexible()),
+            GridItem(.flexible())
+        ]
+        
+        
+        LazyVGrid(columns: gridItems, spacing: 12) {
+            ForEach(displayedCategories) { category in
+                
+                let quizzesInCategory = allQuizzes.filter {
+                    $0.quizCategory?.id == category.id
+                }
+                
+                let cardView = CategoryCard(
+                    title: category.name,
+                    icon: category.iconName ?? "questionmark",
+                    count: category.quizzes?.count ?? 0,
+                    color: category.themeColorHex?.asHexColor ?? .gray
+                )
+                Button {
+                    if quizzesInCategory.isEmpty {
+                        selectedCategory.wrappedValue = category
+                        showEmptyAlert.wrappedValue = true
+                    } else {
+                        navigationPath.wrappedValue.append(category)
                     }
+                } label: {
+                    cardView
                 }
             }
         }
