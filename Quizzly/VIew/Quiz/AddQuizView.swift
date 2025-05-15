@@ -11,7 +11,7 @@ import SwiftData
 struct AddQuizView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) var dismiss
-
+    
     // TODO: Mock 상태이므로 SwiftData에 바인딩해야 함
     @State private var questionDescription: String = ""
     @State private var options: [String] = Array(repeating: "", count: 4)
@@ -21,6 +21,7 @@ struct AddQuizView: View {
     @State private var imagePath: String? = nil
     
     @State private var selectedCategory: QuizCategory? = nil
+    @EnvironmentObject var quizVieModel: QuizViewModel
     
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -190,11 +191,11 @@ struct AddQuizView: View {
             quizCategory: category
         )
         
-        modelContext.insert(newQuiz)
+        quizVieModel.addQuiz(item: newQuiz)
         dismiss()
     }
 }
 
 #Preview {
-    AddQuizView()
+//    AddQuizView()
 }

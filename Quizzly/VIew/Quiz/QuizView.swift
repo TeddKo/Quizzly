@@ -19,10 +19,12 @@ struct QuizView: View {
     @State private var currentIndex: Int = 0
     @State private var showResult: Bool = false
     @State private var correctCount: Int = 0
-
+    @EnvironmentObject var categoryViewModel:CategoryViewModel
+    @EnvironmentObject var quizViewModel:QuizViewModel
+    
     @Query(sort: \Quiz.questionDescription) private var quizzes: [Quiz]
     
-    let category: Category
+    let category: QuizCategory
     let difficulty: DifficultyLevel
     
     // TODO: mock 데이터 실제 데이터로 바꾸기
@@ -32,25 +34,7 @@ struct QuizView: View {
         "Basketball",
         "Badminton"
     ]
-    
-    let quizList: [Quiz] = [
-        Quiz(
-            id: UUID(),
-            questionDescription: "What is the most popular sport throughout the world?",
-            options: ["Volleyball", "Football", "Basketball", "Badminton"],
-            correctAnswerIndex: 1, // "Football"
-            difficultyLevel: .level1,
-            quizCategory: QuizCategory(name: "World", iconName: "globe", themeColorHex: "#3498db")
-        ),
-        Quiz(
-            id: UUID(),
-            questionDescription: "Which keyword is used to define a constant in Swift?",
-            options: ["let", "var", "const", "def"],
-            correctAnswerIndex: 0, // "let"
-            difficultyLevel: .level1,
-            quizCategory: QuizCategory(name: "Swift", iconName: "swift", themeColorHex: "#e67e22")
-        )
-    ]
+    var quizList:[Quiz] = []
     
     var body: some View {
         VStack(spacing: 30) {
@@ -117,17 +101,17 @@ struct QuizView: View {
             }
             
             .navigationDestination(isPresented: $showResult) {
-                QuizResultView(
-                    navigationPath: $navigationPath,
-                    correctCount: correctCount,
-                    incorrectCount: quizList.count - correctCount,
-                    totalTime: "03:24",
-                    scorePercentage: Int((Double(correctCount) / Double(quizList.count)) * 100),
-                    quizTitle: "\(category.title) 퀴즈",
-                    notes: [],
-                    recommendations: [],
-                    category: category
-                )
+//                QuizResultView(
+//                    navigationPath: $navigationPath,
+//                    correctCount: correctCount,
+//                    incorrectCount: quizList.count - correctCount,
+//                    totalTime: "03:24",
+//                    scorePercentage: Int((Double(correctCount) / Double(quizList.count)) * 100),
+//                    quizTitle: "\(category.title) 퀴즈",
+//                    notes: [],
+//                    recommendations: [],
+//                    category: category
+//                )
             }
 
         }

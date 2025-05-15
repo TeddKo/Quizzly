@@ -26,8 +26,8 @@ class CategoryViewModel: ObservableObject {
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
         fetchCategory()
-        modelDeleteAll()
-        updateDummyQuiz()
+//        modelDeleteAll()
+//        updateDummyQuiz()
     }
 
     func addCategory(item: QuizCategory) {
@@ -83,22 +83,22 @@ class CategoryViewModel: ObservableObject {
     }
 
     func modelDeleteAll() {
-//        for item in quizCategories.enumerated() {
-//            modelContext.delete(item.element)
-//            do {
-//                try saveContext()
-//            } catch let e {
-//                print(e)
-//            }
-//        }
-//        for item in quizList.enumerated() {
-//            modelContext.delete(item.element)
-//            do {
-//                try saveContext()
-//            } catch let e {
-//                print(e)
-//            }
-//        }
+        for item in quizCategories.enumerated() {
+            modelContext.delete(item.element)
+            do {
+                try saveContext()
+            } catch let e {
+                print(e)
+            }
+        }
+        for item in quizList.enumerated() {
+            modelContext.delete(item.element)
+            do {
+                try saveContext()
+            } catch let e {
+                print(e)
+            }
+        }
         let predicate = #Predicate<Quiz>{
             $0.questionDescription.isEmpty == false
         }

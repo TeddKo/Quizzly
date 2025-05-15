@@ -197,7 +197,6 @@ struct HomeView: View {
 //                                    }
                                     Button {
                                         navigationPath.append(category)
-                                        print(#line,#file,"test")
                                     } label: {
                                         Text(category.name)
                                         Image(systemName: category.iconName ?? "")
@@ -220,7 +219,7 @@ struct HomeView: View {
                 .cornerRadius(16)
                 .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
                 .onAppear {
-                    categories = categoryViewModel.getCategories()
+                    categories = categoryViewModel.quizCategories
                 }
                 
                 Group {
