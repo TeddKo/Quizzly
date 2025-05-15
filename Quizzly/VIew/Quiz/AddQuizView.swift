@@ -20,6 +20,7 @@ struct AddQuizView: View {
     @State private var imagePath: String? = nil
     
     @State private var selectedCategory: QuizCategory? = nil
+    @EnvironmentObject var quizViewModel:QuizViewModel
     
     @Query(sort: \QuizCategory.name) private var categories: [QuizCategory]
 
@@ -69,7 +70,7 @@ struct AddQuizView: View {
             imagePath: imagePath
         )
         
-        modelContext.insert(newQuiz)
+        quizViewModel.addQuiz(item: newQuiz)
         dismiss()
     }
 }
