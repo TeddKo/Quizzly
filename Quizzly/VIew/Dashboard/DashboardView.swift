@@ -11,7 +11,7 @@ enum PeriodFilter: String, CaseIterable, Identifiable {
     case all = "전체"
     case thisWeek = "이번 주"
     case thisMonth = "이번 달"
-
+    
     var id: String { rawValue }
 }
 
@@ -54,98 +54,23 @@ struct DashboardView: View {
             ScrollView {
                 Group {
                     VStack(alignment: .leading, spacing: 18) {
-                        HStack {
-                            Text("대시보드")
-                                .font(.headline)
-                                .fontWeight(.bold)
-                            
-                            Spacer()
-                            
-                            // MARK: 기간 탭 필터
-                            Menu {
-                                Picker("기간 선택", selection: $selectedPeriod) {
-                                    ForEach(PeriodFilter.allCases) { period in
-                                        Text(period.rawValue).tag(period)
-                                    }
-                                }
-                            } label: {
-                                HStack {
-                                    Text(selectedPeriod.rawValue)
-                                        .font(.caption) // ← 여기서 폰트 크기 조절
-                                        .foregroundColor(.blue)
-
-                                    Image(systemName: "chevron.down")
-                                        .font(.caption2)
-                                        .foregroundColor(.blue)
-                                }
-                            }
+                        backgroundView {
+                            headerView(selectedPeriod: $selectedPeriod)
                         }
                         
                         // MARK: 퀴즈 통계 카드
-                        HStack(spacing: 16) {
-                            StatCard(title: "퀴즈 시도 횟수", value: "32", background: Color.blue.opacity(0.1))
-                            
-                            StatCard(title: "평균 정답률", value: "78%", subtitle: "↑ 5%", background: Color.green.opacity(0.1))
+                        backgroundView {
+                            quizStatsCardsView()
                         }
                         
                         // MARK: 카테고리별 성과
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("카테고리별 성과")
-                                .font(.callout)
-                                .fontWeight(.bold)
-                            
-                            HStack(spacing: 12) {
-                                CategoryPerformanceCard(category: "Swift", percent: 0.9, color: .blue, icon: "chevron.left.slash.chevron.right")
-                                
-                                CategoryPerformanceCard(category: "자료구조", percent: 0.75, color: .purple, icon: "doc.on.clipboard")
-                                
-                                CategoryPerformanceCard(category: "네트워크", percent: 0.6, color: .red, icon: "arrow.left.arrow.right")
-                            }
+                        backgroundView {
+                            categoryPerformanceView()
                         }
                         
                         // MARK: 취약 카테고리
-                        VStack(alignment: .leading, spacing: 12) {
-                            
-                            HStack {
-                                Text("취약 카테고리")
-                                    .font(.callout)
-                                    .fontWeight(.bold)
-                                
-                                Spacer()
-                                
-                                ZStack {
-                                    Circle()
-                                        .stroke(.gray.opacity(0.3), lineWidth: 10)
-                                        .frame(width: 50, height: 50)
-                                    
-                                    Circle()
-                                        .rotation(.degrees(-90))
-                                        .trim(from: 0, to: weakCategoryPercent)
-                                        .stroke(.red, style: .init(lineWidth: 10, lineCap: .round))
-                                        .frame(width: 50, height: 50)
-                                    
-                                    Text("\(Int(weakCategoryPercent * 100))%")
-                                        .font(.caption)
-                                        .bold()
-                                }
-                                .clipShape(.circle)
-                            }
-                            
-                            HStack(spacing: 12) {
-                                WeakCategoryCard(title: "네트워크 (60%)", subtitle: "TCP/IP 프로토콜 관련 문제에 취약", percent: 0.6)
-                            }
-                            
-                            Button{
-                                
-                            } label: {
-                                Text("맞춤 학습 시작")
-                                    .fontWeight(.semibold)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(12)
-                                    .background(Color.blue)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(10)
-                            }
+                        backgroundView {
+                            weakCategoryView(weakCategoryPercent: weakCategoryPercent)
                         }
                     }
                 }
@@ -154,64 +79,13 @@ struct DashboardView: View {
                 .cornerRadius(16)
                 .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
                 
-                Group {
-                    // MARK: 오답 노트
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack {
-                            Text("오답 노트")
-                                .font(.callout)
-                                .fontWeight(.bold)
-                            
-                            Spacer()
-                            
-                            Menu {
-                                // MARK: 카테고리 탭 필터
-                                Picker("카테고리 선택", selection: $selectedCategory) {
-                                    ForEach(WrongNoteCategory.allCases) { category in
-                                        Text(category.rawValue).tag(category)
-                                    }
-                                }
-                            } label: {
-                                HStack {
-                                    Text(selectedCategory.rawValue)
-                                        .font(.caption)
-                                        .foregroundColor(.blue)
-                                    
-                                    Image(systemName: "chevron.down")
-                                        .font(.caption2)
-                                        .foregroundColor(.blue)
-                                }
-                            }
-                        }
-                        
-                        HStack {
-                            Image(systemName: "magnifyingglass")
-                                .foregroundColor(.gray)
-                            
-                            TextField("검색어를 입력하세요", text: $searchText)
-                        }
-                        .padding(10)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(10)
-                        
-                        ScrollView {
-                             VStack(spacing: 12) {
-                                 ForEach(mockNotes, id: \.id) { note in
-                                     WrongNoteCard(
-                                         question: note.question,
-                                         category: note.category,
-                                         date: note.date,
-                                         accuracy: note.accuracy
-                                     )
-                                 }
-                             }
-                         }
-                    }
+                backgroundView {
+                    wrongNoteSectionView(
+                        selectedCategory: $selectedCategory,
+                        searchText: $searchText,
+                        notes: mockNotes
+                    )
                 }
-                .padding()
-                .background(.white)
-                .cornerRadius(16)
-                .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
             }
             .padding()
             .padding(.top, 50)
@@ -221,6 +95,185 @@ struct DashboardView: View {
     }
 }
 
+@ViewBuilder
+private func backgroundView(@ViewBuilder content: () -> some View) -> some View {
+    Group {
+        content()
+    }
+    .padding()
+    .background(.white)
+    .cornerRadius(16)
+    .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+}
+
+@ViewBuilder
+private func headerView(selectedPeriod: Binding<PeriodFilter>) -> some View {
+    HStack {
+        Text("대시보드")
+            .font(.headline)
+            .fontWeight(.bold)
+        
+        Spacer()
+        
+        // MARK: 기간 탭 필터
+        Menu {
+            Picker("기간 선택", selection: selectedPeriod) {
+                ForEach(PeriodFilter.allCases) { period in
+                    Text(period.rawValue).tag(period)
+                }
+            }
+        } label: {
+            HStack {
+                Text(selectedPeriod.wrappedValue.rawValue)
+                    .font(.caption)
+                    .foregroundColor(.blue)
+                
+                Image(systemName: "chevron.down")
+                    .font(.caption2)
+                    .foregroundColor(.blue)
+            }
+        }
+    }
+}
+
+@ViewBuilder
+private func quizStatsCardsView() -> some View {
+        HStack(spacing: 16) {
+            StatCard(title: "퀴즈 시도 횟수", value: "32", background: .blue.opacity(0.1))
+            
+            StatCard(title: "평균 정답률", value: "78%", subtitle: "↑ 5%", background: .green.opacity(0.1))
+        }
+}
+
+@ViewBuilder
+private func categoryPerformanceView() -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("카테고리별 성과")
+                .font(.callout)
+                .fontWeight(.bold)
+            
+            HStack(spacing: 12) {
+                CategoryPerformanceCard(category: "Swift", percent: 0.9, color: .blue, icon: "chevron.left.slash.chevron.right")
+                
+                CategoryPerformanceCard(category: "자료구조", percent: 0.75, color: .purple, icon: "doc.on.clipboard")
+                
+                CategoryPerformanceCard(category: "네트워크", percent: 0.6, color: .red, icon: "arrow.left.arrow.right")
+            }
+        }
+}
+
+@ViewBuilder
+private func weakCategoryView(weakCategoryPercent: Double) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            
+            HStack {
+                Text("취약 카테고리")
+                    .font(.callout)
+                    .fontWeight(.bold)
+                
+                Spacer()
+                
+                ZStack {
+                    Circle()
+                        .stroke(.gray.opacity(0.3), lineWidth: 10)
+                        .frame(width: 50, height: 50)
+                    
+                    Circle()
+                        .rotation(.degrees(-90))
+                        .trim(from: 0, to: weakCategoryPercent)
+                        .stroke(.red, style: .init(lineWidth: 10, lineCap: .round))
+                        .frame(width: 50, height: 50)
+                    
+                    Text("\(Int(weakCategoryPercent * 100))%")
+                        .font(.caption)
+                        .bold()
+                }
+                .clipShape(.circle)
+            }
+            
+            HStack(spacing: 12) {
+                WeakCategoryCard(title: "네트워크 (60%)", subtitle: "TCP/IP 프로토콜 관련 문제에 취약", percent: 0.6)
+            }
+            
+            Button{
+                
+            } label: {
+                Text("맞춤 학습 시작")
+                    .fontWeight(.semibold)
+                    .frame(maxWidth: .infinity)
+                    .padding(12)
+                    .background(.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+        }
+}
+
+@ViewBuilder
+private func wrongNoteSectionView(
+    selectedCategory: Binding<WrongNoteCategory>,
+    searchText: Binding<String>,
+    notes: [WrongNote]
+) -> some View {
+        Group {
+            // MARK: 오답 노트
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text("오답 노트")
+                        .font(.callout)
+                        .fontWeight(.bold)
+                    
+                    Spacer()
+                    
+                    Menu {
+                        // MARK: 카테고리 탭 필터
+                        Picker("카테고리 선택", selection: selectedCategory) {
+                            ForEach(WrongNoteCategory.allCases) { category in
+                                Text(category.rawValue).tag(category)
+                            }
+                        }
+                    } label: {
+                        HStack {
+                            Text(selectedCategory.wrappedValue.rawValue)
+                                .font(.caption)
+                                .foregroundColor(.blue)
+                            
+                            Image(systemName: "chevron.down")
+                                .font(.caption2)
+                                .foregroundColor(.blue)
+                        }
+                    }
+                }
+                
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.gray)
+                    
+                    TextField("검색어를 입력하세요", text: searchText)
+                }
+                .padding(10)
+                .background(Color(.systemGray6))
+                .cornerRadius(10)
+                
+                ScrollView {
+                    VStack(spacing: 12) {
+                        ForEach(mockNotes, id: \.id) { note in
+                            WrongNoteCard(
+                                question: note.question,
+                                category: note.category,
+                                date: note.date,
+                                accuracy: note.accuracy
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        .padding()
+        .background(.white)
+        .cornerRadius(16)
+        .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+}
 
 struct StatCard: View {
     let title: String
@@ -349,7 +402,7 @@ struct WrongNoteCard: View {
     let category: String
     let date: String
     let accuracy: Int
-
+    
     var body: some View {
         HStack(alignment: .center, spacing: 15) {
             Image(systemName: "xmark.circle")
