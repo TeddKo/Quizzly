@@ -74,8 +74,15 @@ struct ChooseProfileView: View {
             .navigationDestination(for: Profile.self) { profile in
                 MainTabView(profile: profile, navigationPath: $navigationPath)
             }
-            .navigationDestination(for: Category.self) { category in
-                QuizView(navigationPath: $navigationPath, category: category, difficulty: .level1)
+            .navigationDestination(for: QuizCategory.self) { quizCategory in
+                let filtered = quizCategory.quizzes ?? []
+
+                QuizView(
+                    navigationPath: $navigationPath,
+                    category: quizCategory,
+                    difficulty: .level1,
+                    questions: filtered
+                )
             }
             .onAppear {
                 homeViewModel.fetchProfile()
