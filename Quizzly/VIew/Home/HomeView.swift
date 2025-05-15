@@ -141,7 +141,15 @@ struct CategorySectionView: View {
     @State private var categoryToDelete: QuizCategory? = nil
     @State private var showDeleteConfirmationAlert = false
 
-    let columns = [GridItem(.flexible()), GridItem(.flexible())]
+    var gridColumns: [GridItem] {
+            if categories.isEmpty {
+                // 카테고리가 없으면 "카테고리 추가" 버튼이 전체 너비를 차지하도록 단일 컬럼을 사용합니다.
+                return [GridItem(.flexible())]
+            } else {
+                // 카테고리가 있으면 기본 2열 레이아웃을 사용합니다.
+                return [GridItem(.flexible()), GridItem(.flexible())]
+            }
+        }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -167,9 +175,8 @@ struct CategorySectionView: View {
             }
             .padding(.bottom, 10)
             
-            LazyVGrid(columns: columns, spacing: 12) {
+            LazyVGrid(columns: gridColumns, spacing: 12) {
                 Button {
-                    // 편집 모드 중 "카테고리 추가"를 누르면 편집 모드 해제
                     if editingCategoryID != nil {
                         withAnimation {
                             editingCategoryID = nil
@@ -198,38 +205,43 @@ struct CategorySectionView: View {
                 }
 
                 let displayedCategories = showingAllCategories ? categories : Array(categories.prefix(3))
-                ForEach(displayedCategories) { category in
-                    CategoryCardView(category: category)
-                        .onLongPressGesture(minimumDuration: 0.5) {
-                            withAnimation(.spring()) {
-                                self.editingCategoryID = category.id
-                            }
-                        }
-                        .overlay(alignment: .topTrailing) {
-                            if editingCategoryID == category.id {
-                                Button {
-                                    self.categoryToDelete = category
-                                    self.showDeleteConfirmationAlert = true
-                                } label: {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .font(.title2)
-                                        .foregroundColor(.red)
-                                        .background(Circle().fill(Color.white.opacity(0.8)))
-                                        .padding(3)
-                                }
-                                .offset(x: 8, y: -8)
-                                .transition(.scale.combined(with: .opacity))
-                                .zIndex(1)
-                            }
-                        }
-                        .onTapGesture {
-                            if editingCategoryID == category.id {
-                            } else if editingCategoryID != nil {
-                                withAnimation {
-                                    editingCategoryID = nil
+                
+                if displayedCategories.isEmpty {
+                    Caution()
+                } else {
+                    ForEach(displayedCategories) { category in
+                        CategoryCardView(category: category)
+                            .onLongPressGesture(minimumDuration: 0.5) {
+                                withAnimation(.spring()) {
+                                    self.editingCategoryID = category.id
                                 }
                             }
-                        }
+                            .overlay(alignment: .topTrailing) {
+                                if editingCategoryID == category.id {
+                                    Button {
+                                        self.categoryToDelete = category
+                                        self.showDeleteConfirmationAlert = true
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .font(.title2)
+                                            .foregroundColor(.red)
+                                            .background(Circle().fill(Color.white.opacity(0.8)))
+                                            .padding(3)
+                                    }
+                                    .offset(x: 8, y: -8)
+                                    .transition(.scale.combined(with: .opacity))
+                                    .zIndex(1)
+                                }
+                            }
+                            .onTapGesture {
+                                if editingCategoryID == category.id {
+                                } else if editingCategoryID != nil {
+                                    withAnimation {
+                                        editingCategoryID = nil
+                                    }
+                                }
+                            }
+                    }
                 }
             }
             .contentShape(Rectangle())
