@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-enum DifficultyLevel: Int, Codable, CaseIterable {
+enum DifficultyLevel: Int, Codable, CaseIterable, Comparable {
     case level1 = 1
     case level2 = 2
     case level3 = 3
@@ -30,6 +30,10 @@ enum DifficultyLevel: Int, Codable, CaseIterable {
         case .level5:
             "매우 어려움"
         }
+    }
+
+    public static func < (lhs: DifficultyLevel, rhs: DifficultyLevel) -> Bool {
+        return lhs.rawValue < rhs.rawValue
     }
 }
 

@@ -9,19 +9,20 @@ import SwiftUI
 
 // MARK: - Main View: WrongNoteDetailView
 struct WrongNoteDetailView: View {
-    let note: QuizNote // 이전과 동일
+    let note: QuizNote
     @Environment(\.dismiss) var dismiss
-
-    // 메모는 이 View 내에서 State로 관리하고,
-    // 실제 저장은 ViewModel을 통하거나 .onDisappear에서 처리 필요
     @State private var memoText: String
 
-    // ViewModel 주입 (메모 저장, 다시 풀기 기능 등을 위해 추후 필요)
-    // @EnvironmentObject var noteViewModel: NoteViewModel // 예시
+    // "다시 풀기" 버튼을 눌렀을 때 호출될 클로저
+    var onRetryQuiz: (QuizNote) -> Void
 
-    init(note: QuizNote) {
+    init(note: QuizNote, onRetryQuiz: @escaping (QuizNote) -> Void) {
         self.note = note
-        _memoText = State(initialValue: note.memo) // State 초기화
+        self._memoText = State(initialValue: note.memo)
+        self.onRetryQuiz = onRetryQuiz
+        
+        // 디버깅 로그 (필요시 사용)
+        // print("✅ WrongNoteDetailView init: Question: \(note.question), OriginalQuizID: \(String(describing: note.originalQuizID))")
     }
 
     var body: some View {
@@ -46,26 +47,17 @@ struct WrongNoteDetailView: View {
                 NoteActionButtons(
                     onDismiss: { dismiss() },
                     onRetry: {
-                        // TODO: "다시 풀기" 기능 구현
-                        print("다시 풀기 버튼 탭됨 - 기능 구현 필요. Quiz ID 또는 정보: \(note.question)")
-                        // 예: 특정 퀴즈로 돌아가는 로직 (navigationPath 또는 ViewModel 사용)
+                        onRetryQuiz(note) // 클로저 호출
+                        dismiss()         // 시트 닫기
                     }
                 )
             }
             .padding()
         }
-        .navigationBarHidden(true) // 헤더를 커스텀하게 사용하므로 네비게이션 바 숨김
+        .navigationBarHidden(true) // 시트 내부이므로 네비게이션 바는 NavigationStack이 관리
         .onAppear {
-            // memoText는 init에서 이미 초기화됨
-            print("🧭 WrongNoteDetailView loaded for question: \(note.question)")
+            // print("🧭 WrongNoteDetailView loaded for question: \(note.question)")
         }
-        // .onDisappear {
-        //     // TODO: memoText가 변경되었으면 저장하는 로직 (ViewModel 또는 modelContext 사용)
-        //     if memoText != note.memo {
-        //         print("메모가 변경되었습니다. 저장 로직 필요: \(memoText)")
-        //         // 예: noteViewModel.updateMemo(for: note.id, newMemo: memoText)
-        //     }
-        // }
     }
 }
 
@@ -97,7 +89,7 @@ fileprivate struct NoteDetailHeaderView: View {
     }
 }
 
-// MARK: - Sub-component: NoteProblemInfoSection (문제 기본 정보)
+// MARK: - Sub-component: NoteProblemInfoSection
 fileprivate struct NoteProblemInfoSection: View {
     let note: QuizNote
 
@@ -130,14 +122,14 @@ fileprivate struct NoteProblemInfoSection: View {
         }
         .padding(13)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.red.opacity(0.06)) // 전체 박스 배경
+        .background(Color.red.opacity(0.06))
         .cornerRadius(8)
     }
 }
 
-// MARK: - Sub-component: NoteChoicesSection (선택지)
+// MARK: - Sub-component: NoteChoicesSection
 fileprivate struct NoteChoicesSection: View {
-    let choices: [Choice] // QuizNote.Choice
+    let choices: [Choice]
     let userAnswer: String
     let correctAnswer: String
 
@@ -154,6 +146,7 @@ fileprivate struct NoteChoicesSection: View {
     }
 }
 
+// MARK: - Sub-component: ChoiceRow
 fileprivate struct ChoiceRow: View {
     let choice: Choice
     let isUserAnswer: Bool
@@ -161,7 +154,7 @@ fileprivate struct ChoiceRow: View {
 
     private var backgroundColor: Color {
         if isCorrectAnswer { return .green }
-        if isUserAnswer { return .red } // isCorrectAnswer가 false일 때만 빨간색 (틀린 답)
+        if isUserAnswer { return .red }
         return .clear
     }
 
@@ -201,8 +194,7 @@ fileprivate struct ChoiceRow: View {
     }
 }
 
-
-// MARK: - Sub-component: NoteExplanationSection (해설)
+// MARK: - Sub-component: NoteExplanationSection
 fileprivate struct NoteExplanationSection: View {
     let explanation: String
 
@@ -226,43 +218,44 @@ fileprivate struct NoteExplanationSection: View {
     }
 }
 
-
-// MARK: - Sub-component: NoteRecommendationsSection (추천 학습)
+// MARK: - Sub-component: NoteRecommendationsSection
 fileprivate struct NoteRecommendationsSection: View {
-    let recommendations: [LearningRecommendation] // QuizNote.LearningRecommendation
+    let recommendations: [LearningRecommendation]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 13) {
-            Text("관련 학습 자료")
-                .font(.headline)
-                .padding(.bottom, 10)
+        if !recommendations.isEmpty {
+            VStack(alignment: .leading, spacing: 13) {
+                Text("관련 학습 자료")
+                    .font(.headline)
+                    .padding(.bottom, 10)
 
-            ForEach(Array(recommendations.enumerated()), id: \.1.id) { index, rec in
-                HStack {
-                    Image(systemName: "book") // 아이콘 고정 또는 rec에서 받기
-                        .resizable().scaledToFit().frame(width: 13, height: 13)
-                        .fontWeight(.semibold).foregroundColor(.blue)
-                        .padding(8).background(Color.blue.opacity(0.1)).cornerRadius(5)
-                    
-                    VStack(alignment: .leading) {
-                        Text(rec.title).bold()
-                            .font(.footnote)
-                            .fontWeight(.semibold)
-                        Text(rec.duration)
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundColor(.black.opacity(0.5))
+                ForEach(Array(recommendations.enumerated()), id: \.1.id) { index, rec in
+                    HStack {
+                        Image(systemName: "book")
+                            .resizable().scaledToFit().frame(width: 13, height: 13)
+                            .fontWeight(.semibold).foregroundColor(.blue)
+                            .padding(8).background(Color.blue.opacity(0.1)).cornerRadius(5)
+                        
+                        VStack(alignment: .leading) {
+                            Text(rec.title).bold()
+                                .font(.footnote)
+                                .fontWeight(.semibold)
+                            Text(rec.duration)
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundColor(.black.opacity(0.5))
+                        }
                     }
-                }
-                if index < recommendations.count - 1 {
-                    Divider()
+                    if index < recommendations.count - 1 {
+                        Divider()
+                    }
                 }
             }
         }
     }
 }
 
-// MARK: - Sub-component: NoteMemoSection (메모)
+// MARK: - Sub-component: NoteMemoSection
 fileprivate struct NoteMemoSection: View {
     @Binding var memoText: String
 
@@ -283,7 +276,7 @@ fileprivate struct NoteMemoSection: View {
     }
 }
 
-// MARK: - Sub-component: NoteActionButtons (하단 버튼)
+// MARK: - Sub-component: NoteActionButtons
 fileprivate struct NoteActionButtons: View {
     var onDismiss: () -> Void
     var onRetry: () -> Void
@@ -308,41 +301,47 @@ fileprivate struct NoteActionButtons: View {
 }
 
 // MARK: - Preview
-// QuizNote와 하위 struct들에 대한 샘플 데이터 정의 필요
-extension Choice { // QuizResultView.swift에 정의된 Choice 사용 가정
-    static let sampleA = Choice(label: "A", text: "보기 A 텍스트 (정답)")
-    static let sampleB = Choice(label: "B", text: "보기 B 텍스트 (사용자 오답)")
-    static let sampleC = Choice(label: "C", text: "보기 C 텍스트")
-    static let sampleD = Choice(label: "D", text: "보기 D 텍스트")
+// 샘플 데이터 정의 (QuizNote, Choice, LearningRecommendation extension)
+// 이 extension들은 WrongNoteDetailView.swift 파일 하단 또는 공통 모델 파일에 위치할 수 있습니다.
+// 여기서는 Preview를 위해 이 파일에 함께 둡니다.
+extension Choice {
+    static var sampleA_preview: Choice { Choice(label: "A", text: "미리보기 보기 A (정답)") }
+    static var sampleB_preview: Choice { Choice(label: "B", text: "미리보기 보기 B (오답)") }
+    static var sampleC_preview: Choice { Choice(label: "C", text: "미리보기 보기 C") }
+    static var sampleD_preview: Choice { Choice(label: "D", text: "미리보기 보기 D") }
 }
 
-extension LearningRecommendation { // QuizResultView.swift에 정의된 LearningRecommendation 사용 가정
-    static let sampleRec1 = LearningRecommendation(id: UUID(), title: "관련 개념 학습하기", duration: "15분 코스")
-    static let sampleRec2 = LearningRecommendation(id: UUID(), title: "유사 문제 더 풀어보기", duration: "10분 퀴즈")
+extension LearningRecommendation {
+    static var sampleRec1_preview: LearningRecommendation { LearningRecommendation(id: UUID(), title: "미리보기 개념 학습", duration: "10분") }
+    static var sampleRec2_preview: LearningRecommendation { LearningRecommendation(id: UUID(), title: "미리보기 유사 문제", duration: "5분") }
 }
 
-extension QuizNote { // QuizResultView.swift에 정의된 QuizNote 사용 가정
-    static var sampleForDetail: QuizNote {
+extension QuizNote {
+    static var sampleForDetailPreview: QuizNote {
         QuizNote(
             id: UUID(),
-            question: "SwiftUI에서 View를 업데이트하는 가장 기본적인 방법은 무엇인가요? 그리고 왜 그런가요?",
-            userAnswer: Choice.sampleB.text, // 사용자가 선택한 오답 텍스트
-            correctAnswer: Choice.sampleA.text, // 정답 텍스트
-            explanation: "SwiftUI는 선언적 프로그래밍 패러다임을 따르며, @State, @Binding, @ObservedObject, @EnvironmentObject, @StateObject와 같은 프로퍼티 래퍼를 사용하여 데이터의 변경을 감지하고 자동으로 View를 다시 렌더링합니다. 그 중 @State가 가장 기본적인 값 타입 상태 관리 도구입니다.",
-            level: "보통",
-            category: "SwiftUI 기초",
-            dateAdded: "2025년 5월 16일",
-            choices: [Choice.sampleA, Choice.sampleB, Choice.sampleC, Choice.sampleD],
-            recommendations: [LearningRecommendation.sampleRec1, LearningRecommendation.sampleRec2],
-            memo: "State와 ObservableObject의 차이를 명확히 이해하자."
+            originalQuizID: UUID(), // 샘플 원본 퀴즈 ID
+            question: "미리보기: SwiftUI에서 @State는 무엇인가요?",
+            userAnswer: Choice.sampleB_preview.text,
+            correctAnswer: Choice.sampleA_preview.text,
+            explanation: "미리보기: @State는 SwiftUI 뷰의 로컬 상태를 저장하는 프로퍼티 래퍼입니다.",
+            level: "쉬움",
+            category: "SwiftUI",
+            dateAdded: "2025년 5월 17일",
+            choices: [Choice.sampleA_preview, Choice.sampleB_preview, Choice.sampleC_preview, Choice.sampleD_preview],
+            recommendations: [LearningRecommendation.sampleRec1_preview, LearningRecommendation.sampleRec2_preview],
+            memo: "미리보기 메모입니다."
         )
     }
 }
 
 #Preview {
-    // DetailView는 NavigationStack 내에서 테스트하는 것이 좋습니다.
     NavigationStack {
-        WrongNoteDetailView(note: QuizNote.sampleForDetail)
-            // .environmentObject(NoteViewModel(modelContext: ...)) // ViewModel 필요시 주입
+        WrongNoteDetailView(
+            note: QuizNote.sampleForDetailPreview, // 수정된 샘플 데이터 사용
+            onRetryQuiz: { note in
+                print("Preview: Retry quiz for note: \(note.question)")
+            }
+        )
     }
 }

@@ -111,13 +111,9 @@ class QuizViewModel: ObservableObject {
         do {
             try modelContext.save()
             print("QuizViewModel: Context saved successfully after \(operationDescription).")
-            fetchQuizzes() // 전체 퀴즈 목록 새로고침
-            // 필요하다면 filteredQuizzes도 현재 필터 조건에 맞게 다시 로드
+            fetchQuizzes()
         } catch {
             print("QuizViewModel: Failed to save context after \(operationDescription): \(error.localizedDescription)")
-            // self.errorMessage = "Failed to save changes: \(error.localizedDescription)"
-            // self.showErrorAlert = true
-            // 롤백은 호출하는 쪽에서 결정하거나, 여기서 항상 수행할 수 있음
             modelContext.rollback()
             print("QuizViewModel: Context rolled back due to save failure.")
         }

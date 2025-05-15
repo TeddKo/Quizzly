@@ -58,7 +58,7 @@ struct AddQuizView: View {
         }
         
         .ignoresSafeArea(.keyboard, edges: .top)
-        .background(Color(UIColor.systemGroupedBackground).edgesIgnoringSafeArea(.all)) // 전체 배경색
+        .background(Color(UIColor.systemGroupedBackground).edgesIgnoringSafeArea(.all))
         .onAppear {
             if categoryViewModel.categories.isEmpty {
                  categoryViewModel.fetchCategory()

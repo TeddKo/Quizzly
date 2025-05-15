@@ -19,13 +19,13 @@ struct QuizListView: View {
         NavigationStack {
             
             List {
-                ForEach(quizViewModel.filteredQuizzes) { quiz in // ViewModel의 목록 사용
+                ForEach(quizViewModel.filteredQuizzes) { quiz in
                     NavigationLink(value: quiz) {
                         Text(quiz.questionDescription)
                             .lineLimit(2)
                     }
                 }
-                .onDelete(perform: deleteQuizItemsFromViewModel) // ViewModel을 사용하도록 수정
+                .onDelete(perform: deleteQuizItemsFromViewModel)
             }
             .navigationTitle("‘\(category.name)’ 퀴즈")
             .toolbar {
@@ -125,5 +125,5 @@ struct QuizListView: View {
     
     return QuizListView(category: sampleCategory)
         .modelContainer(container)
-        .environmentObject(quizVM) // QuizViewModel 주입
+        .environmentObject(quizVM)
 }
