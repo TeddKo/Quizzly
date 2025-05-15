@@ -6,22 +6,27 @@
 //
 
 import SwiftUI
-import SFSymbolsPicker
+import SymbolPicker
 
-struct SymbolPicker: View {
+struct SymbolPickerButton: View {
     @Binding var categoryIconName: String
     @Binding var isPresented: Bool
     
     var body: some View {
-        HStack {
-            Text("아이콘 선택")
-                .sheet(isPresented: $isPresented) {
-                    SymbolsPicker(selection: $categoryIconName, title: "Pick a symbol", autoDismiss: true)
-                }
-            Spacer()
-            Image(systemName: categoryIconName)
-                .scaledToFit()
-                .font(.system(size: 24))
+        Button {
+            isPresented = true
+        } label: {
+            HStack {
+                Text("아이콘 선택")
+                    .sheet(isPresented: $isPresented) {
+                        SymbolPicker(symbol: $categoryIconName)
+                    }
+                Spacer()
+                Image(systemName: categoryIconName)
+                    .scaledToFit()
+                    .font(.system(size: 24))
+            }
         }
+        .tint(.primary)
     }
 }
