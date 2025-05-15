@@ -69,7 +69,6 @@ struct QuizView: View {
                     currentIndex += 1
                     selectedOption = nil
                 } else {
-                    evaluateQuizResults(from: questions)
                     showResult = true
                 }
             } label: {
