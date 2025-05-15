@@ -108,7 +108,7 @@ struct HomeView: View {
                             }
                             .clipShape(.circle)
                         }.onAppear(perform: {
-                            homeViewModel.getOverallScoreRate()
+//                            homeViewModel.getOverallScoreRate()
                         })
                         .padding(13)
                         .background(.blue.opacity(0.08))

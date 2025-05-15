@@ -46,7 +46,7 @@ class CategoryViewModel: ObservableObject {
         }
     }
 
-    func updateDummyQuiz() {
+    func createDummyQuiz() {
         let quizList: [Quiz] = [
             Quiz(
                 questionDescription: "What is the most popular sport throughout the world?",
@@ -82,7 +82,7 @@ class CategoryViewModel: ObservableObject {
         }
     }
 
-    func modelDeleteAll() {
+    func deleteAllModel() {
         for item in quizCategories.enumerated() {
             modelContext.delete(item.element)
             do {
@@ -137,21 +137,20 @@ class CategoryViewModel: ObservableObject {
         fetchCategory()
     }
 
-    func calculateTotalQuizAttempt() {
-        let currentUserID = UserDefaults.standard.string(forKey: "currentUserUUID") ?? ""
-        guard let userUUID = UUID(uuidString: currentUserID) else { return }
-        let predicate = #Predicate<CategoryProgress> { category in
-            return category.profile?.id == userUUID
-        }
-        let descriptor = FetchDescriptor<CategoryProgress>(predicate: predicate)
-        var categoryProgress: [CategoryProgress]
-        do {
-            categoryProgress = try modelContext.fetch(descriptor)
-            print(categoryProgress)
-        } catch let e {
-            print(e)
-        }
-    }
+//    func calculateTotalQuizAttempt() {
+//        let currentUserID = UserDefaults.standard.string(forKey: "currentUserUUID") ?? ""
+//        guard let userUUID = UUID(uuidString: currentUserID) else { return }
+//        let predicate = #Predicate<CategoryProgress> { category in
+//            return category.profile?.id == userUUID
+//        }
+//        let descriptor = FetchDescriptor<CategoryProgress>(predicate: predicate)
+//        var categoryProgress: [CategoryProgress]
+//        do {
+//            categoryProgress = try modelContext.fetch(descriptor)
+//        } catch let e {
+//            print(e)
+//        }
+//    }
 
     func saveContext() throws {
         do {

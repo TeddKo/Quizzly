@@ -80,7 +80,6 @@ class QuizViewModel: ObservableObject {
             correctCount = correctCount + 1
         } else {
             isCorrect = false
-            print(isCorrect)
         }
         do {
             try modelContext.transaction {

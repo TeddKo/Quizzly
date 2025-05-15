@@ -76,10 +76,14 @@ class HomeViewModel: ObservableObject {
             answers = try modelContext.fetch(descriptor)
             answerCount = answers.count{$0.wasCorrect == true }
             totalCount = answers.count
-            overallScoreRate = Int(Double(answerCount)/Double(totalCount) * 100)
+//            overallScoreRate = Int(Double(answerCount)/Double(totalCount) * 100)
             print(overallScoreRate)
         } catch  {
             print(error)
         }
+    }
+    
+    func fetchRecentActivity(){
+        
     }
 }
