@@ -13,25 +13,6 @@ let recentCards: [RecentCard] = [
     RecentCard(title: "데이터베이스 개념", percent: 0.6, date: "어제", isCorrect: false)
 ]
 
-struct Category: Identifiable, Hashable {
-    let id = UUID()
-    let title: String
-    let icon: String
-    let count: Int
-    let color: Color
-}
-
-let allCategories: [Category] = [
-    Category(title: "자료구조", icon: "doc.on.clipboard", count: 32, color: .purple),
-    Category(title: "운영체제", icon: "cpu", count: 25, color: .green),
-    Category(title: "Swift", icon: "chevron.left.slash.chevron.right", count: 48, color: .blue),
-    Category(title: "네트워크", icon: "arrow.left.arrow.right", count: 36, color: .red),
-    Category(title: "자료구조", icon: "doc.on.clipboard", count: 32, color: .purple), // ← OK now
-    Category(title: "운영체제", icon: "cpu", count: 25, color: .green),
-    Category(title: "Swift", icon: "chevron.left.slash.chevron.right", count: 48, color: .blue),
-    Category(title: "네트워크", icon: "arrow.left.arrow.right", count: 36, color: .red)
-]
-
 struct HomeView: View {
     @Bindable var profile: Profile
     @Binding var navigationPath: NavigationPath
