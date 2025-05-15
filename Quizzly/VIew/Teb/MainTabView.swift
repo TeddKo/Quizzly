@@ -20,12 +20,14 @@ struct MainTabView: View {
     @Binding var navigationPath: NavigationPath
     
     @EnvironmentObject var categoryViewModel: CategoryViewModel
+    @EnvironmentObject var homeViewModel: HomeViewModel
     var userID:String
     
     var body: some View {
         TabView {
             HomeView(profile: profile, navigationPath: $navigationPath)
             HomeView(profile: profile, navigationPath: $navigationPath,userID:userID)
+                .environmentObject(homeViewModel)
                 .tabItem {
                     Label("홈", systemImage: "house")
                 }

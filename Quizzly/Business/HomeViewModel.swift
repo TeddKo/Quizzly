@@ -13,6 +13,7 @@ class HomeViewModel: ObservableObject {
 
     @Published var profiles: [Profile] = []
     @Published var overallScoreRate:Int = 0
+    @Published var overallScoreRate: Int = 0
     @Published var totalCount: Int = 0
     @Published var answerCount: Int = 0
     private var modelContext: ModelContext

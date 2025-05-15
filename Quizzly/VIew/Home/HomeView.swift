@@ -41,8 +41,7 @@ struct ProfileInfoView: View {
 
 // MARK: TotalCorrectRateView
 struct TotalCorrectRateView: View {
-    // TODO: 실제 정답률 데이터로 교체
-    let overallCorrectRate: Double = 0.78 // 예시 값
+    let overallScoreRate:Int
     
     var body: some View {
         HStack {
@@ -53,6 +52,7 @@ struct TotalCorrectRateView: View {
                     .foregroundColor(.black.opacity(0.5))
                 
                 Text("\(Int(overallCorrectRate * 100))%")
+                Text("\(overallScoreRate)%")
                     .font(.title3)
                     .bold()
             }
@@ -67,6 +67,7 @@ struct TotalCorrectRateView: View {
                 Circle()
                     .rotation(.degrees(-90))
                     .trim(from: 0, to: CGFloat(overallCorrectRate))
+                    .trim(from: 0, to: CGFloat(overallScoreRate))
                     .stroke(.blue, style: .init(lineWidth: 10, lineCap: .round))
                     .frame(width: 55, height: 55)
             }
@@ -379,6 +380,7 @@ struct HomeView: View {
     
     @State private var showingAllCategories = false
     @EnvironmentObject private var categoryViewModel: CategoryViewModel
+    @EnvironmentObject var homeViewModel: HomeViewModel
     @AppStorage("currentUserUUID") var id = ""
     var userID:String
     
@@ -398,6 +400,7 @@ struct HomeView: View {
                     VStack(alignment: .leading, spacing: 15) {
                         ProfileInfoView(name: profile.name, themeColorHex: profile.themeColorHex)
                         TotalCorrectRateView() // TODO: 실제 정답률 데이터 전달
+                        TotalCorrectRateView(overallScoreRate: homeViewModel.overallScoreRate) // TODO: 실제 정답률 데이터 전달
                         RecommendedQuizView()  // TODO: 실제 추천 퀴즈 데이터 전달
                     }
                 }
