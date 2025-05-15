@@ -74,9 +74,13 @@ struct ChooseProfileView: View {
                     .environmentObject(homeViewModel)
             }
             .navigationDestination(for: Profile.self) { profile in
-                HomeView(profile: profile, navigationPath: $navigationPath)
+                MainTabView(profile: profile, navigationPath: $navigationPath)
                     .environmentObject(categoryViewModel)
             }
+//            .navigationDestination(for: Profile.self) { profile in
+//                HomeView(profile: profile, navigationPath: $navigationPath)
+//                    .environmentObject(categoryViewModel)
+//            }
             .navigationDestination(for: QuizCategory.self) { category in
                 QuizView(navigationPath: $navigationPath, category: category, difficulty: .level1)
             }
