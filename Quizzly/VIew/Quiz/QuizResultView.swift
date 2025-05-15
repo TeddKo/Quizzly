@@ -10,16 +10,18 @@ import SwiftUI
 struct QuizResultView: View {
     @Binding var navigationPath: NavigationPath
     
+    @EnvironmentObject var quizViewModel:QuizViewModel
     @State private var retry: Bool = false
     
-    let correctCount: Int
-    let incorrectCount: Int
-    let totalTime: String
-    let scorePercentage: Int
-    let quizTitle: String
-    let notes: [QuizNote]
-    let recommendations: [LearningRecommendation]
+//    let correctCount: Int
+//    let incorrectCount: Int
+//    let totalTime: String
+//    let scorePercentage: Int
+    @State var quizTitle: String = ""
+//    let notes: [QuizNote]
+//    let recommendations: [LearningRecommendation]
     let category: QuizCategory
+    @State var totalTime:String = ""
     
     var body: some View {
         VStack(spacing: 24) {
@@ -41,25 +43,25 @@ struct QuizResultView: View {
                         .stroke(.gray.opacity(0.3), lineWidth: 20)
                         .frame(width: 110, height: 110)
 
-                    Circle()
-                        .rotation(.degrees(-90))
-                        .trim(from: 0, to: CGFloat(scorePercentage) / 100)
-                        .stroke(.blue, lineWidth: 20)
-                        .frame(width: 110, height: 110)
-
-                    Text("\(scorePercentage)%")
-                        .font(.title3)
-                        .bold()
+//                    Circle()
+//                        .rotation(.degrees(-90))
+//                        .trim(from: 0, to: CGFloat(scorePercentage) / 100)
+//                        .stroke(.blue, lineWidth: 20)
+//                        .frame(width: 110, height: 110)
+//
+//                    Text("\(scorePercentage)%")
+//                        .font(.title3)
+//                        .bold()
                 }
                 .clipShape(.circle)
             
                 HStack(spacing: 24) {
                     VStack {
-                        Text("\(correctCount)")
-                            .font(.title3)
-                            .fontWeight(.bold)
-                            .foregroundStyle(.green)
-                        
+//                        Text("\(correctCount)")
+//                            .font(.title3)
+//                            .fontWeight(.bold)
+//                            .foregroundStyle(.green)
+//                        
                         Text("정답")
                             .font(.footnote)
                             .fontWeight(.bold)
@@ -67,11 +69,11 @@ struct QuizResultView: View {
                     }
                     
                     VStack {
-                        Text("\(incorrectCount)")
-                            .font(.title3)
-                            .fontWeight(.bold)
-                            .foregroundStyle(.red)
-                        
+//                        Text("\(incorrectCount)")
+//                            .font(.title3)
+//                            .fontWeight(.bold)
+//                            .foregroundStyle(.red)
+//                        
                         Text("오답")
                             .font(.footnote)
                             .fontWeight(.bold)
@@ -90,6 +92,11 @@ struct QuizResultView: View {
                             .foregroundStyle(.black.opacity(0.5))
                     }
                 }
+                .onAppear {
+                    quizTitle = category.name
+                    quizViewModel.calculateDuration()
+                    totalTime = quizViewModel.formattedDuration
+                }
             }
 
             // MARK: 오답 노트
@@ -98,38 +105,38 @@ struct QuizResultView: View {
                     .font(.headline)
                     .fontWeight(.semibold)
 
-                ForEach(notes) { note in
-                    VStack(alignment: .leading, spacing: 7) {
-                        Text(note.question)
-                            .font(.footnote)
-                            .fontWeight(.semibold)
-
-                        HStack(spacing: 15) {
-                            Label("내 답안: \(note.userAnswer)", systemImage: "xmark.circle")
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .foregroundColor(.red)
-
-                            Label("정답: \(note.correctAnswer)", systemImage: "checkmark.circle")
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .foregroundColor(.green)
-                        }
-
-                        Text(note.explanation)
-                            .font(.caption2)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.black.opacity(0.5))
-                    }
-                    .padding(13)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(.red.opacity(0.06))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(.red.opacity(0.1), lineWidth: 3)
-                    )
-                    .cornerRadius(12)
-                }
+//                ForEach(notes) { note in
+//                    VStack(alignment: .leading, spacing: 7) {
+//                        Text(note.question)
+//                            .font(.footnote)
+//                            .fontWeight(.semibold)
+//
+//                        HStack(spacing: 15) {
+//                            Label("내 답안: \(note.userAnswer)", systemImage: "xmark.circle")
+//                                .font(.caption)
+//                                .fontWeight(.medium)
+//                                .foregroundColor(.red)
+//
+//                            Label("정답: \(note.correctAnswer)", systemImage: "checkmark.circle")
+//                                .font(.caption)
+//                                .fontWeight(.medium)
+//                                .foregroundColor(.green)
+//                        }
+//
+//                        Text(note.explanation)
+//                            .font(.caption2)
+//                            .fontWeight(.semibold)
+//                            .foregroundColor(.black.opacity(0.5))
+//                    }
+//                    .padding(13)
+//                    .frame(maxWidth: .infinity, alignment: .leading)
+//                    .background(.red.opacity(0.06))
+//                    .overlay(
+//                        RoundedRectangle(cornerRadius: 12)
+//                            .stroke(.red.opacity(0.1), lineWidth: 3)
+//                    )
+//                    .cornerRadius(12)
+//                }
             }
 
             // MARK: 추천 학습
@@ -138,34 +145,34 @@ struct QuizResultView: View {
                     .font(.headline)
                     .padding(.bottom, 10)
                 
-                ForEach(Array(recommendations.enumerated()), id: \.1.id) { index, item in
-                    HStack {
-                        Image(systemName: "book")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 13, height: 13)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.blue)
-                            .padding(8)
-                            .background(.blue.opacity(0.1))
-                            .cornerRadius(5)
-                        
-                        VStack(alignment: .leading) {
-                            Text(item.title)
-                                .font(.footnote)
-                                .fontWeight(.semibold)
-                            
-                            Text(item.duration)
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .foregroundColor(.black.opacity(0.5))
-                        }
-                    }
-                    
-                    if index < recommendations.count - 1 {
-                        Divider()
-                    }
-                }
+//                ForEach(Array(recommendations.enumerated()), id: \.1.id) { index, item in
+//                    HStack {
+//                        Image(systemName: "book")
+//                            .resizable()
+//                            .scaledToFit()
+//                            .frame(width: 13, height: 13)
+//                            .fontWeight(.semibold)
+//                            .foregroundColor(.blue)
+//                            .padding(8)
+//                            .background(.blue.opacity(0.1))
+//                            .cornerRadius(5)
+//                        
+//                        VStack(alignment: .leading) {
+//                            Text(item.title)
+//                                .font(.footnote)
+//                                .fontWeight(.semibold)
+//                            
+//                            Text(item.duration)
+//                                .font(.caption)
+//                                .fontWeight(.medium)
+//                                .foregroundColor(.black.opacity(0.5))
+//                        }
+//                    }
+//                    
+//                    if index < recommendations.count - 1 {
+//                        Divider()
+//                    }
+//                }
             }
 
             HStack {
@@ -184,6 +191,8 @@ struct QuizResultView: View {
 
                 Button {
                     retry = true
+                    quizViewModel.startTime = Date.init()
+                    quizViewModel.endTime = Date.init()
                 } label: {
                     Text("다시 풀기")
                         .font(.subheadline)
@@ -197,6 +206,7 @@ struct QuizResultView: View {
                 .cornerRadius(8)
             }
         }
+        .environmentObject(quizViewModel)
         .padding()
         .navigationBarBackButtonHidden(true)
         .navigationDestination(isPresented: $retry) {
@@ -205,6 +215,7 @@ struct QuizResultView: View {
                 category: category,
                 difficulty: .level1
             )
+            .environmentObject(quizViewModel)
         }
     }
 }

@@ -11,6 +11,7 @@ struct MainTabView: View {
     let profile: Profile
     @Binding var navigationPath: NavigationPath
     @EnvironmentObject var categoryViewModel:CategoryViewModel
+    @EnvironmentObject var quizViewModel:QuizViewModel
     var userID:String
     
     var body: some View {
@@ -30,6 +31,7 @@ struct MainTabView: View {
                     Label("대시보드", systemImage: "chart.bar.xaxis")
                 }
         }
+        .environmentObject(quizViewModel)
     }
 }
 

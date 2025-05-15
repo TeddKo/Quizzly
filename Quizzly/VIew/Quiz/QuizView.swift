@@ -104,17 +104,18 @@ struct QuizView: View {
             }
             .opacity(isCount != 0 ? 100 : 0 )
             .navigationDestination(isPresented: $showResult) {
-                //                QuizResultView(
-                //                    navigationPath: $navigationPath,
-                //                    correctCount: correctCount,
-                //                    incorrectCount: quizList.count - correctCount,
-                //                    totalTime: "03:24",
-                //                    scorePercentage: Int((Double(correctCount) / Double(quizList.count)) * 100),
-                //                    quizTitle: "\(category.title) 퀴즈",
-                //                    notes: [],
-                //                    recommendations: [],
-                //                    category: category
-                //                )
+                                QuizResultView(
+                                    navigationPath: $navigationPath,
+//                                    correctCount: correctCount,
+//                                    incorrectCount: quizList.count - correctCount,
+//                                    totalTime: "03:24",
+//                                    scorePercentage: Int((Double(correctCount) / Double(quizList.count)) * 100),
+//                                    quizTitle: "\(category.title) 퀴즈",
+//                                    notes: [],
+//                                    recommendations: [],
+                                    category: category
+                                )
+                                .environmentObject(quizViewModel)
             }
             .onAppear {
                 quizViewModel.fetchQuiz(category: category)
@@ -123,8 +124,6 @@ struct QuizView: View {
                 quizViewModel.startTime = Date.now
             }
             .onDisappear {
-                quizViewModel.calculateDuration()
-                print(quizViewModel.formattedDuration)
             }
         }
         .padding(.horizontal)
