@@ -49,8 +49,14 @@ struct DashboardView: View {
     // TODO: 취약 카테고리 받아서 실제 percent로 교체
     private var weakCategoryPercent = 0.6
     
+    let dashboardData: [String] = []
+    
     var body: some View {
-        NavigationStack {
+        if dashboardData.isEmpty {
+            EmptyDashboardView()
+                .navigationBarBackButtonHidden(true)
+                .toolbar(.hidden, for: .navigationBar)
+        } else {
             ScrollView {
                 Group {
                     VStack(alignment: .leading, spacing: 18) {
@@ -195,17 +201,17 @@ struct DashboardView: View {
                         .cornerRadius(10)
                         
                         ScrollView {
-                             VStack(spacing: 12) {
-                                 ForEach(mockNotes, id: \.id) { note in
-                                     WrongNoteCard(
-                                         question: note.question,
-                                         category: note.category,
-                                         date: note.date,
-                                         accuracy: note.accuracy
-                                     )
-                                 }
-                             }
-                         }
+                            VStack(spacing: 12) {
+                                ForEach(mockNotes, id: \.id) { note in
+                                    WrongNoteCard(
+                                        question: note.question,
+                                        category: note.category,
+                                        date: note.date,
+                                        accuracy: note.accuracy
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
                 .padding()
@@ -369,9 +375,9 @@ struct WrongNoteCard: View {
                     .font(.caption)
                     .fontWeight(.semibold)
                 
-                    Text("\(category) • \(date)")
-                        .font(.caption2)
-                        .foregroundColor(.black.opacity(0.6))
+                Text("\(category) • \(date)")
+                    .font(.caption2)
+                    .foregroundColor(.black.opacity(0.6))
             }
             
             Spacer()
