@@ -15,6 +15,8 @@ struct RecentCard: View, Identifiable, Hashable {
     let date: String
     let isCorrect: Bool
     
+    //퀴즈 넘어가는 것 중..
+    
     var body: some View {
         HStack(spacing: 10) {
             Image(systemName: isCorrect ? "checkmark.circle" : "xmark.circle")

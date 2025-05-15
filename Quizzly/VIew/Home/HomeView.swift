@@ -37,6 +37,10 @@ struct HomeView: View {
     
     @State private var showingAllCategories = false
     @EnvironmentObject var categoryViewModel:CategoryViewModel
+    @AppStorage("currentUserUUID") var id = ""
+    var userID:String
+//    var allCategories:[QuizCategory]
+//    @State var categories:[QuizCategory] = []
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -69,6 +73,9 @@ struct HomeView: View {
                             }
                             
                             Spacer()
+                        }
+                        .onAppear {
+                            id = userID
                         }
                         
                         // MARK: 전체 정답률
@@ -177,6 +184,7 @@ struct HomeView: View {
                         VStack {
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                                 ForEach(displayedCategories) { category in
+
                                     Button {
                                         navigationPath.append(category)
                                     } label: {
@@ -187,7 +195,19 @@ struct HomeView: View {
                                             color: category.color
                                         )
                                     }
-                                    .buttonStyle(PlainButtonStyle())
+//                                    Button {
+//                                        navigationPath.append(category)
+//                                    } label: {
+//                                        Image(systemName: category.iconName ?? "")
+//                                            .resizable()
+//                                            .scaledToFit()
+//                                            .frame(width: 20, height: 20)
+//                                            .font(.title3)
+//                                            .foregroundColor(.primary)
+//                                            .padding(8)
+//                                            .cornerRadius(6)
+//                                    }
+//                                    .buttonStyle(PlainButtonStyle())
                                 }
                             }
                         }
@@ -197,6 +217,9 @@ struct HomeView: View {
                 .background(.white)
                 .cornerRadius(16)
                 .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+                .onAppear {
+//                    categories = categoryViewModel.getCategories()
+                }
                 
                 Group {
                     // MARK: 최근 학습
@@ -237,6 +260,7 @@ struct HomeView: View {
 
 
 
+
 #Preview {
-    HomeView(profile: Profile(name: "민지", createdAt: Date.now), navigationPath: .constant(NavigationPath()))
+//    HomeView(profile: Profile(name: "민지", createdAt: Date.now), navigationPath: .constant(NavigationPath()), userID: ""), allCategoreis: []
 }

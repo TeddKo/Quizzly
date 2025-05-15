@@ -5,15 +5,15 @@
 //  Created by 강민지 on 5/13/25.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 // TODO: mock 데이터 실제 데이터로 바꾸기
 let mockCategories: [QuizCategory] = [
     QuizCategory(name: "iOS", iconName: "iphone", themeColorHex: "#34C759"),
     QuizCategory(name: "Design", iconName: "scribble", themeColorHex: "#FF9500"),
     QuizCategory(name: "CS", iconName: "cpu", themeColorHex: "#007AFF"),
-    QuizCategory(name: "Swift", iconName: "swift", themeColorHex: "#AF52DE")
+    QuizCategory(name: "Swift", iconName: "swift", themeColorHex: "#AF52DE"),
 ]
 
 struct ChooseCategoryView: View {
@@ -21,14 +21,23 @@ struct ChooseCategoryView: View {
     @State private var selectedCategory: QuizCategory? = nil
     @State private var showAlert = false
     @State private var navigationPath = NavigationPath()
-    
-    let categories: [QuizCategory]
-    
+    @Environment(\.modelContext) private var modelContext
+    @StateObject var categoryViewModel: CategoryViewModel
+
+    //    let categories: [QuizCategory]
+    @State var categories: [QuizCategory] = []
+
+    init(modelContext: ModelContext) {
+        _categoryViewModel = StateObject(
+            wrappedValue: CategoryViewModel(modelContext: modelContext.container.mainContext)
+        )
+    }
+
     let columns = [
         GridItem(.flexible()),
-        GridItem(.flexible())
+        GridItem(.flexible()),
     ]
-    
+
     var body: some View {
         NavigationStack(path: $navigationPath) {
             VStack {
@@ -42,16 +51,16 @@ struct ChooseCategoryView: View {
                                     .frame(height: 50)
                                     .foregroundColor(colorFromHex(category.themeColorHex))
                                     .shadow(color: Color.black.opacity(0.1), radius: 6, x: 0, y: 3)
-                                
+
                                 Spacer()
                             }
                             .padding(.bottom)
-                            
+
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(category.name)
                                     .font(.headline)
                                     .foregroundColor(.black)
-                                
+
                                 Text("\(category.quizzes?.count ?? 0) questions")
                                     .font(.caption)
                                     .foregroundColor(.gray)
@@ -73,13 +82,13 @@ struct ChooseCategoryView: View {
                     }
                 }
                 .padding(.horizontal)
-                
+
                 Spacer()
-                
+
                 VStack(alignment: .leading, spacing: 12) {
                     Text("난이도를 선택하세요")
                         .font(.headline)
-                    
+
                     Picker("난이도", selection: $selectedDifficulty) {
                         ForEach(DifficultyLevel.allCases, id: \.self) { level in
                             Text(level.displayName).tag(level)
@@ -88,16 +97,17 @@ struct ChooseCategoryView: View {
                     .pickerStyle(.segmented)
                 }
                 .padding(.horizontal)
-                
+
                 Spacer()
-                
+
                 Button {
                     guard let selected = selectedCategory else { return }
-                    
-                    let matchingQuizzes = selected.quizzes?.filter {
-                        $0.difficultyLevel == selectedDifficulty
-                    } ?? []
-                    
+
+                    let matchingQuizzes =
+                        selected.quizzes?.filter {
+                            $0.difficultyLevel == selectedDifficulty
+                        } ?? []
+
                     if matchingQuizzes.isEmpty {
                         showAlert = true
                     } else {
@@ -112,7 +122,7 @@ struct ChooseCategoryView: View {
                         .background(.cyan)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
-                
+
                 .disabled(selectedCategory == nil)
                 .background {
                     RoundedRectangle(cornerRadius: 12)
@@ -122,6 +132,9 @@ struct ChooseCategoryView: View {
                         .blur(radius: 12)
                 }
             }
+            .onAppear(perform: {
+                categories = categoryViewModel.getCategories()
+            })
             .padding(.horizontal)
             .padding(.top, 25)
             .padding(.bottom, 15)
@@ -130,23 +143,23 @@ struct ChooseCategoryView: View {
                 Button("문제 만들러 가기") {
                     navigationPath.append("create")
                 }
-                
+
                 Button("취소", role: .cancel) {}
             } message: {
                 Text("이 카테고리와 난이도에 해당하는 문제가 없습니다.")
             }
-            
+
             // TODO: 문제 유무에 따라 CreateQuizView / QuizView 화면 다르게 이동
         }
     }
-    
+
     private func colorFromHex(_ hexString: String?) -> Color {
         guard let hex = hexString?.trimmingCharacters(in: CharacterSet.alphanumerics.inverted), hex.count == 6 else {
             return Color.gray
         }
         var rgbValue: UInt64 = 0
         Scanner(string: hex).scanHexInt64(&rgbValue)
-        
+
         return Color(
             red: Double((rgbValue & 0xFF0000) >> 16) / 255.0,
             green: Double((rgbValue & 0x00FF00) >> 8) / 255.0,
@@ -156,5 +169,5 @@ struct ChooseCategoryView: View {
 }
 
 #Preview {
-    ChooseCategoryView(categories: mockCategories)
+    //    ChooseCategoryView(categories: mockCategories)
 }

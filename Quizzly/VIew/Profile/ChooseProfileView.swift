@@ -17,6 +17,7 @@ struct ChooseProfileView: View {
     
     @State private var showingAddProfileSheet = false
     @State private var navigationPath = NavigationPath()
+    @State var allCategories:[QuizCategory] = []
     
     init(modelContext:ModelContext) {
         _homeViewModel = StateObject(wrappedValue: HomeViewModel(modelContext: modelContext.container.mainContext))
@@ -74,7 +75,7 @@ struct ChooseProfileView: View {
                     .environmentObject(homeViewModel)
             }
             .navigationDestination(for: Profile.self) { profile in
-                HomeView(profile: profile, navigationPath: $navigationPath)
+                HomeView(profile: profile, navigationPath: $navigationPath,userID:profile.id.uuidString)
                     .environmentObject(categoryViewModel)
             }
             .navigationDestination(for: Category.self) { category in
@@ -84,6 +85,7 @@ struct ChooseProfileView: View {
                 homeViewModel.fetchProfile()
             }
             .onDisappear {
+                allCategories = categoryViewModel.quizCategories
 //                homeViewModel.deleteProfile()
                 //임시로 뷰가 사라지면 모든 프로필들이 지워지게 해놨습니다.
                 //참고 부탁 드립니다.
