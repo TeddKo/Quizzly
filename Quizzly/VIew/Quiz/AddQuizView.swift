@@ -23,7 +23,7 @@ struct AddQuizView: View {
     @State private var selectedCategory: QuizCategory? = nil
     
     var body: some View {
-        VStack {
+        ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 30) {
                 HStack {
                     Text("퀴즈 생성")
