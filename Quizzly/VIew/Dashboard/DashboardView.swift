@@ -49,8 +49,14 @@ struct DashboardView: View {
     // TODO: 취약 카테고리 받아서 실제 percent로 교체
     private var weakCategoryPercent = 0.6
     
+    let dashboardData: [String] = []
+    
     var body: some View {
-        NavigationStack {
+        if dashboardData.isEmpty {
+            EmptyDashboardView()
+                .navigationBarBackButtonHidden(true)
+                .toolbar(.hidden, for: .navigationBar)
+        } else {
             ScrollView {
                 Group {
                     VStack(alignment: .leading, spacing: 18) {
