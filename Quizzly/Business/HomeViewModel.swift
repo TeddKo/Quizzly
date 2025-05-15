@@ -13,6 +13,8 @@ class HomeViewModel: ObservableObject {
 
     @Published var profiles: [Profile] = []
     @Published var overallScoreRate:Int = 0
+    @Published var totalCount: Int = 0
+    @Published var answerCount: Int = 0
     private var modelContext: ModelContext
 
     init(modelContext: ModelContext) {
@@ -66,8 +68,6 @@ class HomeViewModel: ObservableObject {
         let currentUserID = UserDefaults.standard.string(forKey: "currentUserUUID") ?? ""
         guard let userUUID = UUID(uuidString: currentUserID) else { return }
         var answers:[QuizAttempt]
-        var totalCount: Int = 0
-        var answerCount: Int = 0
         do {
             let predicate = #Predicate<QuizAttempt>{ attempt in
                 attempt.profile?.id == userUUID
@@ -76,10 +76,11 @@ class HomeViewModel: ObservableObject {
             answers = try modelContext.fetch(descriptor)
             answerCount = answers.count{$0.wasCorrect == true }
             totalCount = answers.count
-//            overallScoreRate = Int(Double(answerCount)/Double(totalCount) * 100)
-            print(overallScoreRate)
         } catch  {
             print(error)
+        }
+        if (answerCount != 0 && totalCount != 0){
+            overallScoreRate = Int(Double(answerCount)/Double(totalCount) * 100)
         }
     }
     

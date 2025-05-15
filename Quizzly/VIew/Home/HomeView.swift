@@ -107,9 +107,7 @@ struct HomeView: View {
                                     .frame(width: 55, height: 55)
                             }
                             .clipShape(.circle)
-                        }.onAppear(perform: {
-//                            homeViewModel.getOverallScoreRate()
-                        })
+                        }
                         .padding(13)
                         .background(.blue.opacity(0.08))
                         .overlay(
@@ -255,6 +253,9 @@ struct HomeView: View {
             }
             .padding()
         }
+        .onAppear(perform: {
+            homeViewModel.getOverallScoreRate()
+        })
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
         .background(.gray.opacity(0.1))
