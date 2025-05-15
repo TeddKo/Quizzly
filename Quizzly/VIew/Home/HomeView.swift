@@ -39,7 +39,9 @@ struct HomeView: View {
     @State private var showingAllCategories = false
     
     @Query private var allQuizzes: [Quiz]
-    @State private var selectedCategory: Category? = nil
+    @Query private var allCategories: [QuizCategory]
+
+    @State private var selectedCategory: QuizCategory? = nil
     @State private var showAddQuizView = false
     @State private var showEmptyAlert = false
     
@@ -217,9 +219,9 @@ private func backgroundView(@ViewBuilder content: () -> some View) -> some View 
 @ViewBuilder
 private func categoryView(
     showingAllCategories: Binding<Bool>,
-    allCategories: [Category],
+    allCategories: [QuizCategory],
     allQuizzes: [Quiz],
-    selectedCategory: Binding<Category?>,
+    selectedCategory: Binding<QuizCategory?>,
     showEmptyAlert: Binding<Bool>,
     navigationPath: Binding<NavigationPath>
 ) -> some View {
