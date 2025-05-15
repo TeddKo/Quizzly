@@ -40,7 +40,7 @@ struct HomeView: View {
     @AppStorage("currentUserUUID") var id = ""
     var userID:String
 //    var allCategories:[QuizCategory]
-//    @State var categories:[QuizCategory] = []
+    @State var categories:[QuizCategory] = []
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -179,35 +179,37 @@ struct HomeView: View {
                             }
                         }
                         
-                        let displayedCategories = showingAllCategories ? allCategories : Array(allCategories.prefix(4))
+//                        let displayedCategories = showingAllCategories ? allCategories : Array(allCategories.prefix(4))
+//                        let displayedCategories = showingAllCategories ? categories : Array(categories.prefix(4))
                         
                         VStack {
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                                ForEach(displayedCategories) { category in
-
-                                    Button {
-                                        navigationPath.append(category)
-                                    } label: {
-                                        CategoryCard(
-                                            title: category.title,
-                                            icon: category.icon,
-                                            count: category.count,
-                                            color: category.color
-                                        )
-                                    }
+                                ForEach(categories) { category in
 //                                    Button {
 //                                        navigationPath.append(category)
 //                                    } label: {
-//                                        Image(systemName: category.iconName ?? "")
-//                                            .resizable()
-//                                            .scaledToFit()
-//                                            .frame(width: 20, height: 20)
-//                                            .font(.title3)
-//                                            .foregroundColor(.primary)
-//                                            .padding(8)
-//                                            .cornerRadius(6)
+//                                        CategoryCard(
+//                                            title: category.title,
+//                                            icon: category.icon,
+//                                            count: category.count,
+//                                            color: category.color
+//                                        )
 //                                    }
-//                                    .buttonStyle(PlainButtonStyle())
+                                    Button {
+                                        navigationPath.append(category)
+                                        print(#line,#file,"test")
+                                    } label: {
+                                        Text(category.name)
+                                        Image(systemName: category.iconName ?? "")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 20, height: 20)
+                                            .font(.title3)
+                                            .foregroundColor(.primary)
+                                            .padding(8)
+                                            .cornerRadius(6)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
                                 }
                             }
                         }
@@ -218,7 +220,7 @@ struct HomeView: View {
                 .cornerRadius(16)
                 .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
                 .onAppear {
-//                    categories = categoryViewModel.getCategories()
+                    categories = categoryViewModel.getCategories()
                 }
                 
                 Group {

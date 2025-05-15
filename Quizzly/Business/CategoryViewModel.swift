@@ -26,8 +26,8 @@ class CategoryViewModel: ObservableObject {
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
         fetchCategory()
-//        modelDeleteAll()
-//        updateDummyQuiz()
+        modelDeleteAll()
+        updateDummyQuiz()
     }
 
     func addCategory(item: QuizCategory) {
@@ -64,7 +64,8 @@ class CategoryViewModel: ObservableObject {
             )
         ]
         let quizCategoryList:[QuizCategory] = [
-            QuizCategory(name: "자료구조", iconName: "doc.on.clipboard")
+            QuizCategory(name: "자료구조", iconName: "doc.on.clipboard"),
+            QuizCategory(name: "Swift",iconName: "swift")
         ]
         do {
             try modelContext.transaction {
@@ -161,4 +162,12 @@ class CategoryViewModel: ObservableObject {
             print(e)
         }
     }
+    
+//    취약카테고리
+//    wasCorrect가 false인것을 카운팅해서 가장 많은 것
+//    func findWeakness(){
+//        
+//        modelContext.insert(QuizAttempt(attemptDate: Date.now, selectedAnswerIndex: 3, wasCorrect: false, profile: Profile(name: "Jack", createdAt: Date.now), quiz: Quiz(questionDescription: "강사님 성은", options: ["김","이","박","최"], correctAnswerIndex: 4, difficultyLevel: .level1, quizCategory: QuizCategory(name: "상식"))))
+//        saveContext()
+//    }
 }

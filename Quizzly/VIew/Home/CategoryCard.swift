@@ -5,7 +5,6 @@
 //  Created by DEV on 5/15/25.
 //
 
-
 import SwiftUI
 
 struct CategoryCard: View {
@@ -13,22 +12,22 @@ struct CategoryCard: View {
     let icon: String
     let count: Int
     let color: Color
-    
+
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 5) {
                 Text(title)
                     .font(.subheadline)
                     .bold()
-                
+
                 Text("문제 \(count)개")
                     .font(.footnote)
                     .fontWeight(.semibold)
                     .foregroundColor(.black.opacity(0.5))
             }
-            
+
             Spacer()
-            
+
             Image(systemName: icon)
                 .resizable()
                 .scaledToFit()
