@@ -43,13 +43,57 @@ fileprivate struct QuizQuestionView: View {
     }
 }
 
+fileprivate struct TimeProgressView: View {
+    let elapsedTime: TimeInterval
+    let timeLimit: TimeInterval
+    let formattedTime: String
+    
+    private var progress: Double {
+        guard timeLimit > 0 else { return 0 }
+        return min(elapsedTime / timeLimit, 1.0) // 0.0 ~ 1.0 사이 값
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text("남은 시간")
+                    .font(.caption2)
+                    .foregroundColor(.gray)
+                Spacer()
+                Text(formattedTime)
+                    .font(.caption.bold())
+                    .foregroundColor(.blue)
+            }
+            
+            GeometryReader { geometry in
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(height: 10)
+                    
+                    Capsule()
+                        .fill(LinearGradient(
+                            gradient: Gradient(colors: [.blue.opacity(0.7), .blue]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ))
+                        .frame(width: geometry.size.width * CGFloat(progress), height: 10)
+                        .animation(.linear(duration: 0.1), value: progress) // 부드러운 애니메이션
+                }
+                .clipShape(Capsule())
+            }
+            .frame(height: 10)
+        }
+    }
+}
+
 // MARK: QuizView
 struct QuizView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) var dismiss
     
     @Binding var navigationPath: NavigationPath
-
+    
     // 기존 상태 변수들
     @State private var selectedOption: String? = nil
     @State private var currentIndex: Int = 0
@@ -64,7 +108,8 @@ struct QuizView: View {
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     @State private var totalQuizTimeTaken: String = "00:00"
-
+    let quizTimeLimit: TimeInterval = 600
+    
     let category: QuizCategory
     let difficulty: DifficultyLevel
     
@@ -74,9 +119,14 @@ struct QuizView: View {
         }
         return fetchedQuizzesForCategory[currentIndex]
     }
-
+    
     var body: some View {
         VStack(spacing: 30) {
+            TimeProgressView(
+                elapsedTime: elapsedTime,
+                timeLimit: quizTimeLimit,
+                formattedTime: formatTime(quizTimeLimit - elapsedTime)
+            )
             if let quiz = currentQuiz {
                 QuizQuestionView(questionDescription: quiz.questionDescription)
                 QuizOptionsListView(options: quiz.options, selectedOption: $selectedOption)
@@ -131,13 +181,20 @@ struct QuizView: View {
             print("Fetched quizzes count for category: \(fetchedQuizzesForCategory.count)")
         }
         .onDisappear {
-             stopTimer()
-         }
+            stopTimer()
+        }
         .onReceive(timer) { firedDate in
             guard quizStartTime != nil, !showResult else {
-               return
+                return
             }
-            elapsedTime = Date().timeIntervalSince(quizStartTime!)
+            let currentElapsedTime = Date().timeIntervalSince(quizStartTime ?? .now)
+            // 시간이 다 되면 자동으로 퀴즈 종료 (선택 사항)
+            if currentElapsedTime >= quizTimeLimit {
+                self.elapsedTime = quizTimeLimit // 정확히 제한 시간으로 설정
+                handleQuizTimeout()
+            } else {
+                self.elapsedTime = currentElapsedTime
+            }
         }
         .onChange(of: category) { _, newCategory in
             print("Category changed to: \(newCategory.name). Fetching quizzes.")
@@ -147,18 +204,28 @@ struct QuizView: View {
         }
     }
     
+    private func handleQuizTimeout() {
+        print("Quiz time is up!")
+        stopTimer()
+        totalQuizTimeTaken = formatTime(quizTimeLimit)
+        _ = Array(fetchedQuizzesForCategory.prefix(currentIndex + 1))
+        
+        evaluateQuizResults(from: fetchedQuizzesForCategory)
+        showResult = true
+    }
+    
     private func startTimer() {
         quizStartTime = Date()
         elapsedTime = 0
         print("Timer started at \(String(describing: quizStartTime))")
     }
-
+    
     private func stopTimer() {
         quizStartTime = nil
         // self.timerSubscription?.cancel()
         print("Timer stopped. Final elapsed time: \(elapsedTime)")
     }
-
+    
     private func formatTime(_ interval: TimeInterval) -> String {
         let totalSeconds = Int(interval)
         let hours = totalSeconds / 3600
@@ -187,7 +254,7 @@ struct QuizView: View {
             fetchedQuizzesForCategory = []
         }
     }
-
+    
     private func resetQuizStateAndTimer() {
         selectedOption = nil
         currentIndex = 0
@@ -201,14 +268,14 @@ struct QuizView: View {
     private func handleNextButtonTap(for quiz: Quiz) {
         if let selected = selectedOption,
            let selectedIndexInOptions = quiz.options.firstIndex(of: selected) {
-             userAnswers.append(selectedIndexInOptions)
-             if selectedIndexInOptions == quiz.correctAnswerIndex {
-                 correctCount += 1
-             }
-         } else {
-             userAnswers.append(-1)
-         }
-
+            userAnswers.append(selectedIndexInOptions)
+            if selectedIndexInOptions == quiz.correctAnswerIndex {
+                correctCount += 1
+            }
+        } else {
+            userAnswers.append(-1)
+        }
+        
         if currentIndex < fetchedQuizzesForCategory.count - 1 {
             currentIndex += 1
             selectedOption = nil
@@ -234,7 +301,7 @@ struct QuizView: View {
             let noteChoices = quiz.options.enumerated().map { idx, optionText in
                 Choice(label: String(UnicodeScalar(65 + idx)!), text: optionText)
             }
-
+            
             return QuizNote(
                 originalQuizID: quiz.id,
                 question: quiz.questionDescription,
