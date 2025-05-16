@@ -76,7 +76,7 @@ struct DashboardView: View {
             .padding()
             .padding(.top, 50)
             .background(.gray.opacity(0.1))
-            .ignoresSafeArea(edges: [.top, .bottom])
+            .ignoresSafeArea(edges: [.top])
         }
     }
 }

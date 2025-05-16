@@ -128,6 +128,7 @@ struct QuizView: View {
             fetchQuizzesForCurrentCategory()
             resetQuizState()
         }
+        .toolbar(.hidden, for: .navigationBar)
     }
     
     private func fetchQuizzesForCurrentCategory() {
