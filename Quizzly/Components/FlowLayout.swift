@@ -375,7 +375,7 @@ struct Test: View {
             .font(.headline)
             .padding()
             .background(isEditingThisItem ? Color.orange.opacity(0.8) : Color.blue)
-            .foregroundColor(.white)
+            .foregroundColor(Color.dynamicBackground)
             .cornerRadius(16)
             .shadow(radius: isEditingThisItem ? 5 : 0)
             .rotationEffect(isEditingThisItem ? Angle.degrees(2.0) : Angle.degrees(0))
@@ -398,7 +398,7 @@ struct Test: View {
                             Image(systemName: "xmark.circle.fill")
                                 .font(.title2)
                                 .foregroundColor(.red)
-                                .background(Circle().fill(Color.white).padding(2))
+                                .background(Circle().fill(Color.dynamicBackground).padding(2))
                         }
                         .offset(x: 10, y: -10)
                         .transition(.scale.combined(with: .opacity))

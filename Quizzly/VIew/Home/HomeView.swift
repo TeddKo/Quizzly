@@ -16,12 +16,12 @@ struct ProfileInfoView: View {
     var body: some View {
         HStack(spacing: 10) {
             Circle()
-                .fill(themeColorHex?.asHexColor ?? .gray)
+                .fill(themeColorHex?.asHexColor ?? .secondary)
                 .frame(width: 45, height: 45)
                 .overlay {
                     Text(name.prefix(1))
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.dynamicBackground)
                 }
             
             VStack(alignment: .leading, spacing: 5) {
@@ -32,7 +32,7 @@ struct ProfileInfoView: View {
                 Text("학습 계속해보세요")
                     .font(.footnote)
                     .fontWeight(.semibold)
-                    .foregroundColor(.black.opacity(0.5))
+                    .foregroundColor(Color.primary.opacity(0.5))
             }
             Spacer()
         }
@@ -50,7 +50,7 @@ struct TotalCorrectRateView: View {
                 Text("전체 정답률")
                     .font(.footnote)
                     .fontWeight(.semibold)
-                    .foregroundColor(.black.opacity(0.5))
+                    .foregroundColor(Color.primary.opacity(0.5))
                 
                 Text("\(Int(overallCorrectRate * 100))%")
                     .font(.title3)
@@ -61,22 +61,22 @@ struct TotalCorrectRateView: View {
             
             ZStack {
                 Circle()
-                    .stroke(.gray.opacity(0.3), lineWidth: 10)
+                    .stroke(.secondary.opacity(0.3), lineWidth: 10)
                     .frame(width: 55, height: 55)
                 
                 Circle()
                     .rotation(.degrees(-90))
                     .trim(from: 0, to: CGFloat(overallCorrectRate))
-                    .stroke(.blue, style: .init(lineWidth: 10, lineCap: .round))
+                    .stroke(Color.adaptiveBlue, style: .init(lineWidth: 10, lineCap: .round))
                     .frame(width: 55, height: 55)
             }
             .clipShape(.circle)
         }
         .padding(13)
-        .background(.blue.opacity(0.08))
+        .background(Color.adaptiveBlue.opacity(0.08))
         .overlay(
             RoundedRectangle(cornerRadius: 8)
-                .stroke(.blue.opacity(0.05), lineWidth: 1)
+                .stroke(Color.adaptiveBlue.opacity(0.05), lineWidth: 1)
         )
         .cornerRadius(8)
     }
@@ -99,7 +99,7 @@ struct RecommendedQuizView: View {
                     Text("취약점 보완 추천")
                         .font(.footnote)
                         .fontWeight(.semibold)
-                        .foregroundColor(.black.opacity(0.5))
+                        .foregroundColor(Color.primary.opacity(0.5))
                 }
                 
                 Spacer()
@@ -113,7 +113,7 @@ struct RecommendedQuizView: View {
                         .padding(.horizontal, 10)
                         .padding(.vertical, 6)
                         .background(Color.orange.opacity(0.8))
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.dynamicBackground)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
             }
@@ -197,10 +197,10 @@ struct CategorySectionView: View {
                     }
                     .padding(15)
                     .frame(maxWidth: .infinity, minHeight: 80)
-                    .background(Color.gray.opacity(0.08))
+                    .background(Color.secondary.opacity(0.08))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray.opacity(0.05), lineWidth: 2)
+                            .stroke(Color.secondary.opacity(0.05), lineWidth: 2)
                     )
                     .cornerRadius(8)
                 }
@@ -225,8 +225,8 @@ struct CategorySectionView: View {
                                     } label: {
                                         Image(systemName: "xmark.circle.fill")
                                             .font(.title2)
-                                            .foregroundColor(.red)
-                                            .background(Circle().fill(Color.white.opacity(0.8)))
+                                            .foregroundColor(Color.adaptiveRed)
+                                            .background(Circle().fill(Color.dynamicBackground.opacity(0.8)))
                                             .padding(3)
                                     }
                                     .offset(x: 8, y: -8)
@@ -287,7 +287,7 @@ struct CategoryCardView: View {
                 Text("문제 \(category.quizzes?.count ?? 0)개")
                     .font(.footnote)
                     .fontWeight(.semibold)
-                    .foregroundColor(.black.opacity(0.5))
+                    .foregroundColor(Color.primary.opacity(0.5))
             }
             
             Spacer()
@@ -296,7 +296,7 @@ struct CategoryCardView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 20, height: 20)
-                .foregroundColor(category.themeColorHex?.asHexColor ?? .gray)
+                .foregroundColor(category.themeColorHex?.asHexColor ?? .secondary)
                 .padding(8)
         }
         .padding(15)
@@ -304,7 +304,7 @@ struct CategoryCardView: View {
         .background((category.themeColorHex?.asHexColor ?? .gray).opacity(0.08))
         .overlay(
             RoundedRectangle(cornerRadius: 8)
-                .stroke((category.themeColorHex?.asHexColor ?? .gray).opacity(0.05), lineWidth: 2)
+                .stroke((category.themeColorHex?.asHexColor ?? .secondary).opacity(0.05), lineWidth: 2)
         )
         .cornerRadius(8)
     }
@@ -325,7 +325,7 @@ struct RecentQuizSectionView: View {
             if quizAttempts.isEmpty {
                 Text("최근 학습 기록이 없습니다.")
                     .font(.footnote)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.secondary)
             } else {
                 ForEach(quizAttempts.indices, id: \.self) { index in
                     let attempt = quizAttempts[index]
@@ -352,9 +352,9 @@ struct RecentQuizCardView: View, Identifiable, Hashable {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 20, height: 20)
-                .foregroundColor(attempt.wasCorrect ? .green : .red)
+                .foregroundColor(attempt.wasCorrect ? Color.adaptiveGreen : Color.adaptiveRed)
                 .padding(8)
-                .background((attempt.wasCorrect ? Color.green : Color.red).opacity(0.1))
+                .background((attempt.wasCorrect ? Color.adaptiveGreen : Color.adaptiveRed).opacity(0.1))
                 .clipShape(Circle())
             
             VStack(alignment: .leading) {
@@ -366,7 +366,7 @@ struct RecentQuizCardView: View, Identifiable, Hashable {
                 Text("\(attempt.attemptDate, style: .date) \(attempt.attemptDate, style: .time)")
                     .font(.caption)
                     .fontWeight(.semibold)
-                    .foregroundColor(.black.opacity(0.5))
+                    .foregroundColor(Color.primary.opacity(0.5))
             }
             Spacer()
         }
@@ -389,9 +389,9 @@ struct HomeView: View {
     private func sectionBackground<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         content()
             .padding()
-            .background(.white)
+            .background(Color.adaptiveGrayOverlay)
             .cornerRadius(16)
-            .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+            .shadow(color: Color.adaptiveGrayOverlay, radius: 5, x: 0, y: 2)
     }
     
     var body: some View {
@@ -433,7 +433,7 @@ struct HomeView: View {
                                 .padding(.bottom, 10)
                             Text("최근 학습 기록이 없습니다.")
                                 .font(.footnote)
-                                .foregroundColor(.gray)
+                                .foregroundColor(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }

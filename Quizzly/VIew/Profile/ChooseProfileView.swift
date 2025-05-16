@@ -49,7 +49,7 @@ struct ChooseProfileView: View {
                             } label: {
                                 ZStack {
                                     Circle()
-                                        .fill(.gray.opacity(0.5))
+                                        .fill(.gray)
                                         .frame(width: 50, height: 50)
                                     
                                     Image(systemName: "plus")
@@ -57,7 +57,7 @@ struct ChooseProfileView: View {
                                         .scaledToFit()
                                         .frame(width: 18, height: 18)
                                         .bold()
-                                        .foregroundStyle(.white)
+                                        .foregroundStyle(Color.dynamicBackground)
                                 }
                             }
                             
