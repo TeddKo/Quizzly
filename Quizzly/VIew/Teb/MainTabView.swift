@@ -14,10 +14,12 @@ struct MainTabView: View {
     
     @EnvironmentObject var categoryViewModel: CategoryViewModel
     @EnvironmentObject var quizViewModel: QuizViewModel // QuizViewModel 주입
+    @EnvironmentObject var homeViewModel: HomeViewModel
 
     var body: some View {
         TabView {
             HomeView(profile: profile, navigationPath: $navigationPath)
+                .environmentObject(homeViewModel)
                 // HomeView에서 CategoryViewModel을 사용하므로 이미 주입되어 있어야 합니다.
                 // HomeView에서 QuizViewModel도 필요하다면 여기서 주입하거나,
                 // HomeView 내부에서 @EnvironmentObject로 받을 수 있습니다.

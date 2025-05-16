@@ -380,7 +380,11 @@ struct HomeView: View {
     @Binding var navigationPath: NavigationPath
     
     @State private var showingAllCategories = false
+    @State private var isEditingProfile = false
+    @State private var colorVersion = UUID()
+    
     @EnvironmentObject private var categoryViewModel: CategoryViewModel
+    @EnvironmentObject var homeViewModel: HomeViewModel
     
     private func sectionBackground<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         content()
@@ -396,7 +400,14 @@ struct HomeView: View {
                 
                 sectionBackground {
                     VStack(alignment: .leading, spacing: 15) {
-                        ProfileInfoView(name: profile.name, themeColorHex: profile.themeColorHex)
+                        Button {
+                            isEditingProfile = true
+                        } label: {
+                            ProfileInfoView(name: profile.name, themeColorHex: profile.themeColorHex)
+                                .id(profile.themeColorHex ?? "default")
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        
                         TotalCorrectRateView() // TODO: 실제 정답률 데이터 전달
                         RecommendedQuizView()  // TODO: 실제 추천 퀴즈 데이터 전달
                     }
@@ -435,6 +446,18 @@ struct HomeView: View {
         .background(Color(UIColor.systemGroupedBackground))
         .onAppear {
             categoryViewModel.fetchCategory()
+        }
+        .sheet(isPresented: $isEditingProfile) {
+            EditProfileView(profile: profile, onSave: {
+                colorVersion = UUID() 
+            })
+            .environmentObject(homeViewModel)
+        }
+        .onChange(of: profile.themeColorHex) { _, _ in
+            colorVersion = UUID()
+        }
+        .onChange(of: profile.name) { _, _ in
+            colorVersion = UUID()
         }
     }
 }
