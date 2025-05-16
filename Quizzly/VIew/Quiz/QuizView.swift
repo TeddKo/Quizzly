@@ -160,6 +160,7 @@ struct QuizView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
         .navigationDestination(isPresented: $showResult) {
             QuizResultView(
                 navigationPath: $navigationPath,
@@ -237,7 +238,6 @@ struct QuizView: View {
         } else {
             return String(format: "%02d:%02d", minutes, seconds)
         }
-        .toolbar(.hidden, for: .navigationBar)
     }
     
     private func fetchQuizzesForCurrentCategory() {
