@@ -24,19 +24,19 @@ fileprivate struct QuizResultView_SummarySection: View {
             Text(quizTitle)
                 .font(.footnote)
                 .fontWeight(.semibold)
-                .foregroundColor(.black.opacity(0.5))
+                .foregroundColor(Color.primary.opacity(0.5))
         }
         VStack(spacing: 15) {
             ZStack {
-                Circle().stroke(.gray.opacity(0.3), lineWidth: 20).frame(width: 110, height: 110)
-                Circle().rotation(.degrees(-90)).trim(from: 0, to: CGFloat(scorePercentage) / 100).stroke(.blue, lineWidth: 20).frame(width: 110, height: 110)
+                Circle().stroke(.secondary.opacity(0.3), lineWidth: 20).frame(width: 110, height: 110)
+                Circle().rotation(.degrees(-90)).trim(from: 0, to: CGFloat(scorePercentage) / 100).stroke(Color.adaptiveBlue, lineWidth: 20).frame(width: 110, height: 110)
                 Text("\(scorePercentage)%").font(.title3).bold()
             }
             .clipShape(.circle)
             HStack(spacing: 24) {
-                VStack { Text("\(correctCount)").font(.title3).fontWeight(.bold).foregroundStyle(.green); Text("정답").font(.footnote).fontWeight(.bold).foregroundStyle(.black.opacity(0.5)) }
-                VStack { Text("\(incorrectCount)").font(.title3).fontWeight(.bold).foregroundStyle(.red); Text("오답").font(.footnote).fontWeight(.bold).foregroundStyle(.black.opacity(0.5)) }
-                VStack { Text(totalTime).font(.title3).fontWeight(.bold).foregroundStyle(.black); Text("소요시간").font(.footnote).fontWeight(.bold).foregroundStyle(.black.opacity(0.5)) }
+                VStack { Text("\(correctCount)").font(.title3).fontWeight(.bold).foregroundStyle(Color.adaptiveGreen); Text("정답").font(.footnote).fontWeight(.bold).foregroundStyle(Color.adaptiveGrayOverlay) }
+                VStack { Text("\(incorrectCount)").font(.title3).fontWeight(.bold).foregroundStyle(Color.adaptiveRed); Text("오답").font(.footnote).fontWeight(.bold).foregroundStyle(Color.adaptiveGrayOverlay) }
+                VStack { Text(totalTime).font(.title3).fontWeight(.bold).foregroundStyle(Color.primary); Text("소요시간").font(.footnote).fontWeight(.bold).foregroundStyle(Color.adaptiveGrayOverlay) }
             }
         }
     }
@@ -56,12 +56,12 @@ fileprivate struct QuizResultView_NotesSection: View {
                         onNoteTap(note) // 클로저 호출
                     } label: {
                         VStack(alignment: .leading, spacing: 7) {
-                            Text(note.question).font(.footnote).fontWeight(.semibold).foregroundColor(.black).multilineTextAlignment(.leading)
+                            Text(note.question).font(.footnote).fontWeight(.semibold).foregroundColor(Color.primary).multilineTextAlignment(.leading)
                             HStack(spacing: 15) {
-                                Label("내 답안: \(note.userAnswer)", systemImage: "xmark.circle").font(.caption).fontWeight(.medium).foregroundColor(.red)
-                                Label("정답: \(note.correctAnswer)", systemImage: "checkmark.circle").font(.caption).fontWeight(.medium).foregroundColor(.green)
+                                Label("내 답안: \(note.userAnswer)", systemImage: "xmark.circle").font(.caption).fontWeight(.medium).foregroundColor(Color.adaptiveRed)
+                                Label("정답: \(note.correctAnswer)", systemImage: "checkmark.circle").font(.caption).fontWeight(.medium).foregroundColor(Color.adaptiveGreen)
                             }
-                            Text(note.explanation).font(.caption2).fontWeight(.semibold).foregroundColor(.black.opacity(0.5)).lineLimit(2)
+                            Text(note.explanation).font(.caption2).fontWeight(.semibold).foregroundColor(Color.adaptiveGrayOverlay).lineLimit(2)
                         }
                         .padding(13).frame(maxWidth: .infinity, alignment: .leading).background(Color.red.opacity(0.06))
                         .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.red.opacity(0.1), lineWidth: 3))
@@ -83,8 +83,8 @@ fileprivate struct QuizResultView_RecommendationsSection: View {
                 Text("추천 학습").font(.headline).padding(.bottom, 10)
                 ForEach(Array(recommendations.enumerated()), id: \.1.id) { index, item in
                     HStack {
-                        Image(systemName: "book").resizable().scaledToFit().frame(width: 13, height: 13).fontWeight(.semibold).foregroundColor(.blue).padding(8).background(Color.blue.opacity(0.1)).cornerRadius(5)
-                        VStack(alignment: .leading) { Text(item.title).font(.footnote).fontWeight(.semibold); Text(item.duration).font(.caption).fontWeight(.medium).foregroundColor(.black.opacity(0.5)) }
+                        Image(systemName: "book").resizable().scaledToFit().frame(width: 13, height: 13).fontWeight(.semibold).foregroundColor(Color.adaptiveBlue).padding(8).background(Color.adaptiveBlue.opacity(0.1)).cornerRadius(5)
+                        VStack(alignment: .leading) { Text(item.title).font(.footnote).fontWeight(.semibold); Text(item.duration).font(.caption).fontWeight(.medium).foregroundColor(Color.adaptiveGrayOverlay) }
                     }
                     if index < recommendations.count - 1 { Divider() }
                 }
@@ -107,14 +107,14 @@ fileprivate struct QuizResultView_ActionButtonsSection: View {
                      navigationPath.removeLast()
                  }
             } label: {
-                Text("홈으로").font(.subheadline).fontWeight(.semibold).foregroundStyle(.black)
+                Text("홈으로").font(.subheadline).fontWeight(.semibold).foregroundStyle(Color.primary)
             }
-            .frame(maxWidth: .infinity).padding(14).background(Color.gray.opacity(0.2)).cornerRadius(8)
+            .frame(maxWidth: .infinity).padding(14).background(Color.secondary.opacity(0.2)).cornerRadius(8)
 
             Button { retryTrigger = true } label: { // 이 버튼은 "전체 다시 풀기" 역할
-                Text("다시 풀기").font(.subheadline).fontWeight(.bold).foregroundStyle(.white)
+                Text("다시 풀기").font(.subheadline).fontWeight(.bold).foregroundStyle(Color.dynamicBackground)
             }
-            .frame(maxWidth: .infinity).padding(14).background(Color.blue).foregroundColor(.white).cornerRadius(8)
+            .frame(maxWidth: .infinity).padding(14).background(Color.adaptiveBlue).foregroundColor(Color.dynamicBackground).cornerRadius(8)
         }
     }
 }

@@ -22,16 +22,16 @@ struct EmptyDashboardView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 80, height: 80)
-                .foregroundColor(.gray.opacity(0.5))
+                .foregroundColor(.secondary.opacity(0.5))
 
             Text("아직 대시보드가 없습니다")
                 .font(.title3)
                 .fontWeight(.semibold)
-                .foregroundColor(.black)
+                .foregroundColor(Color.primary)
 
             Text("퀴즈를 풀어주세요!")
                 .font(.subheadline)
-                .foregroundColor(.gray)
+                .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -14,10 +14,10 @@ fileprivate struct QuizOptionRowView: View {
     var isSelected: Bool { selectedOption == optionText }
     var body: some View {
         Button { selectedOption = optionText } label: {
-            Text(optionText).bold().foregroundStyle(isSelected ? .cyan : .black)
+            Text(optionText).bold().foregroundStyle(isSelected ? Color.adaptiveCyan : Color.primary)
         }
         .frame(maxWidth: .infinity).padding(.vertical, 24)
-        .background(RoundedRectangle(cornerRadius: 12).stroke(isSelected ? Color.cyan : Color.gray.opacity(0.5), lineWidth: 2))
+        .background(RoundedRectangle(cornerRadius: 12).stroke(isSelected ? Color.adaptiveCyan : Color.secondary.opacity(0.5), lineWidth: 2))
     }
 }
 
@@ -38,7 +38,7 @@ fileprivate struct QuizQuestionView: View {
     var body: some View {
         ZStack(alignment: .top) {
             RoundedRectangle(cornerRadius: 20).fill(.gray.opacity(0.5)).frame(maxWidth: .infinity, maxHeight: 200)
-                .overlay { Text(questionDescription).bold().foregroundStyle(.black).multilineTextAlignment(.center).padding() }
+                .overlay { Text(questionDescription).bold().foregroundStyle(Color.primary).multilineTextAlignment(.center).padding() }
         }
     }
 }
@@ -134,9 +134,9 @@ struct QuizView: View {
                     handleNextButtonTap(for: quiz)
                 } label: {
                     Text(currentIndex == fetchedQuizzesForCategory.count - 1 ? "Finish" : "Next")
-                        .tint(.white).bold().padding().frame(maxWidth: .infinity).background(.cyan).clipShape(RoundedRectangle(cornerRadius: 12))
+                        .tint(Color.dynamicBackground).bold().padding().frame(maxWidth: .infinity).background(Color.adaptiveCyan).clipShape(RoundedRectangle(cornerRadius: 12))
                 }
-                .background { RoundedRectangle(cornerRadius: 12).foregroundStyle(.cyan).offset(y: 10).opacity(0.4).blur(radius: 12) }
+                .background { RoundedRectangle(cornerRadius: 12).foregroundStyle(Color.adaptiveCyan).offset(y: 10).opacity(0.4).blur(radius: 12) }
                 .disabled(selectedOption == nil && currentIndex < fetchedQuizzesForCategory.count)
             } else {
                 ContentUnavailableView(
@@ -154,8 +154,8 @@ struct QuizView: View {
                     if navigationPath.count > 0 { navigationPath.removeLast() } else { dismiss() }
                 }) {
                     Image(systemName: "xmark")
-                        .resizable().scaledToFit().frame(width: 14, height: 14).bold().foregroundColor(.black)
-                        .frame(width: 36, height: 36).overlay(Circle().stroke(.black.opacity(0.5), lineWidth: 1.3))
+                        .resizable().scaledToFit().frame(width: 14, height: 14).bold().foregroundColor(Color.primary)
+                        .frame(width: 36, height: 36).overlay(Circle().stroke(Color.adaptiveGrayOverlay, lineWidth: 1.3))
                 }
             }
         }

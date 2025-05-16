@@ -76,7 +76,7 @@ fileprivate struct NoteDetailHeaderView: View {
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
                     .padding(8)
-                    .overlay(Circle().stroke(.gray.opacity(0.5), lineWidth: 2))
+                    .overlay(Circle().stroke(.secondary.opacity(0.5), lineWidth: 2))
                     .clipShape(Circle())
             }
             
@@ -100,8 +100,8 @@ fileprivate struct NoteProblemInfoSection: View {
                     .font(.caption2)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(Color.red.opacity(0.1))
-                    .foregroundColor(.red)
+                    .background(Color.adaptiveRed.opacity(0.1))
+                    .foregroundColor(Color.adaptiveRed)
                     .clipShape(Capsule())
                 
                 Spacer()
@@ -109,7 +109,7 @@ fileprivate struct NoteProblemInfoSection: View {
                 Text(note.dateAdded)
                     .font(.caption)
                     .fontWeight(.semibold)
-                    .foregroundColor(.black.opacity(0.5))
+                    .foregroundColor(Color.primary.opacity(0.5))
             }
             Text(note.question)
                 .font(.headline)
@@ -118,11 +118,11 @@ fileprivate struct NoteProblemInfoSection: View {
             Text("난이도: \(note.level)")
                 .font(.footnote)
                 .fontWeight(.semibold)
-                .foregroundColor(.black.opacity(0.5))
+                .foregroundColor(Color.primary.opacity(0.5))
         }
         .padding(13)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.red.opacity(0.06))
+        .background(Color.adaptiveRed.opacity(0.06))
         .cornerRadius(8)
     }
 }
@@ -159,14 +159,14 @@ fileprivate struct ChoiceRow: View {
     }
 
     private var foregroundColor: Color {
-        if isCorrectAnswer || isUserAnswer { return .white }
+        if isCorrectAnswer || isUserAnswer { return Color.dynamicBackground }
         return .primary
     }
     
     private var strokeColor: Color {
-        if isCorrectAnswer { return .green }
-        if isUserAnswer { return .red }
-        return .gray.opacity(0.5)
+        if isCorrectAnswer { return Color.adaptiveGreen }
+        if isUserAnswer { return Color.adaptiveRed }
+        return .secondary.opacity(0.5)
     }
 
     var body: some View {
@@ -185,7 +185,7 @@ fileprivate struct ChoiceRow: View {
             Spacer()
         }
         .padding(13)
-        .background(.white)
+        .background(Color.dynamicBackground)
         .overlay(
             RoundedRectangle(cornerRadius: 8)
                 .stroke(strokeColor, lineWidth: 3)
@@ -209,10 +209,10 @@ fileprivate struct NoteExplanationSection: View {
         }
         .padding(13)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.white)
+        .background(Color.dynamicBackground)
         .overlay(
             RoundedRectangle(cornerRadius: 8)
-                .stroke(.gray.opacity(0.2), lineWidth: 3)
+                .stroke(.secondary.opacity(0.2), lineWidth: 3)
         )
         .cornerRadius(8)
     }
@@ -233,8 +233,8 @@ fileprivate struct NoteRecommendationsSection: View {
                     HStack {
                         Image(systemName: "book")
                             .resizable().scaledToFit().frame(width: 13, height: 13)
-                            .fontWeight(.semibold).foregroundColor(.blue)
-                            .padding(8).background(Color.blue.opacity(0.1)).cornerRadius(5)
+                            .fontWeight(.semibold).foregroundColor(Color.adaptiveBlue)
+                            .padding(8).background(Color.adaptiveBlue.opacity(0.1)).cornerRadius(5)
                         
                         VStack(alignment: .leading) {
                             Text(rec.title).bold()
@@ -243,7 +243,7 @@ fileprivate struct NoteRecommendationsSection: View {
                             Text(rec.duration)
                                 .font(.caption)
                                 .fontWeight(.medium)
-                                .foregroundColor(.black.opacity(0.5))
+                                .foregroundColor(Color.primary.opacity(0.5))
                         }
                     }
                     if index < recommendations.count - 1 {
@@ -270,7 +270,7 @@ fileprivate struct NoteMemoSection: View {
                 .cornerRadius(10)
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                        .stroke(Color.secondary.opacity(0.4), lineWidth: 1)
                 )
         }
     }
@@ -285,17 +285,17 @@ fileprivate struct NoteActionButtons: View {
         HStack {
             Button(action: onDismiss) {
                 Text("목록으로")
-                    .font(.subheadline).fontWeight(.semibold).foregroundStyle(.black)
+                    .font(.subheadline).fontWeight(.semibold).foregroundStyle(Color.primary)
             }
             .frame(maxWidth: .infinity).padding(14)
             .background(Color.gray.opacity(0.2)).cornerRadius(8)
 
             Button(action: onRetry) {
                 Text("다시 풀기")
-                    .font(.subheadline).fontWeight(.bold).foregroundStyle(.white)
+                    .font(.subheadline).fontWeight(.bold).foregroundStyle(Color.dynamicBackground)
             }
             .frame(maxWidth: .infinity).padding(14)
-            .background(Color.blue).foregroundColor(.white).cornerRadius(8)
+            .background(Color.adaptiveBlue).foregroundColor(Color.dynamicBackground).cornerRadius(8)
         }
     }
 }
