@@ -431,6 +431,7 @@ struct HomeView: View {
             .padding()
         }
         .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
         .background(Color(UIColor.systemGroupedBackground))
         .onAppear {
             categoryViewModel.fetchCategory()

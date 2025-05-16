@@ -10,6 +10,15 @@ import SwiftData
 
 @main
 struct QuizzlyApp: App {
+    init() {
+        let tabBarAppearance = UITabBarAppearance()
+        tabBarAppearance.configureWithOpaqueBackground()
+        tabBarAppearance.backgroundColor = UIColor.white
+
+        UITabBar.appearance().standardAppearance = tabBarAppearance
+        UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+    }
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Profile.self,

@@ -237,6 +237,7 @@ struct QuizView: View {
         } else {
             return String(format: "%02d:%02d", minutes, seconds)
         }
+        .toolbar(.hidden, for: .navigationBar)
     }
     
     private func fetchQuizzesForCurrentCategory() {
